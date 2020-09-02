@@ -3,18 +3,14 @@ package main
 import (
 	"log"
 
-	"github.com/OpenStars/EtcdBackendService/StringBigsetService"
-	"github.com/OpenStars/EtcdBackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
-	"github.com/OpenStars/GoEndpointManager/GoEndpointBackendManager"
+	"github.com/OpenStars/BackendService/StringBigsetService"
+	"github.com/OpenStars/BackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
 )
 
 //host = 10.60.1.20
 //port = 18408
 func TestSV() {
-	svClient := StringBigsetService.NewStringBigsetServiceModel("", []string{}, GoEndpointBackendManager.EndPoint{
-		Host:      "10.110.1.21",
-		Port:      "185997",
-		ServiceID: ""})
+	svClient := StringBigsetService.NewClient(nil, "/test/", "10.110.1.21", "18597")
 	bskey := generic.TStringKey("GiacNgoTVLinkPaper")
 	// svClient.BsPutItem(bskey, &generic.TItem{
 	// 	Key:   []byte("minhv2"),
