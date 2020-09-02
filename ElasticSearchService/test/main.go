@@ -5,11 +5,7 @@ import (
 	"log"
 	"strconv"
 
-<<<<<<< HEAD
-	ElasticSearchService "github.com/OpenStars/BackendService"
-=======
-	"github.com/OpenStars/EtcdBackendService/ElasticSearchService"
->>>>>>> f350f9ee25ae378e31198147aaba44d0f211622c
+	"github.com/OpenStars/BackendService/ElasticSearchService"
 )
 
 type ShopItem struct {
@@ -102,7 +98,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	doc, err := ElasticSearchService.ParseRawDocuments(rs)
+	doc, err := ElasticSearchService.ParseResultToDocuments(rs)
 	// IndexToES(esclient)
 	// result, err := esclient.Get("eshop", "qUl2LXQBTjAo_D0k19Q7")
 	if err != nil {
