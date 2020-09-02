@@ -1,0 +1,1 @@
+./client -host=127.0.0.1 -port=19417  -action=bsputitem -bskey=TEST -itemkey=sonlh -itemvalue=mta
