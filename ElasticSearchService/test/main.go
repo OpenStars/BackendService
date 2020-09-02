@@ -5,7 +5,11 @@ import (
 	"log"
 	"strconv"
 
+<<<<<<< HEAD
 	ElasticSearchService "github.com/OpenStars/BackendService"
+=======
+	"github.com/OpenStars/EtcdBackendService/ElasticSearchService"
+>>>>>>> f350f9ee25ae378e31198147aaba44d0f211622c
 )
 
 type ShopItem struct {
