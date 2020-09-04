@@ -1,4 +1,4 @@
-package PubProfileClient
+package PublicProfileService
 
 import "github.com/OpenStars/BackendService/PublicProfileService/tpubprofileservice/thrift/gen-go/openstars/pubprofile"
 

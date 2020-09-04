@@ -1,4 +1,4 @@
-package PubProfileClient
+package PublicProfileService
 
 func NewClient(ahost, aport string) Client {
 

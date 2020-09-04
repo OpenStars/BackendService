@@ -1,4 +1,4 @@
-package PubProfileClient
+package PublicProfileService
 
 import (
 	"context"
