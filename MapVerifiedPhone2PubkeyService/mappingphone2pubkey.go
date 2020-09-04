@@ -1,4 +1,4 @@
-package MapPhoneNumber2Pubkey
+package MapVerifiedPhone2PubkeyService
 
 import (
 	"context"

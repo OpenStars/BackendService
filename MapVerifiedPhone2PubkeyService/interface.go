@@ -1,4 +1,4 @@
-package MapPhoneNumber2Pubkey
+package MapVerifiedPhone2PubkeyService
 
 type Client interface {
 	PutData(pubkey string, phonenumber string) (bool, error)
