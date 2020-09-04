@@ -3,6 +3,9 @@ module github.com/OpenStars/BackendService
 go 1.15
 
 require (
+	github.com/OpenStars/EtcdBackendService v0.0.0-20200902010328-9a9cc534fe8e
+	github.com/OpenStars/GoEndpointManager v0.0.0-20200513065934-c2f3d8399632
+	github.com/OpenStars/thriftpoolv2 v0.0.0-20200306081147-89225e956ca9 // indirect
 	github.com/apache/thrift v0.13.0
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
