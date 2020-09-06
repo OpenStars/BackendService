@@ -16,6 +16,7 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/google/uuid v1.1.2 // indirect
+	github.com/rtt/Go-Solr v0.0.0-20190512221613-64fac99dcae2
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	go.etcd.io/etcd v3.3.25+incompatible
 	go.uber.org/zap v1.16.0 // indirect
