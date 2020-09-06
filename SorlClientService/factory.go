@@ -1,18 +1,21 @@
 package SorlClientService
 
 import (
+	"strconv"
+
 	solr "github.com/rtt/Go-Solr"
 )
 
-func NewSolrClient(ahost string, aport int, acollection string) SolrClientServiceIf {
+func NewClient(ahost string, aport string, acollection string) Client {
 
-	s, err := solr.Init(ahost, aport, acollection)
+	port, _ := strconv.Atoi(aport)
+	s, err := solr.Init(ahost, port, acollection)
 	if err != nil {
 		return nil
 	}
 	return &solrclientservice{
 		host:       ahost,
-		port:       aport,
+		port:       port,
 		collection: acollection,
 		sconn:      s,
 	}
