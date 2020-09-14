@@ -7,6 +7,7 @@ require (
 	github.com/OpenStars/GoEndpointManager v0.0.0-20200513065934-c2f3d8399632
 	github.com/OpenStars/thriftpoolv2 v0.0.0-20200306081147-89225e956ca9 // indirect
 	github.com/apache/thrift v0.13.0
+	github.com/bluele/gcache v0.0.0-20190518031135-bc40bd653833
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf // indirect

@@ -3,9 +3,11 @@ package PublicProfileService
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/OpenStars/BackendService/PublicProfileService/tpubprofileservice/thrift/gen-go/openstars/pubprofile"
 	"github.com/OpenStars/BackendService/PublicProfileService/tpubprofileservice/transports"
+	"github.com/bluele/gcache"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -13,9 +15,11 @@ type pubprofileclient struct {
 	host string
 	port string
 
-	bot_token  string
-	bot_chatID int64
-	botClient  *tgbotapi.BotAPI
+	bot_token     string
+	bot_chatID    int64
+	botClient     *tgbotapi.BotAPI
+	cache         gcache.Cache
+	cacheExperied int64
 }
 
 func (m *pubprofileclient) notifyEndpointError() {
@@ -45,6 +49,9 @@ func (m *pubprofileclient) GetProfileByUID(uid int64) (r *pubprofile.ProfileData
 		if resp.ProfileData.Pubkey == "" && resp.ProfileData.DisplayName == "" && resp.ProfileData.LastModified == 0 {
 			return nil, errors.New("Profile not existed")
 		}
+		if m.cache != nil {
+			m.cache.SetWithExpire(uid, resp.ProfileData, time.Duration(m.cacheExperied)*time.Minute)
+		}
 		return resp.ProfileData, nil
 	}
 	return nil, errors.New("Get data nil")
@@ -68,6 +75,9 @@ func (m *pubprofileclient) GetProfileByPubkey(pubkey string) (r *pubprofile.Prof
 		if resp.ProfileData.Pubkey == "" && resp.ProfileData.DisplayName == "" && resp.ProfileData.LastModified == 0 {
 			return nil, errors.New("Profile not existed")
 		}
+		if m.cache != nil {
+			m.cache.SetWithExpire(pubkey, resp.ProfileData, time.Duration(m.cacheExperied)*time.Minute)
+		}
 		return resp.ProfileData, nil
 	}
 	return nil, errors.New("Get data nil")
@@ -86,6 +96,9 @@ func (m *pubprofileclient) UpdateProfileByPubkey(pubkey string, profileUpdate *p
 	defer client.BackToPool()
 
 	if resp != nil {
+		if m.cache != nil {
+			m.cache.SetWithExpire(pubkey, profileUpdate, time.Duration(m.cacheExperied)*time.Minute)
+		}
 		return resp.Resp, nil
 	}
 	return false, nil
@@ -104,6 +117,9 @@ func (m *pubprofileclient) SetProfileByPubkey(pubkey string, profileUpdate *pubp
 	defer client.BackToPool()
 
 	if resp != nil {
+		if m.cache != nil {
+			m.cache.SetWithExpire(pubkey, profileUpdate, time.Duration(m.cacheExperied)*time.Minute)
+		}
 		return resp.Resp, nil
 	}
 	return false, nil
@@ -122,6 +138,9 @@ func (m *pubprofileclient) UpdateProfileByUID(uid int64, profileUpdate *pubprofi
 	defer client.BackToPool()
 
 	if resp != nil {
+		if m.cache != nil {
+			m.cache.SetWithExpire(uid, profileUpdate, time.Duration(m.cacheExperied)*time.Minute)
+		}
 		return resp.Resp, nil
 	}
 	return false, nil
