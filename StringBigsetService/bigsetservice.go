@@ -73,6 +73,7 @@ func NewClient(etcdEndpoints []string, sid string, defaultEndpointsHost string, 
 func NewClientWithMonitor(etcdEndpoints []string, sid string, host string, port string, bot_token string, bot_chatID int64) Client {
 	// 1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg
 	// -1001469468779
+
 	log.Println("Init StringBigset Service sid", sid, "address", host+":"+port)
 	stringbs := &StringBigsetService{
 		host:        host,
@@ -477,7 +478,7 @@ func (m *StringBigsetService) BsGetSliceR(bskey generic.TStringKey, fromPos int3
 			m.port = p
 		}
 	}
-	log.Println("host", m.host, "port", m.port, "bskey", string(bskey))
+
 	client := transports.GetBsGenericClient(m.host, m.port)
 	if client == nil || client.Client == nil {
 		go m.notifyEndpointError()
