@@ -3,7 +3,7 @@ package ElasticSearchService
 import (
 	"log"
 
-	"github.com/elastic/go-elasticsearch"
+	"github.com/elastic/go-elasticsearch/v8"
 )
 
 func NewClient(hosts []string) Client {
@@ -23,4 +23,5 @@ func NewClient(hosts []string) Client {
 		esclient: es,
 		url:      url,
 	}
+
 }

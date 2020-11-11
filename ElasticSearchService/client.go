@@ -7,11 +7,67 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
+	"reflect"
+	"strconv"
 	"strings"
 
-	"github.com/elastic/go-elasticsearch"
-	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
+
+type Location struct {
+	Latitude  float64 `json:"lat,omitempty"`
+	Longitude float64 `json:"lon,omitempty"`
+}
+
+func ConvertToMapInterface(stu interface{}) map[string]interface{} {
+	result := make(map[string]interface{})
+	val := reflect.ValueOf(stu).Elem()
+
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		typeField := val.Type().Field(i)
+		if typeField.Type.String() == "map[string]string" {
+			for k, v := range valueField.Interface().(map[string]string) {
+				if k == "uid" {
+					vi, _ := strconv.ParseInt(v, 10, 64)
+					result[k] = vi
+					continue
+				}
+				if k == "location" {
+					var locinfo Location
+					json.Unmarshal([]byte(v), &locinfo)
+					result[k] = locinfo
+				}
+				result[k] = v
+			}
+			continue
+		}
+
+		valuedatabytes, _ := json.Marshal(valueField.Interface())
+		valueDataString := string(valuedatabytes)
+
+		if valueDataString == "0" || valueDataString == "" || valueDataString == "null" || valueDataString == "\"\"" {
+			continue
+		}
+		tags := strings.Split(typeField.Tag.Get("json"), ",")
+		if len(tags) == 0 {
+			continue
+		}
+
+		result[tags[0]] = valueField.Interface()
+	}
+	return result
+}
+
+func ToJson(stu interface{}) string {
+	mapData := ConvertToMapInterface(stu)
+	databytes, _ := json.Marshal(mapData)
+	if databytes == nil {
+		return ""
+	}
+	return string(databytes)
+}
 
 type client struct {
 	esclient *elasticsearch.Client
@@ -19,6 +75,7 @@ type client struct {
 }
 
 func (m *client) Index(indexName, docID, documentJson string) (bool, error) {
+
 	req := esapi.IndexRequest{
 		Index:      indexName,
 		Body:       strings.NewReader(documentJson),
@@ -183,5 +240,36 @@ func ParseResultToDocuments(rawResult []byte) ([]interface{}, error) {
 	if len(listDoc) == 0 {
 		return nil, errors.New("NOT FOUND")
 	}
+
 	return listDoc, nil
+}
+
+type ShardsInfo struct {
+	Total      int64 `json:"total,omitempty"`
+	Successful int64 `json:"successful,omitempty"`
+	Skipped    int64 `json:"skipped,omitempty"`
+	Failed     int64 `json:"failed,omitempty"`
+}
+
+type TotalHits struct {
+	Value    int64  `json:"value,omitempty"`
+	Relation string `json:"relation,omitempty"`
+}
+type HitElement struct {
+	Index  string      `json:"_index,omitempty"`
+	Type   string      `json:"_type,omitempty"`
+	Score  float32     `json:"_score,omitempty"`
+	Source interface{} `json:"_source,omitempty"`
+}
+type HitsInfo struct {
+	Total    *TotalHits    `json:"total,omitempty"`
+	MaxScore *float64      `json:"max_score,omitempty"`
+	Hits     []*HitElement `json:"hits,omitempty"`
+}
+
+type AggsResult struct {
+	Took    int64       `json:"took,omitempty"`
+	TimeOut bool        `json:"time_out,omitempty"`
+	Shards  *ShardsInfo `json:"_shards,omitempty"`
+	Hits    HitsInfo    `json:"hits,omitempty"`
 }
