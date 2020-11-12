@@ -3,19 +3,17 @@ package MapVerifiedPhone2PubkeyService
 import (
 	"context"
 	"errors"
-	"log"
 
-	"github.com/OpenStars/BackendService/EndpointsManager"
 	"github.com/OpenStars/BackendService/MapVerifiedPhone2PubkeyService/mapphone2pubkey/thrift/gen-go/OpenStars/Common/MapPhoneNumberPubkeyKV"
 	"github.com/OpenStars/BackendService/MapVerifiedPhone2PubkeyService/mapphone2pubkey/transports"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type MappingPhone2PubkeyServiceModel struct {
-	host        string
-	port        string
-	sid         string
-	etcdManager *EndpointsManager.EtcdBackendEndpointManager
+	host string
+	port string
+	sid  string
+	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
 
 	bot_token  string
 	bot_chatID int64
@@ -24,15 +22,15 @@ type MappingPhone2PubkeyServiceModel struct {
 
 func (m *MappingPhone2PubkeyServiceModel) PutData(pubkey string, phonenumber string) (bool, error) {
 
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetTMapPhoneNumberPubkeyKVServiceCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
@@ -54,15 +52,15 @@ func (m *MappingPhone2PubkeyServiceModel) PutData(pubkey string, phonenumber str
 
 func (m *MappingPhone2PubkeyServiceModel) GetPhoneNumberByPubkey(pubkey string) (string, error) {
 
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetTMapPhoneNumberPubkeyKVServiceCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
@@ -84,15 +82,15 @@ func (m *MappingPhone2PubkeyServiceModel) GetPhoneNumberByPubkey(pubkey string) 
 
 func (m *MappingPhone2PubkeyServiceModel) GetPubkeyByPhoneNumber(phonenumber string) (string, error) {
 
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetTMapPhoneNumberPubkeyKVServiceCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
@@ -122,26 +120,26 @@ func (m *MappingPhone2PubkeyServiceModel) notifyEndpointError() {
 
 func NewClient(etcdServer []string, sid, host, port string) Client {
 	mapphone2pub := &MappingPhone2PubkeyServiceModel{
-		host:        host,
-		port:        port,
-		sid:         sid,
-		etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServer),
-		bot_chatID:  -1001469468779,
-		bot_token:   "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
-		botClient:   nil,
+		host: host,
+		port: port,
+		sid:  sid,
+		// etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServer),
+		bot_chatID: -1001469468779,
+		bot_token:  "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
+		botClient:  nil,
 	}
 	bot, err := tgbotapi.NewBotAPI(mapphone2pub.bot_token)
 	if err == nil {
 		mapphone2pub.botClient = bot
 	}
-	if mapphone2pub.etcdManager == nil {
-		return mapphone2pub
-	}
-	err = mapphone2pub.etcdManager.SetDefaultEntpoint(sid, host, port)
-	if err != nil {
-		log.Println("SetDefaultEndpoint sid", sid, "err", err)
-		return nil
-	}
+	// if mapphone2pub.etcdManager == nil {
+	// 	return mapphone2pub
+	// }
+	// err = mapphone2pub.etcdManager.SetDefaultEntpoint(sid, host, port)
+	// if err != nil {
+	// 	log.Println("SetDefaultEndpoint sid", sid, "err", err)
+	// 	return nil
+	// }
 
 	return mapphone2pub
 }

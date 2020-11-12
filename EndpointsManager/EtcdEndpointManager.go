@@ -7,7 +7,7 @@ import (
 	"context"
 	"sync"
 
-	etcdv3 "go.etcd.io/etcd/clientv3"
+	etcdv3 "go.etcd.io/etcd/v3"
 )
 
 // //EnpointManagerIf interface of enpoint manager

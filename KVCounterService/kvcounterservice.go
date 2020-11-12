@@ -3,9 +3,7 @@ package KVCounterService
 import (
 	"context"
 	"errors"
-	"log"
 
-	"github.com/OpenStars/BackendService/EndpointsManager"
 	"github.com/OpenStars/BackendService/KVCounterService/kvcounter/thrift/gen-go/OpenStars/Counters/KVStepCounter"
 	"github.com/OpenStars/BackendService/KVCounterService/kvcounter/transports"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -16,7 +14,7 @@ type KVCounterService struct {
 	port string
 	sid  string
 
-	etcdManager *EndpointsManager.EtcdBackendEndpointManager
+	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
 
 	bot_token  string
 	bot_chatID int64
@@ -31,15 +29,15 @@ func (m *KVCounterService) notifyEndpointError() {
 }
 
 func (m *KVCounterService) GetValue(genname string) (int64, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
@@ -58,15 +56,15 @@ func (m *KVCounterService) GetValue(genname string) (int64, error) {
 }
 
 func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
@@ -84,15 +82,15 @@ func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
 }
 
 func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
@@ -113,15 +111,15 @@ func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, erro
 
 func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
@@ -143,25 +141,25 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Client {
 
 	kvcounter := &KVCounterService{
-		host:        defaultHost,
-		port:        defaultPort,
-		sid:         sid,
-		etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServers),
-		bot_chatID:  -1001469468779,
-		bot_token:   "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
-		botClient:   nil,
+		host: defaultHost,
+		port: defaultPort,
+		sid:  sid,
+		// etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServers),
+		bot_chatID: -1001469468779,
+		bot_token:  "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
+		botClient:  nil,
 	}
 	bot, err := tgbotapi.NewBotAPI(kvcounter.bot_token)
 	if err == nil {
 		kvcounter.botClient = bot
 	}
-	if kvcounter.etcdManager == nil {
-		return kvcounter
-	}
-	err = kvcounter.etcdManager.SetDefaultEntpoint(sid, defaultHost, defaultPort)
-	if err != nil {
-		log.Println("SetDefaultEndpoint sid", sid, "err", err)
-		return nil
-	}
+	// if kvcounter.etcdManager == nil {
+	// 	return kvcounter
+	// }
+	// err = kvcounter.etcdManager.SetDefaultEntpoint(sid, defaultHost, defaultPort)
+	// if err != nil {
+	// 	log.Println("SetDefaultEndpoint sid", sid, "err", err)
+	// 	return nil
+	// }
 	return kvcounter
 }

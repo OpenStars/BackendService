@@ -3,9 +3,7 @@ package SimpleSessionService
 import (
 	"context"
 	"errors"
-	"log"
 
-	"github.com/OpenStars/BackendService/EndpointsManager"
 	"github.com/OpenStars/BackendService/SimpleSessionService/simplesession/thrift/gen-go/simplesession"
 	"github.com/OpenStars/BackendService/SimpleSessionService/simplesession/transports"
 
@@ -17,7 +15,7 @@ type simpleSessionClient struct {
 	port string
 	sid  string
 
-	etcdManager *EndpointsManager.EtcdBackendEndpointManager
+	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
 
 	bot_token  string
 	bot_chatID int64
@@ -32,15 +30,15 @@ func (m *simpleSessionClient) notifyEndpointError() {
 }
 
 func (m *simpleSessionClient) GetSession(sskey string) (*simplesession.TUserSessionInfo, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 	client := transports.GetSimpleSessionCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
 		go m.notifyEndpointError()
@@ -60,15 +58,15 @@ func (m *simpleSessionClient) GetSession(sskey string) (*simplesession.TUserSess
 }
 
 func (m *simpleSessionClient) CreateSession(uid int64, deviceInfo string, data string, expiredTime int64) (string, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 	client := transports.GetSimpleSessionCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
 		go m.notifyEndpointError()
@@ -96,15 +94,15 @@ func (m *simpleSessionClient) CreateSession(uid int64, deviceInfo string, data s
 }
 
 func (m *simpleSessionClient) RemoveSession(sskey string) (bool, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 	client := transports.GetSimpleSessionCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
 		go m.notifyEndpointError()

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	etcdv3 "go.etcd.io/etcd/clientv3"
+	etcdv3 "go.etcd.io/etcd/v3"
 )
 
 var etcdManagerSingleton *EtcdBackendEndpointManager

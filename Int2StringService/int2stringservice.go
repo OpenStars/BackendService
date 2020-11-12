@@ -3,9 +3,7 @@ package Int2StringService
 import (
 	"context"
 	"errors"
-	"log"
 
-	"github.com/OpenStars/BackendService/EndpointsManager"
 	"github.com/OpenStars/BackendService/Int2StringService/i2skv/thrift/gen-go/OpenStars/Common/I2SKV"
 	"github.com/OpenStars/BackendService/Int2StringService/i2skv/transports"
 
@@ -17,7 +15,7 @@ type Int2StringService struct {
 	port string
 	sid  string
 
-	etcdManager *EndpointsManager.EtcdBackendEndpointManager
+	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
 
 	bot_token  string
 	bot_chatID int64
@@ -32,15 +30,15 @@ func (m *Int2StringService) notifyEndpointError() {
 }
 
 func (m *Int2StringService) PutData(key int64, value string) (bool, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetTI2StringServiceCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
@@ -67,15 +65,15 @@ func (m *Int2StringService) PutData(key int64, value string) (bool, error) {
 }
 
 func (m *Int2StringService) GetData(key int64) (string, error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 	client := transports.GetTI2StringServiceCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
 		go m.notifyEndpointError()
@@ -98,10 +96,10 @@ func (m *Int2StringService) GetData(key int64) (string, error) {
 
 func NewClient(etcdServers []string, sid, host, port string) Client {
 	i2ssv := &Int2StringService{
-		host:        host,
-		port:        port,
-		sid:         sid,
-		etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServers),
+		host: host,
+		port: port,
+		sid:  sid,
+		// etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServers),
 
 		bot_chatID: -1001469468779,
 		bot_token:  "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
@@ -111,14 +109,14 @@ func NewClient(etcdServers []string, sid, host, port string) Client {
 	if err == nil {
 		i2ssv.botClient = bot
 	}
-	if i2ssv.etcdManager == nil {
-		return i2ssv
-	}
-	err = i2ssv.etcdManager.SetDefaultEntpoint(sid, host, port)
-	if err != nil {
-		log.Println("SetDefaultEndpoint sid", sid, "err", err)
-		return i2ssv
-	}
+	// if i2ssv.etcdManager == nil {
+	// 	return i2ssv
+	// }
+	// err = i2ssv.etcdManager.SetDefaultEntpoint(sid, host, port)
+	// if err != nil {
+	// 	log.Println("SetDefaultEndpoint sid", sid, "err", err)
+	// 	return i2ssv
+	// }
 
 	return i2ssv
 }

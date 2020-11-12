@@ -10,7 +10,7 @@ import (
 	"context"
 	"sync"
 
-	etcdv3 "go.etcd.io/etcd/clientv3"
+	etcdv3 "go.etcd.io/etcd/v3"
 )
 
 //EtcdEnpointManager Endpoint manager for backend service using etcd
@@ -28,6 +28,7 @@ type EtcdBackendEndpointManager struct {
 //Input: a full path /my/path/thrift:10.0.0.10:5560
 //output : errr, endpoint , a service path (/my/path)
 func (e *EtcdBackendEndpointManager) parseEndpointFromPath(endPointPath string) (error, *Endpoint, string) {
+
 	var ep Endpoint
 	baseNode := strings.Split(endPointPath, "/")
 	fmt.Println(endPointPath, " base Node", baseNode)
@@ -160,6 +161,7 @@ func (o *EtcdBackendEndpointManager) GetAllEndPoint(serviceID string) ([]*Endpoi
 	if o.client == nil {
 		o.Start()
 	}
+
 	/*
 		Get in Endpoint map first
 		If it does not exist, get from etcd, and monitor it.
