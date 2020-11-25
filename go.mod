@@ -5,6 +5,7 @@ go 1.15
 replace go.etcd.io/etcd/v3 => /home/lehaisonmath6/go/src/go.etcd.io/etcd
 
 require (
+	github.com/OpenStars/EtcdBackendService v0.0.0-20201021070238-0d4c60000fbe
 	github.com/apache/thrift v0.13.0
 	github.com/bluele/gcache v0.0.0-20190518031135-bc40bd653833
 	github.com/elastic/go-elasticsearch/v8 v8.0.0-20201104130540-2e1f801663c6
