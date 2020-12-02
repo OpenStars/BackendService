@@ -91,6 +91,7 @@ func (m *client) Index(indexName, docID, documentJson string) (bool, error) {
 	}
 	defer res.Body.Close()
 	resultBody, err := ioutil.ReadAll(res.Body)
+
 	var resultBodyMap map[string]interface{}
 	err = json.Unmarshal(resultBody, &resultBodyMap)
 	if err != nil {
@@ -147,7 +148,7 @@ func (m *client) Delete(indexName string, docID string) (bool, error) {
 	return true, nil
 }
 
-func (m *client) Get(indexName string, id string) (rawResult []byte, err error) {
+func (m *client) Get(indexName string, id string) (r interface{}, err error) {
 	req := esapi.GetRequest{
 		Index:      indexName,
 		DocumentID: id,
@@ -164,10 +165,19 @@ func (m *client) Get(indexName string, id string) (rawResult []byte, err error) 
 	if err != nil {
 		return nil, err
 	}
-	if string(resultBody) == "" {
+	var result GetDocResult
+	err = json.Unmarshal(resultBody, &result)
+	if err != nil {
+		return nil, err
+	}
+	if result.Found == false {
 		return nil, errors.New("NOT FOUND")
 	}
-	return resultBody, nil
+	return result.Source, nil
+	// if string(resultBody) == "" {
+	// 	return nil, errors.New("NOT FOUND")
+	// }
+	// return resultBody, nil
 }
 
 func (m *client) Update(indexName string, id string, documentJson string) (bool, error) {
@@ -272,4 +282,39 @@ type AggsResult struct {
 	TimeOut bool        `json:"time_out,omitempty"`
 	Shards  *ShardsInfo `json:"_shards,omitempty"`
 	Hits    HitsInfo    `json:"hits,omitempty"`
+}
+
+// {
+// 	"_index" : "new_media_item",
+// 	"_type" : "_doc",
+// 	"_id" : "660037",
+// 	"_version" : 5,
+// 	"_seq_no" : 5500,
+// 	"_primary_term" : 1,
+// 	"found" : true,
+// 	"_source" : {
+// 	  "createTime" : "2020-12-02",
+// 	  "extend" : """{"thumb":"https://photocloud.mobilelab.vn/2020-12-02/70255323-82e1-4ec8-8775-a16fc46d3711.png"}""",
+// 	  "hashtags" : "#reface",
+// 	  "idmedia" : 660037,
+// 	  "idpost" : 660037,
+// 	  "mediaType" : 8,
+// 	  "name" : "Donal son haha 3 #reface",
+// 	  "privacy" : "0",
+// 	  "pubkey" : "03049ef040e0d21a49bccb428cd9e9c4854b3e9d08e21cf463fe29a6205c6833a3",
+// 	  "timestamps" : 1606902527,
+// 	  "uid" : 25704,
+// 	  "url" : "https://mediacloud.mobilelab.vn/2020-12-02/16_48_48-fb266dfe-0b8c-4286-a217-b5e1a9d26244.mp4"
+// 	}
+//   }
+
+type GetDocResult struct {
+	Index       string      `json:"_index,omitempty"`
+	Type        string      `json:"_type,omitempty"`
+	Id          string      `json:"_id,omitempty"`
+	Version     int64       `json:"_version,omitempty"`
+	SeqNo       int64       `json:"_seq_no,omitempty"`
+	PrimaryTerm int64       `json:"_primary_term,omitempty"`
+	Found       bool        `json:"found,omitempty"`
+	Source      interface{} `json:"_source,omitempty"`
 }

@@ -7,7 +7,7 @@ type Client interface {
 
 	Delete(indexName string, docID string) (bool, error)
 
-	Get(indexName string, docID string) (rawResult []byte, err error)
+	Get(indexName string, docID string) (r interface{}, err error)
 
 	Update(indexName string, docID string, documentJson string) (bool, error)
 }
