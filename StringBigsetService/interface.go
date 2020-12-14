@@ -19,4 +19,5 @@ type Client interface {
 	BsGetSliceFromItemR(bskey string, fromKey string, count int32) ([]*generic.TItem, error)
 	RemoveAll(bskey string) (bool, error)
 	BsGetSliceR(bskey string, fromPos int32, count int32) ([]*generic.TItem, error)
+	SetAgentCaller(agentName string, agentAddress string)
 }
