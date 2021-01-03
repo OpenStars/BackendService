@@ -10,13 +10,14 @@ import (
 //host = 10.60.1.20
 //port = 18408
 func TestSV() {
-	svClient := StringBigsetService.NewClient(nil, "/test/", "10.110.1.21", "18597")
+	// 10.110.1.21:29810
+	svClient := StringBigsetService.NewClient(nil, "/test/", "10.110.1.21", "29810")
 	bskey := generic.TStringKey("GiacNgoTVLinkPaper")
 	// svClient.BsPutItem(bskey, &generic.TItem{
 	// 	Key:   []byte("minhv2"),
 	// 	Value: []byte("1234"),
 	// })
-	lsItems, err := svClient.BsGetSliceR(bskey, 0, 10)
+	lsItems, err := svClient.BsGetSlice(string(bskey), 0, 10)
 	if err != nil {
 		log.Println("[ERROR] err", err)
 	}
