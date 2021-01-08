@@ -207,11 +207,11 @@ func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (
 	if r.Error != generic.TErrorCode_EGood {
 		return false, nil
 	}
-	if r.Ok == false {
-		err := errors.New("Can not write bskey: " + bskey + " itemkey: " + itemKey)
-		go m.notifyEndpointError(err)
-		return false, err
-	}
+	// if r.Ok == false {
+	// 	err := errors.New("Can not write bskey: " + bskey + " itemkey: " + itemKey)
+	// 	go m.notifyEndpointError(err)
+	// 	return false, err
+	// }
 	return true, nil
 
 }
