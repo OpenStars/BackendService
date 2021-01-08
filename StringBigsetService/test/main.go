@@ -35,12 +35,12 @@ func main() {
 	databigset := StringBigsetService.NewClient(nil, "/test", "10.110.69.96", "20547")
 	ok, err := databigset.BsPutItem("PRAY_INFO", utils.PaddingZeros(3467), utils.PaddingZeros(3487))
 	log.Println("ok", ok, "err", err)
-	item, err := databigset.BsGetItem("PRAY_INFO", utils.PaddingZeros(3467))
-	if err != nil {
-		log.Println("err", item)
-	}
-	if item != nil {
-		log.Println("item", string(item.Value))
-	}
-	log.Println("aaaa")
+	// item, err := databigset.BsGetItem("PRAY_INFO", utils.PaddingZeros(3467))
+	// if err != nil {
+	// 	log.Println("err", item)
+	// }
+	// if item != nil {
+	// 	log.Println("item", string(item.Value))
+	// }
+	// log.Println("aaaa")
 }
