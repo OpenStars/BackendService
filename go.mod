@@ -12,4 +12,5 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/rtt/Go-Solr v0.0.0-20190512221613-64fac99dcae2
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	gitlab.123xe.vn/TrustKeysV2/socialnetworks v0.0.0-20210101162412-64053eadd377
 )
