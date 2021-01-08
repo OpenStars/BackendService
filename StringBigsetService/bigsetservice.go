@@ -204,9 +204,13 @@ func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (
 		return false, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
 	defer client.BackToPool()
-
 	if r.Error != generic.TErrorCode_EGood {
 		return false, nil
+	}
+	if r.Ok == false {
+		err := errors.New("Can not write bskey: " + bskey + " itemkey: " + itemKey)
+		go m.notifyEndpointError(err)
+		return false, err
 	}
 	return true, nil
 
