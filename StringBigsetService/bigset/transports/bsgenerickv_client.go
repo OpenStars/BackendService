@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	bsGenericMapPool = thriftpool.NewMapPool(1000, 3600, 3600,
+	bsGenericMapPool = thriftpool.NewMapPool(1000, 5, 3600,
 		thriftpool.GetThriftClientCreatorFunc(func(c thrift.TClient) interface{} { return (generic.NewTStringBigSetKVServiceClient(c)) }),
 		thriftpool.DefaultClose)
 
-	ibsGenericMapPool = thriftpool.NewMapPool(1000, 3600, 3600,
+	ibsGenericMapPool = thriftpool.NewMapPool(1000, 5, 3600,
 		thriftpool.GetThriftClientCreatorFunc(func(c thrift.TClient) interface{} { return (generic.NewTIBSDataServiceClient(c)) }),
 		thriftpool.DefaultClose)
 )

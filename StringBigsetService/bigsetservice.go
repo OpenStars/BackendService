@@ -53,8 +53,11 @@ func (m *StringBigsetService) handleEventChangeEndpoint(host, port string) {
 }
 
 func NewClient(etcdEndpoints []string, sid string, defaultEndpointsHost string, defaultEndpointPort string) Client {
-
 	log.Println("Init StringBigset Service sid", sid, "address", defaultEndpointsHost+":"+defaultEndpointPort)
+	client := transports.GetBsGenericClient(defaultEndpointsHost, defaultEndpointPort)
+	if client == nil || client.Client == nil {
+		return nil
+	}
 	stringbs := &StringBigsetService{
 		host: defaultEndpointsHost,
 		port: defaultEndpointPort,

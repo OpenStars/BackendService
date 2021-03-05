@@ -139,7 +139,10 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 }
 
 func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Client {
-
+	client := transports.GetKVCounterCompactClient(defaultHost, defaultPort)
+	if client == nil || client.Client == nil {
+		return nil
+	}
 	kvcounter := &KVCounterService{
 		host: defaultHost,
 		port: defaultPort,

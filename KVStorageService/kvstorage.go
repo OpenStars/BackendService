@@ -126,6 +126,10 @@ func (m *kvstorageservice) GetListData(keys []string) (results map[string]string
 }
 
 func NewClient(sid string, host string, port string) Client {
+	client := transports.GetKVStorageCompactClient(host, port)
+	if client == nil || client.Client == nil {
+		return nil
+	}
 	kvstorage := &kvstorageservice{
 		host: host,
 		port: port,

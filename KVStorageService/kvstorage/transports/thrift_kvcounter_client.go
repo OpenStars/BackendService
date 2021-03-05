@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	kvstorageMapPool = thriftpool.NewMapPool(1000, 3600, 3600,
+	kvstorageMapPool = thriftpool.NewMapPool(1000, 5, 3600,
 		thriftpool.GetThriftClientCreatorFunc(func(c thrift.TClient) interface{} { return (KVStorage.NewKVStorageServiceClient(c)) }),
 		thriftpool.DefaultClose)
 
-	kvstorageMapPoolCompact = thriftpool.NewMapPool(1000, 3600, 3600,
+	kvstorageMapPoolCompact = thriftpool.NewMapPool(1000, 5, 3600,
 		thriftpool.GetThriftClientCreatorFuncCompactProtocol(func(c thrift.TClient) interface{} { return (KVStorage.NewKVStorageServiceClient(c)) }),
 		thriftpool.DefaultClose)
 )
