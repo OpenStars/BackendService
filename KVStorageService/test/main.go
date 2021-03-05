@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	kvstorageclient := KVStorageService.NewClient("10.60.68.100", "8893")
+	kvstorageclient := KVStorageService.NewClient("/tets", "10.60.68.100", "8893")
 	kvstorageclient.PutData("1", "1")
 	item, err := kvstorageclient.GetData("1")
 	log.Println("multiget", item, "err", err)

@@ -39,7 +39,6 @@ func (m *KVCounterService) GetValue(genname string) (int64, error) {
 	// 	}
 	// }
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
-
 	if client == nil || client.Client == nil {
 		go m.notifyEndpointError()
 		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -136,6 +135,10 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 	defer client.BackToPool()
 	return r, nil
 
+}
+
+func (m *KVCounterService) Close() {
+	transports.Close(m.host, m.port)
 }
 
 func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Client {

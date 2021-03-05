@@ -428,6 +428,7 @@ func (mp *MapPool) Get(ip, port string) *ThriftPool {
 		mp.pools[addr] = serverPool
 		mp.lock.Unlock()
 	}
+
 	return serverPool
 }
 

@@ -34,6 +34,10 @@ func (m *StringBigsetService) SetAgentCaller(agentName string, agentAddress stri
 	m.agentCallerName = agentName
 }
 
+func (m *StringBigsetService) Close() {
+	transports.Close(m.host, m.port)
+}
+
 func (m *StringBigsetService) notifyEndpointError(err error) {
 	if m.botClient != nil {
 		errString := ""

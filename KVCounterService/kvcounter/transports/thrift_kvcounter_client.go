@@ -34,14 +34,19 @@ func GetKVCounterCompactClient(aHost, aPort string) *thriftpool.ThriftSocketClie
 	return client
 }
 
-//GetKVCounterBinaryClient client by host:port
-func NewGetKVCounterBinaryClient(aHost, aPort string) *thriftpool.ThriftSocketClient {
-	client, _ := kvCounterMapPool.NewGet(aHost, aPort).Get()
-	return client
+func Close(host, port string) {
+	kvCounterMapPool.Release(host, port)
+	kvCounterMapPoolCompact.Release(host, port)
 }
 
-//GetKVCounterCompactClient get compact client by host:port
-func NewGetKVCounterCompactClient(aHost, aPort string) *thriftpool.ThriftSocketClient {
-	client, _ := kvCounterMapPoolCompact.NewGet(aHost, aPort).Get()
-	return client
-}
+// //GetKVCounterBinaryClient client by host:port
+// func NewGetKVCounterBinaryClient(aHost, aPort string) *thriftpool.ThriftSocketClient {
+// 	client, _ := kvCounterMapPool.NewGet(aHost, aPort).Get()
+// 	return client
+// }
+
+// //GetKVCounterCompactClient get compact client by host:port
+// func NewGetKVCounterCompactClient(aHost, aPort string) *thriftpool.ThriftSocketClient {
+// 	client, _ := kvCounterMapPoolCompact.NewGet(aHost, aPort).Get()
+// 	return client
+// }

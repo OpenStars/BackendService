@@ -29,6 +29,10 @@ func (m *kvstorageservice) notifyEndpointError() {
 	}
 }
 
+func (m *kvstorageservice) Close() {
+	transports.Close(m.host, m.port)
+}
+
 func (m *kvstorageservice) GetData(key string) (string, error) {
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)

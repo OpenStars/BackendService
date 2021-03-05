@@ -33,3 +33,8 @@ func GetKVStorageCompactClient(aHost, aPort string) *thriftpool.ThriftSocketClie
 	client, _ := kvstorageMapPoolCompact.Get(aHost, aPort).Get()
 	return client
 }
+
+func Close(host, port string) {
+	kvstorageMapPool.Release(host, port)
+	kvstorageMapPoolCompact.Release(host, port)
+}

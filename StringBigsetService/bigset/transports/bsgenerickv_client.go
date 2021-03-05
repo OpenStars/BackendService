@@ -27,6 +27,10 @@ func NewGetBsGenericClient(aHost, aPort string) *thriftpool.ThriftSocketClient {
 	return client
 }
 
+func Close(host, port string) {
+	bsGenericMapPool.Release(host, port)
+}
+
 //GetIBsGenericClient client by host:port
 func GetIBsGenericClient(aHost, aPort string) *thriftpool.ThriftSocketClient {
 	client, _ := ibsGenericMapPool.Get(aHost, aPort).Get()
