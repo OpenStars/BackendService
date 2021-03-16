@@ -1,6 +1,6 @@
 package StringBigsetService
 
-import "github.com/OpenStars/BackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
+import "github.com/OpenStars/BackendService/BigsetSharding/bigset/thrift/gen-go/openstars/core/bigset/generic"
 
 type Client interface {
 	TotalStringKeyCount() (r int64, err error)
@@ -20,7 +20,5 @@ type Client interface {
 	RemoveAll(bskey string) (bool, error)
 	BsGetSliceR(bskey string, fromPos int32, count int32) ([]*generic.TItem, error)
 	SetAgentCaller(agentName string, agentAddress string)
-	BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (failedItem []*generic.TBigsetItem, err error)
-	BsMultiRemoveBsItem(listItems []*generic.TBigsetItem) (listFailedRemove []*generic.TBigsetItem, err error)
 	Close()
 }

@@ -5,4 +5,5 @@ type Client interface {
 	PutData(key string, value string) (bool, error)
 	RemoveData(key string) (bool, error)
 	GetListData(keys []string) (results map[string]string, missingkeys []string, err error)
+	Close()
 }
