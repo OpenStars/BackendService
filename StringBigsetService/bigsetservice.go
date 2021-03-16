@@ -181,6 +181,33 @@ func (m *StringBigsetService) GetListKey(fromIndex int64, count int32) ([]string
 	return listKey, nil
 }
 
+func (m *StringBigsetService) BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (failedItem []*generic.TBigsetItem, err error) {
+	client := transports.GetBsGenericClient(m.host, m.port)
+	if client == nil || client.Client == nil {
+		go m.notifyEndpointError(errors.New("Client transport null"))
+		return lsItem, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	r, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsMultiPutBsItem(ctx, lsItem)
+
+	if err != nil {
+		go m.notifyEndpointError(err)
+		// client = transports.NewGetBsGenericClient(m.host, m.port)
+		return lsItem, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
+	}
+	defer client.BackToPool()
+	if r.Error != generic.TErrorCode_EGood {
+		return lsItem, nil
+	}
+	// if r.Ok == false {
+	// 	err := errors.New("Can not write bskey: " + bskey + " itemkey: " + itemKey)
+	// 	go m.notifyEndpointError(err)
+	// 	return false, err
+	// }
+	return r.FailedPutbsItem, nil
+}
+
 func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (bool, error) {
 
 	// if m.etcdManager != nil {
@@ -585,6 +612,28 @@ func (m *StringBigsetService) BsMultiPut(bskey string, lsItems []*generic.TItem)
 		return false, nil
 	}
 	return true, nil
+}
+
+func (m *StringBigsetService) BsMultiRemoveBsItem(listItems []*generic.TBigsetItem) (listFailedRemove []*generic.TBigsetItem, err error) {
+	client := transports.GetBsGenericClient(m.host, m.port)
+	if client == nil || client.Client == nil {
+		go m.notifyEndpointError(errors.New("Client transport null"))
+		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsMultiRemoveBsItem(ctx, listItems)
+	if err != nil {
+		go m.notifyEndpointError(err)
+		// client = transports.NewGetBsGenericClient(m.host, m.port)
+		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
+	}
+	defer client.BackToPool()
+	if rs.Error != generic.TErrorCode_EGood {
+		return rs.FailedRemovebsItem, nil
+	}
+
+	return rs.FailedRemovebsItem, nil
 }
 
 func (m *StringBigsetService) BsGetSliceFromItem(bskey string, fromKey string, count int32) ([]*generic.TItem, error) {

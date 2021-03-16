@@ -247,7 +247,8 @@ service TStringBigSetKVService{
     list<TStringKey> getListKey(1: i64 fromIndex, 2: i32 count),
 
     list<TStringKey> getListKeyFrom(1: TStringKey keyFrom, 2: i32 count), // keyFrom="" => get from start
-
+    TMultiPutBigsetItemResult bsMultiPutBsItem(1:list<TBigsetItem> listBsItems)
+ TMultiRemoveBigsetItemResult bsMultiRemoveBsItem(1:list<TBigsetItem> listBsItems)
 }
 
 //String key, big value.
@@ -255,7 +256,21 @@ service TBSBigValueService{
     
 }
 
+struct TBigsetItem{
+    1: required binary bskey,
+    2: required binary itemkey,
+    3: required binary itemvalue
+}
 
+struct TMultiPutBigsetItemResult{
+    1: TErrorCode error,
+    2: optional list<TBigsetItem> failedPutbsItem
+}
+
+struct TMultiRemoveBigsetItemResult{
+    1: TErrorCode error,
+    2: optional list<TBigsetItem> failedRemovebsItem
+}
 /* 
 * BigSet with Int BigSetID key-value items
 * This is a interface of a safer big set (a bit slower)
@@ -291,6 +306,7 @@ service TIBSDataService{
 
     i64 removeAll(1:TKey bigsetID)
 
+   
 
 }
 

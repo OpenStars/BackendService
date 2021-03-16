@@ -3534,6 +3534,494 @@ func (p *TCaSItem) String() string {
 }
 
 // Attributes:
+//  - Bskey
+//  - Itemkey
+//  - Itemvalue
+type TBigsetItem struct {
+  Bskey []byte `thrift:"bskey,1,required" db:"bskey" json:"bskey"`
+  Itemkey []byte `thrift:"itemkey,2,required" db:"itemkey" json:"itemkey"`
+  Itemvalue []byte `thrift:"itemvalue,3,required" db:"itemvalue" json:"itemvalue"`
+}
+
+func NewTBigsetItem() *TBigsetItem {
+  return &TBigsetItem{}
+}
+
+
+func (p *TBigsetItem) GetBskey() []byte {
+  return p.Bskey
+}
+
+func (p *TBigsetItem) GetItemkey() []byte {
+  return p.Itemkey
+}
+
+func (p *TBigsetItem) GetItemvalue() []byte {
+  return p.Itemvalue
+}
+func (p *TBigsetItem) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetBskey bool = false;
+  var issetItemkey bool = false;
+  var issetItemvalue bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+        issetBskey = true
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+        issetItemkey = true
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 3:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField3(iprot); err != nil {
+          return err
+        }
+        issetItemvalue = true
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetBskey{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Bskey is not set"));
+  }
+  if !issetItemkey{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Itemkey is not set"));
+  }
+  if !issetItemvalue{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Itemvalue is not set"));
+  }
+  return nil
+}
+
+func (p *TBigsetItem)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Bskey = v
+}
+  return nil
+}
+
+func (p *TBigsetItem)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Itemkey = v
+}
+  return nil
+}
+
+func (p *TBigsetItem)  ReadField3(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.Itemvalue = v
+}
+  return nil
+}
+
+func (p *TBigsetItem) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("TBigsetItem"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+    if err := p.writeField3(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TBigsetItem) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("bskey", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:bskey: ", p), err) }
+  if err := oprot.WriteBinary(p.Bskey); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.bskey (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:bskey: ", p), err) }
+  return err
+}
+
+func (p *TBigsetItem) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("itemkey", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:itemkey: ", p), err) }
+  if err := oprot.WriteBinary(p.Itemkey); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.itemkey (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:itemkey: ", p), err) }
+  return err
+}
+
+func (p *TBigsetItem) writeField3(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("itemvalue", thrift.STRING, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:itemvalue: ", p), err) }
+  if err := oprot.WriteBinary(p.Itemvalue); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.itemvalue (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:itemvalue: ", p), err) }
+  return err
+}
+
+func (p *TBigsetItem) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TBigsetItem(%+v)", *p)
+}
+
+// Attributes:
+//  - Error
+//  - FailedPutbsItem
+type TMultiPutBigsetItemResult_ struct {
+  Error TErrorCode `thrift:"error,1" db:"error" json:"error"`
+  FailedPutbsItem []*TBigsetItem `thrift:"failedPutbsItem,2" db:"failedPutbsItem" json:"failedPutbsItem,omitempty"`
+}
+
+func NewTMultiPutBigsetItemResult_() *TMultiPutBigsetItemResult_ {
+  return &TMultiPutBigsetItemResult_{}
+}
+
+
+func (p *TMultiPutBigsetItemResult_) GetError() TErrorCode {
+  return p.Error
+}
+var TMultiPutBigsetItemResult__FailedPutbsItem_DEFAULT []*TBigsetItem
+
+func (p *TMultiPutBigsetItemResult_) GetFailedPutbsItem() []*TBigsetItem {
+  return p.FailedPutbsItem
+}
+func (p *TMultiPutBigsetItemResult_) IsSetFailedPutbsItem() bool {
+  return p.FailedPutbsItem != nil
+}
+
+func (p *TMultiPutBigsetItemResult_) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.I32 {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.LIST {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TMultiPutBigsetItemResult_)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := TErrorCode(v)
+  p.Error = temp
+}
+  return nil
+}
+
+func (p *TMultiPutBigsetItemResult_)  ReadField2(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*TBigsetItem, 0, size)
+  p.FailedPutbsItem =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem7 := &TBigsetItem{}
+    if err := _elem7.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem7), err)
+    }
+    p.FailedPutbsItem = append(p.FailedPutbsItem, _elem7)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *TMultiPutBigsetItemResult_) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("TMultiPutBigsetItemResult"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TMultiPutBigsetItemResult_) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("error", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:error: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Error)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.error (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:error: ", p), err) }
+  return err
+}
+
+func (p *TMultiPutBigsetItemResult_) writeField2(oprot thrift.TProtocol) (err error) {
+  if p.IsSetFailedPutbsItem() {
+    if err := oprot.WriteFieldBegin("failedPutbsItem", thrift.LIST, 2); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:failedPutbsItem: ", p), err) }
+    if err := oprot.WriteListBegin(thrift.STRUCT, len(p.FailedPutbsItem)); err != nil {
+      return thrift.PrependError("error writing list begin: ", err)
+    }
+    for _, v := range p.FailedPutbsItem {
+      if err := v.Write(oprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+      }
+    }
+    if err := oprot.WriteListEnd(); err != nil {
+      return thrift.PrependError("error writing list end: ", err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:failedPutbsItem: ", p), err) }
+  }
+  return err
+}
+
+func (p *TMultiPutBigsetItemResult_) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TMultiPutBigsetItemResult_(%+v)", *p)
+}
+
+// Attributes:
+//  - Error
+//  - FailedRemovebsItem
+type TMultiRemoveBigsetItemResult_ struct {
+  Error TErrorCode `thrift:"error,1" db:"error" json:"error"`
+  FailedRemovebsItem []*TBigsetItem `thrift:"failedRemovebsItem,2" db:"failedRemovebsItem" json:"failedRemovebsItem,omitempty"`
+}
+
+func NewTMultiRemoveBigsetItemResult_() *TMultiRemoveBigsetItemResult_ {
+  return &TMultiRemoveBigsetItemResult_{}
+}
+
+
+func (p *TMultiRemoveBigsetItemResult_) GetError() TErrorCode {
+  return p.Error
+}
+var TMultiRemoveBigsetItemResult__FailedRemovebsItem_DEFAULT []*TBigsetItem
+
+func (p *TMultiRemoveBigsetItemResult_) GetFailedRemovebsItem() []*TBigsetItem {
+  return p.FailedRemovebsItem
+}
+func (p *TMultiRemoveBigsetItemResult_) IsSetFailedRemovebsItem() bool {
+  return p.FailedRemovebsItem != nil
+}
+
+func (p *TMultiRemoveBigsetItemResult_) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.I32 {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.LIST {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TMultiRemoveBigsetItemResult_)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := TErrorCode(v)
+  p.Error = temp
+}
+  return nil
+}
+
+func (p *TMultiRemoveBigsetItemResult_)  ReadField2(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*TBigsetItem, 0, size)
+  p.FailedRemovebsItem =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem8 := &TBigsetItem{}
+    if err := _elem8.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem8), err)
+    }
+    p.FailedRemovebsItem = append(p.FailedRemovebsItem, _elem8)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *TMultiRemoveBigsetItemResult_) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("TMultiRemoveBigsetItemResult"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TMultiRemoveBigsetItemResult_) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("error", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:error: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Error)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.error (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:error: ", p), err) }
+  return err
+}
+
+func (p *TMultiRemoveBigsetItemResult_) writeField2(oprot thrift.TProtocol) (err error) {
+  if p.IsSetFailedRemovebsItem() {
+    if err := oprot.WriteFieldBegin("failedRemovebsItem", thrift.LIST, 2); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:failedRemovebsItem: ", p), err) }
+    if err := oprot.WriteListBegin(thrift.STRUCT, len(p.FailedRemovebsItem)); err != nil {
+      return thrift.PrependError("error writing list begin: ", err)
+    }
+    for _, v := range p.FailedRemovebsItem {
+      if err := v.Write(oprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+      }
+    }
+    if err := oprot.WriteListEnd(); err != nil {
+      return thrift.PrependError("error writing list end: ", err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:failedRemovebsItem: ", p), err) }
+  }
+  return err
+}
+
+func (p *TMultiRemoveBigsetItemResult_) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TMultiRemoveBigsetItemResult_(%+v)", *p)
+}
+
+// Attributes:
 //  - RootID
 //  - SplitInfo
 type SplitJob struct {
@@ -3713,27 +4201,27 @@ func (p *MasterMetaServiceClient) Client_() thrift.TClient {
 // Parameters:
 //  - Key
 func (p *MasterMetaServiceClient) GetMetaID(ctx context.Context, key TKey) (r TMetaKey, err error) {
-  var _args7 MasterMetaServiceGetMetaIDArgs
-  _args7.Key = key
-  var _result8 MasterMetaServiceGetMetaIDResult
-  if err = p.Client_().Call(ctx, "getMetaID", &_args7, &_result8); err != nil {
+  var _args9 MasterMetaServiceGetMetaIDArgs
+  _args9.Key = key
+  var _result10 MasterMetaServiceGetMetaIDResult
+  if err = p.Client_().Call(ctx, "getMetaID", &_args9, &_result10); err != nil {
     return
   }
-  return _result8.GetSuccess(), nil
+  return _result10.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Key
 //  - MetaID
 func (p *MasterMetaServiceClient) SetMetaID(ctx context.Context, key TKey, metaID TMetaKey) (r bool, err error) {
-  var _args9 MasterMetaServiceSetMetaIDArgs
-  _args9.Key = key
-  _args9.MetaID = metaID
-  var _result10 MasterMetaServiceSetMetaIDResult
-  if err = p.Client_().Call(ctx, "setMetaID", &_args9, &_result10); err != nil {
+  var _args11 MasterMetaServiceSetMetaIDArgs
+  _args11.Key = key
+  _args11.MetaID = metaID
+  var _result12 MasterMetaServiceSetMetaIDResult
+  if err = p.Client_().Call(ctx, "setMetaID", &_args11, &_result12); err != nil {
     return
   }
-  return _result10.GetSuccess(), nil
+  return _result12.GetSuccess(), nil
 }
 
 type MasterMetaServiceProcessor struct {
@@ -3756,10 +4244,10 @@ func (p *MasterMetaServiceProcessor) ProcessorMap() map[string]thrift.TProcessor
 
 func NewMasterMetaServiceProcessor(handler MasterMetaService) *MasterMetaServiceProcessor {
 
-  self11 := &MasterMetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self11.processorMap["getMetaID"] = &masterMetaServiceProcessorGetMetaID{handler:handler}
-  self11.processorMap["setMetaID"] = &masterMetaServiceProcessorSetMetaID{handler:handler}
-return self11
+  self13 := &MasterMetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self13.processorMap["getMetaID"] = &masterMetaServiceProcessorGetMetaID{handler:handler}
+  self13.processorMap["setMetaID"] = &masterMetaServiceProcessorSetMetaID{handler:handler}
+return self13
 }
 
 func (p *MasterMetaServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -3770,12 +4258,12 @@ func (p *MasterMetaServiceProcessor) Process(ctx context.Context, iprot, oprot t
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x12 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x14 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x12.Write(oprot)
+  x14.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x12
+  return false, x14
 
 }
 
@@ -4402,39 +4890,25 @@ func (p *TBSGenericDataServiceClient) Client_() thrift.TClient {
 //  - RootID
 //  - Item
 func (p *TBSGenericDataServiceClient) BsgPutItem(ctx context.Context, rootID TContainerKey, item *TItem) (r *TPutItemResult_, err error) {
-  var _args16 TBSGenericDataServiceBsgPutItemArgs
-  _args16.RootID = rootID
-  _args16.Item = item
-  var _result17 TBSGenericDataServiceBsgPutItemResult
-  if err = p.Client_().Call(ctx, "bsgPutItem", &_args16, &_result17); err != nil {
-    return
-  }
-  return _result17.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Key
-//  - ItemKey
-func (p *TBSGenericDataServiceClient) BsgRemoveItem(ctx context.Context, key TMetaKey, itemKey TItemKey) (r bool, err error) {
-  var _args18 TBSGenericDataServiceBsgRemoveItemArgs
-  _args18.Key = key
-  _args18.ItemKey = itemKey
-  var _result19 TBSGenericDataServiceBsgRemoveItemResult
-  if err = p.Client_().Call(ctx, "bsgRemoveItem", &_args18, &_result19); err != nil {
+  var _args18 TBSGenericDataServiceBsgPutItemArgs
+  _args18.RootID = rootID
+  _args18.Item = item
+  var _result19 TBSGenericDataServiceBsgPutItemResult
+  if err = p.Client_().Call(ctx, "bsgPutItem", &_args18, &_result19); err != nil {
     return
   }
   return _result19.GetSuccess(), nil
 }
 
 // Parameters:
-//  - RootID
+//  - Key
 //  - ItemKey
-func (p *TBSGenericDataServiceClient) BsgExisted(ctx context.Context, rootID TContainerKey, itemKey TItemKey) (r *TExistedResult_, err error) {
-  var _args20 TBSGenericDataServiceBsgExistedArgs
-  _args20.RootID = rootID
+func (p *TBSGenericDataServiceClient) BsgRemoveItem(ctx context.Context, key TMetaKey, itemKey TItemKey) (r bool, err error) {
+  var _args20 TBSGenericDataServiceBsgRemoveItemArgs
+  _args20.Key = key
   _args20.ItemKey = itemKey
-  var _result21 TBSGenericDataServiceBsgExistedResult
-  if err = p.Client_().Call(ctx, "bsgExisted", &_args20, &_result21); err != nil {
+  var _result21 TBSGenericDataServiceBsgRemoveItemResult
+  if err = p.Client_().Call(ctx, "bsgRemoveItem", &_args20, &_result21); err != nil {
     return
   }
   return _result21.GetSuccess(), nil
@@ -4443,12 +4917,12 @@ func (p *TBSGenericDataServiceClient) BsgExisted(ctx context.Context, rootID TCo
 // Parameters:
 //  - RootID
 //  - ItemKey
-func (p *TBSGenericDataServiceClient) BsgGetItem(ctx context.Context, rootID TContainerKey, itemKey TItemKey) (r *TItemResult_, err error) {
-  var _args22 TBSGenericDataServiceBsgGetItemArgs
+func (p *TBSGenericDataServiceClient) BsgExisted(ctx context.Context, rootID TContainerKey, itemKey TItemKey) (r *TExistedResult_, err error) {
+  var _args22 TBSGenericDataServiceBsgExistedArgs
   _args22.RootID = rootID
   _args22.ItemKey = itemKey
-  var _result23 TBSGenericDataServiceBsgGetItemResult
-  if err = p.Client_().Call(ctx, "bsgGetItem", &_args22, &_result23); err != nil {
+  var _result23 TBSGenericDataServiceBsgExistedResult
+  if err = p.Client_().Call(ctx, "bsgExisted", &_args22, &_result23); err != nil {
     return
   }
   return _result23.GetSuccess(), nil
@@ -4456,15 +4930,13 @@ func (p *TBSGenericDataServiceClient) BsgGetItem(ctx context.Context, rootID TCo
 
 // Parameters:
 //  - RootID
-//  - FromIdx
-//  - Count
-func (p *TBSGenericDataServiceClient) BsgGetSlice(ctx context.Context, rootID TContainerKey, fromIdx int32, count int32) (r *TItemSetResult_, err error) {
-  var _args24 TBSGenericDataServiceBsgGetSliceArgs
+//  - ItemKey
+func (p *TBSGenericDataServiceClient) BsgGetItem(ctx context.Context, rootID TContainerKey, itemKey TItemKey) (r *TItemResult_, err error) {
+  var _args24 TBSGenericDataServiceBsgGetItemArgs
   _args24.RootID = rootID
-  _args24.FromIdx = fromIdx
-  _args24.Count = count
-  var _result25 TBSGenericDataServiceBsgGetSliceResult
-  if err = p.Client_().Call(ctx, "bsgGetSlice", &_args24, &_result25); err != nil {
+  _args24.ItemKey = itemKey
+  var _result25 TBSGenericDataServiceBsgGetItemResult
+  if err = p.Client_().Call(ctx, "bsgGetItem", &_args24, &_result25); err != nil {
     return
   }
   return _result25.GetSuccess(), nil
@@ -4472,15 +4944,15 @@ func (p *TBSGenericDataServiceClient) BsgGetSlice(ctx context.Context, rootID TC
 
 // Parameters:
 //  - RootID
-//  - FromKey
+//  - FromIdx
 //  - Count
-func (p *TBSGenericDataServiceClient) BsgGetSliceFromItem(ctx context.Context, rootID TContainerKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
-  var _args26 TBSGenericDataServiceBsgGetSliceFromItemArgs
+func (p *TBSGenericDataServiceClient) BsgGetSlice(ctx context.Context, rootID TContainerKey, fromIdx int32, count int32) (r *TItemSetResult_, err error) {
+  var _args26 TBSGenericDataServiceBsgGetSliceArgs
   _args26.RootID = rootID
-  _args26.FromKey = fromKey
+  _args26.FromIdx = fromIdx
   _args26.Count = count
-  var _result27 TBSGenericDataServiceBsgGetSliceFromItemResult
-  if err = p.Client_().Call(ctx, "bsgGetSliceFromItem", &_args26, &_result27); err != nil {
+  var _result27 TBSGenericDataServiceBsgGetSliceResult
+  if err = p.Client_().Call(ctx, "bsgGetSlice", &_args26, &_result27); err != nil {
     return
   }
   return _result27.GetSuccess(), nil
@@ -4488,15 +4960,15 @@ func (p *TBSGenericDataServiceClient) BsgGetSliceFromItem(ctx context.Context, r
 
 // Parameters:
 //  - RootID
-//  - FromIdx
+//  - FromKey
 //  - Count
-func (p *TBSGenericDataServiceClient) BsgGetSliceR(ctx context.Context, rootID TContainerKey, fromIdx int32, count int32) (r *TItemSetResult_, err error) {
-  var _args28 TBSGenericDataServiceBsgGetSliceRArgs
+func (p *TBSGenericDataServiceClient) BsgGetSliceFromItem(ctx context.Context, rootID TContainerKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
+  var _args28 TBSGenericDataServiceBsgGetSliceFromItemArgs
   _args28.RootID = rootID
-  _args28.FromIdx = fromIdx
+  _args28.FromKey = fromKey
   _args28.Count = count
-  var _result29 TBSGenericDataServiceBsgGetSliceRResult
-  if err = p.Client_().Call(ctx, "bsgGetSliceR", &_args28, &_result29); err != nil {
+  var _result29 TBSGenericDataServiceBsgGetSliceFromItemResult
+  if err = p.Client_().Call(ctx, "bsgGetSliceFromItem", &_args28, &_result29); err != nil {
     return
   }
   return _result29.GetSuccess(), nil
@@ -4504,15 +4976,15 @@ func (p *TBSGenericDataServiceClient) BsgGetSliceR(ctx context.Context, rootID T
 
 // Parameters:
 //  - RootID
-//  - FromKey
+//  - FromIdx
 //  - Count
-func (p *TBSGenericDataServiceClient) BsgGetSliceFromItemR(ctx context.Context, rootID TContainerKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
-  var _args30 TBSGenericDataServiceBsgGetSliceFromItemRArgs
+func (p *TBSGenericDataServiceClient) BsgGetSliceR(ctx context.Context, rootID TContainerKey, fromIdx int32, count int32) (r *TItemSetResult_, err error) {
+  var _args30 TBSGenericDataServiceBsgGetSliceRArgs
   _args30.RootID = rootID
-  _args30.FromKey = fromKey
+  _args30.FromIdx = fromIdx
   _args30.Count = count
-  var _result31 TBSGenericDataServiceBsgGetSliceFromItemRResult
-  if err = p.Client_().Call(ctx, "bsgGetSliceFromItemR", &_args30, &_result31); err != nil {
+  var _result31 TBSGenericDataServiceBsgGetSliceRResult
+  if err = p.Client_().Call(ctx, "bsgGetSliceR", &_args30, &_result31); err != nil {
     return
   }
   return _result31.GetSuccess(), nil
@@ -4520,15 +4992,15 @@ func (p *TBSGenericDataServiceClient) BsgGetSliceFromItemR(ctx context.Context, 
 
 // Parameters:
 //  - RootID
-//  - BrotherRootID
-//  - CurrentSize
-func (p *TBSGenericDataServiceClient) SplitBigSet(ctx context.Context, rootID TContainerKey, brotherRootID TContainerKey, currentSize int64) (r *TSplitBigSetResult_, err error) {
-  var _args32 TBSGenericDataServiceSplitBigSetArgs
+//  - FromKey
+//  - Count
+func (p *TBSGenericDataServiceClient) BsgGetSliceFromItemR(ctx context.Context, rootID TContainerKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
+  var _args32 TBSGenericDataServiceBsgGetSliceFromItemRArgs
   _args32.RootID = rootID
-  _args32.BrotherRootID = brotherRootID
-  _args32.CurrentSize = currentSize
-  var _result33 TBSGenericDataServiceSplitBigSetResult
-  if err = p.Client_().Call(ctx, "splitBigSet", &_args32, &_result33); err != nil {
+  _args32.FromKey = fromKey
+  _args32.Count = count
+  var _result33 TBSGenericDataServiceBsgGetSliceFromItemRResult
+  if err = p.Client_().Call(ctx, "bsgGetSliceFromItemR", &_args32, &_result33); err != nil {
     return
   }
   return _result33.GetSuccess(), nil
@@ -4536,15 +5008,15 @@ func (p *TBSGenericDataServiceClient) SplitBigSet(ctx context.Context, rootID TC
 
 // Parameters:
 //  - RootID
-//  - StartKey
-//  - EndKey
-func (p *TBSGenericDataServiceClient) BsgRangeQuery(ctx context.Context, rootID TContainerKey, startKey TItemKey, endKey TItemKey) (r *TItemSetResult_, err error) {
-  var _args34 TBSGenericDataServiceBsgRangeQueryArgs
+//  - BrotherRootID
+//  - CurrentSize
+func (p *TBSGenericDataServiceClient) SplitBigSet(ctx context.Context, rootID TContainerKey, brotherRootID TContainerKey, currentSize int64) (r *TSplitBigSetResult_, err error) {
+  var _args34 TBSGenericDataServiceSplitBigSetArgs
   _args34.RootID = rootID
-  _args34.StartKey = startKey
-  _args34.EndKey = endKey
-  var _result35 TBSGenericDataServiceBsgRangeQueryResult
-  if err = p.Client_().Call(ctx, "bsgRangeQuery", &_args34, &_result35); err != nil {
+  _args34.BrotherRootID = brotherRootID
+  _args34.CurrentSize = currentSize
+  var _result35 TBSGenericDataServiceSplitBigSetResult
+  if err = p.Client_().Call(ctx, "splitBigSet", &_args34, &_result35); err != nil {
     return
   }
   return _result35.GetSuccess(), nil
@@ -4552,13 +5024,15 @@ func (p *TBSGenericDataServiceClient) BsgRangeQuery(ctx context.Context, rootID 
 
 // Parameters:
 //  - RootID
-//  - SetData
-func (p *TBSGenericDataServiceClient) BsgBulkLoad(ctx context.Context, rootID TContainerKey, setData *TItemSet) (r bool, err error) {
-  var _args36 TBSGenericDataServiceBsgBulkLoadArgs
+//  - StartKey
+//  - EndKey
+func (p *TBSGenericDataServiceClient) BsgRangeQuery(ctx context.Context, rootID TContainerKey, startKey TItemKey, endKey TItemKey) (r *TItemSetResult_, err error) {
+  var _args36 TBSGenericDataServiceBsgRangeQueryArgs
   _args36.RootID = rootID
-  _args36.SetData = setData
-  var _result37 TBSGenericDataServiceBsgBulkLoadResult
-  if err = p.Client_().Call(ctx, "bsgBulkLoad", &_args36, &_result37); err != nil {
+  _args36.StartKey = startKey
+  _args36.EndKey = endKey
+  var _result37 TBSGenericDataServiceBsgRangeQueryResult
+  if err = p.Client_().Call(ctx, "bsgRangeQuery", &_args36, &_result37); err != nil {
     return
   }
   return _result37.GetSuccess(), nil
@@ -4567,28 +5041,30 @@ func (p *TBSGenericDataServiceClient) BsgBulkLoad(ctx context.Context, rootID TC
 // Parameters:
 //  - RootID
 //  - SetData
-//  - GetAddedItems
-//  - GetReplacedItems
-func (p *TBSGenericDataServiceClient) BsgMultiPut(ctx context.Context, rootID TContainerKey, setData *TItemSet, getAddedItems bool, getReplacedItems bool) (r *TMultiPutItemResult_, err error) {
-  var _args38 TBSGenericDataServiceBsgMultiPutArgs
+func (p *TBSGenericDataServiceClient) BsgBulkLoad(ctx context.Context, rootID TContainerKey, setData *TItemSet) (r bool, err error) {
+  var _args38 TBSGenericDataServiceBsgBulkLoadArgs
   _args38.RootID = rootID
   _args38.SetData = setData
-  _args38.GetAddedItems = getAddedItems
-  _args38.GetReplacedItems = getReplacedItems
-  var _result39 TBSGenericDataServiceBsgMultiPutResult
-  if err = p.Client_().Call(ctx, "bsgMultiPut", &_args38, &_result39); err != nil {
+  var _result39 TBSGenericDataServiceBsgBulkLoadResult
+  if err = p.Client_().Call(ctx, "bsgBulkLoad", &_args38, &_result39); err != nil {
     return
   }
   return _result39.GetSuccess(), nil
 }
 
 // Parameters:
-//  - MetaID
-func (p *TBSGenericDataServiceClient) GetSetGenData(ctx context.Context, metaID TMetaKey) (r *TBigSetGenericData, err error) {
-  var _args40 TBSGenericDataServiceGetSetGenDataArgs
-  _args40.MetaID = metaID
-  var _result41 TBSGenericDataServiceGetSetGenDataResult
-  if err = p.Client_().Call(ctx, "getSetGenData", &_args40, &_result41); err != nil {
+//  - RootID
+//  - SetData
+//  - GetAddedItems
+//  - GetReplacedItems
+func (p *TBSGenericDataServiceClient) BsgMultiPut(ctx context.Context, rootID TContainerKey, setData *TItemSet, getAddedItems bool, getReplacedItems bool) (r *TMultiPutItemResult_, err error) {
+  var _args40 TBSGenericDataServiceBsgMultiPutArgs
+  _args40.RootID = rootID
+  _args40.SetData = setData
+  _args40.GetAddedItems = getAddedItems
+  _args40.GetReplacedItems = getReplacedItems
+  var _result41 TBSGenericDataServiceBsgMultiPutResult
+  if err = p.Client_().Call(ctx, "bsgMultiPut", &_args40, &_result41); err != nil {
     return
   }
   return _result41.GetSuccess(), nil
@@ -4596,13 +5072,25 @@ func (p *TBSGenericDataServiceClient) GetSetGenData(ctx context.Context, metaID 
 
 // Parameters:
 //  - MetaID
+func (p *TBSGenericDataServiceClient) GetSetGenData(ctx context.Context, metaID TMetaKey) (r *TBigSetGenericData, err error) {
+  var _args42 TBSGenericDataServiceGetSetGenDataArgs
+  _args42.MetaID = metaID
+  var _result43 TBSGenericDataServiceGetSetGenDataResult
+  if err = p.Client_().Call(ctx, "getSetGenData", &_args42, &_result43); err != nil {
+    return
+  }
+  return _result43.GetSuccess(), nil
+}
+
+// Parameters:
+//  - MetaID
 //  - Metadata
 func (p *TBSGenericDataServiceClient) PutSetGenData(ctx context.Context, metaID TMetaKey, metadata *TBigSetGenericData) (err error) {
-  var _args42 TBSGenericDataServicePutSetGenDataArgs
-  _args42.MetaID = metaID
-  _args42.Metadata = metadata
-  var _result43 TBSGenericDataServicePutSetGenDataResult
-  if err = p.Client_().Call(ctx, "putSetGenData", &_args42, &_result43); err != nil {
+  var _args44 TBSGenericDataServicePutSetGenDataArgs
+  _args44.MetaID = metaID
+  _args44.Metadata = metadata
+  var _result45 TBSGenericDataServicePutSetGenDataResult
+  if err = p.Client_().Call(ctx, "putSetGenData", &_args44, &_result45); err != nil {
     return
   }
   return nil
@@ -4611,25 +5099,25 @@ func (p *TBSGenericDataServiceClient) PutSetGenData(ctx context.Context, metaID 
 // Parameters:
 //  - RootID
 func (p *TBSGenericDataServiceClient) GetTotalCount(ctx context.Context, rootID TContainerKey) (r int64, err error) {
-  var _args44 TBSGenericDataServiceGetTotalCountArgs
-  _args44.RootID = rootID
-  var _result45 TBSGenericDataServiceGetTotalCountResult
-  if err = p.Client_().Call(ctx, "getTotalCount", &_args44, &_result45); err != nil {
+  var _args46 TBSGenericDataServiceGetTotalCountArgs
+  _args46.RootID = rootID
+  var _result47 TBSGenericDataServiceGetTotalCountResult
+  if err = p.Client_().Call(ctx, "getTotalCount", &_args46, &_result47); err != nil {
     return
   }
-  return _result45.GetSuccess(), nil
+  return _result47.GetSuccess(), nil
 }
 
 // Parameters:
 //  - RootID
 func (p *TBSGenericDataServiceClient) RemoveAll(ctx context.Context, rootID TContainerKey) (r int64, err error) {
-  var _args46 TBSGenericDataServiceRemoveAllArgs
-  _args46.RootID = rootID
-  var _result47 TBSGenericDataServiceRemoveAllResult
-  if err = p.Client_().Call(ctx, "removeAll", &_args46, &_result47); err != nil {
+  var _args48 TBSGenericDataServiceRemoveAllArgs
+  _args48.RootID = rootID
+  var _result49 TBSGenericDataServiceRemoveAllResult
+  if err = p.Client_().Call(ctx, "removeAll", &_args48, &_result49); err != nil {
     return
   }
-  return _result47.GetSuccess(), nil
+  return _result49.GetSuccess(), nil
 }
 
 type TBSGenericDataServiceProcessor struct {
@@ -4652,24 +5140,24 @@ func (p *TBSGenericDataServiceProcessor) ProcessorMap() map[string]thrift.TProce
 
 func NewTBSGenericDataServiceProcessor(handler TBSGenericDataService) *TBSGenericDataServiceProcessor {
 
-  self48 := &TBSGenericDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self48.processorMap["bsgPutItem"] = &tBSGenericDataServiceProcessorBsgPutItem{handler:handler}
-  self48.processorMap["bsgRemoveItem"] = &tBSGenericDataServiceProcessorBsgRemoveItem{handler:handler}
-  self48.processorMap["bsgExisted"] = &tBSGenericDataServiceProcessorBsgExisted{handler:handler}
-  self48.processorMap["bsgGetItem"] = &tBSGenericDataServiceProcessorBsgGetItem{handler:handler}
-  self48.processorMap["bsgGetSlice"] = &tBSGenericDataServiceProcessorBsgGetSlice{handler:handler}
-  self48.processorMap["bsgGetSliceFromItem"] = &tBSGenericDataServiceProcessorBsgGetSliceFromItem{handler:handler}
-  self48.processorMap["bsgGetSliceR"] = &tBSGenericDataServiceProcessorBsgGetSliceR{handler:handler}
-  self48.processorMap["bsgGetSliceFromItemR"] = &tBSGenericDataServiceProcessorBsgGetSliceFromItemR{handler:handler}
-  self48.processorMap["splitBigSet"] = &tBSGenericDataServiceProcessorSplitBigSet{handler:handler}
-  self48.processorMap["bsgRangeQuery"] = &tBSGenericDataServiceProcessorBsgRangeQuery{handler:handler}
-  self48.processorMap["bsgBulkLoad"] = &tBSGenericDataServiceProcessorBsgBulkLoad{handler:handler}
-  self48.processorMap["bsgMultiPut"] = &tBSGenericDataServiceProcessorBsgMultiPut{handler:handler}
-  self48.processorMap["getSetGenData"] = &tBSGenericDataServiceProcessorGetSetGenData{handler:handler}
-  self48.processorMap["putSetGenData"] = &tBSGenericDataServiceProcessorPutSetGenData{handler:handler}
-  self48.processorMap["getTotalCount"] = &tBSGenericDataServiceProcessorGetTotalCount{handler:handler}
-  self48.processorMap["removeAll"] = &tBSGenericDataServiceProcessorRemoveAll{handler:handler}
-return self48
+  self50 := &TBSGenericDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self50.processorMap["bsgPutItem"] = &tBSGenericDataServiceProcessorBsgPutItem{handler:handler}
+  self50.processorMap["bsgRemoveItem"] = &tBSGenericDataServiceProcessorBsgRemoveItem{handler:handler}
+  self50.processorMap["bsgExisted"] = &tBSGenericDataServiceProcessorBsgExisted{handler:handler}
+  self50.processorMap["bsgGetItem"] = &tBSGenericDataServiceProcessorBsgGetItem{handler:handler}
+  self50.processorMap["bsgGetSlice"] = &tBSGenericDataServiceProcessorBsgGetSlice{handler:handler}
+  self50.processorMap["bsgGetSliceFromItem"] = &tBSGenericDataServiceProcessorBsgGetSliceFromItem{handler:handler}
+  self50.processorMap["bsgGetSliceR"] = &tBSGenericDataServiceProcessorBsgGetSliceR{handler:handler}
+  self50.processorMap["bsgGetSliceFromItemR"] = &tBSGenericDataServiceProcessorBsgGetSliceFromItemR{handler:handler}
+  self50.processorMap["splitBigSet"] = &tBSGenericDataServiceProcessorSplitBigSet{handler:handler}
+  self50.processorMap["bsgRangeQuery"] = &tBSGenericDataServiceProcessorBsgRangeQuery{handler:handler}
+  self50.processorMap["bsgBulkLoad"] = &tBSGenericDataServiceProcessorBsgBulkLoad{handler:handler}
+  self50.processorMap["bsgMultiPut"] = &tBSGenericDataServiceProcessorBsgMultiPut{handler:handler}
+  self50.processorMap["getSetGenData"] = &tBSGenericDataServiceProcessorGetSetGenData{handler:handler}
+  self50.processorMap["putSetGenData"] = &tBSGenericDataServiceProcessorPutSetGenData{handler:handler}
+  self50.processorMap["getTotalCount"] = &tBSGenericDataServiceProcessorGetTotalCount{handler:handler}
+  self50.processorMap["removeAll"] = &tBSGenericDataServiceProcessorRemoveAll{handler:handler}
+return self50
 }
 
 func (p *TBSGenericDataServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -4680,12 +5168,12 @@ func (p *TBSGenericDataServiceProcessor) Process(ctx context.Context, iprot, opr
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x49 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x51 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x49.Write(oprot)
+  x51.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x49
+  return false, x51
 
 }
 
@@ -9350,6 +9838,12 @@ type TStringBigSetKVService interface {
   //  - KeyFrom
   //  - Count
   GetListKeyFrom(ctx context.Context, keyFrom TStringKey, count int32) (r []TStringKey, err error)
+  // Parameters:
+  //  - ListBsItems
+  BsMultiPutBsItem(ctx context.Context, listBsItems []*TBigsetItem) (r *TMultiPutBigsetItemResult_, err error)
+  // Parameters:
+  //  - ListBsItems
+  BsMultiRemoveBsItem(ctx context.Context, listBsItems []*TBigsetItem) (r *TMultiRemoveBigsetItemResult_, err error)
 }
 
 type TStringBigSetKVServiceClient struct {
@@ -9380,22 +9874,10 @@ func (p *TStringBigSetKVServiceClient) Client_() thrift.TClient {
 // Parameters:
 //  - BsName
 func (p *TStringBigSetKVServiceClient) CreateStringBigSet(ctx context.Context, bsName TStringKey) (r *TBigSetInfoResult_, err error) {
-  var _args107 TStringBigSetKVServiceCreateStringBigSetArgs
-  _args107.BsName = bsName
-  var _result108 TStringBigSetKVServiceCreateStringBigSetResult
-  if err = p.Client_().Call(ctx, "createStringBigSet", &_args107, &_result108); err != nil {
-    return
-  }
-  return _result108.GetSuccess(), nil
-}
-
-// Parameters:
-//  - BsName
-func (p *TStringBigSetKVServiceClient) GetBigSetInfoByName(ctx context.Context, bsName TStringKey) (r *TBigSetInfoResult_, err error) {
-  var _args109 TStringBigSetKVServiceGetBigSetInfoByNameArgs
+  var _args109 TStringBigSetKVServiceCreateStringBigSetArgs
   _args109.BsName = bsName
-  var _result110 TStringBigSetKVServiceGetBigSetInfoByNameResult
-  if err = p.Client_().Call(ctx, "getBigSetInfoByName", &_args109, &_result110); err != nil {
+  var _result110 TStringBigSetKVServiceCreateStringBigSetResult
+  if err = p.Client_().Call(ctx, "createStringBigSet", &_args109, &_result110); err != nil {
     return
   }
   return _result110.GetSuccess(), nil
@@ -9403,13 +9885,11 @@ func (p *TStringBigSetKVServiceClient) GetBigSetInfoByName(ctx context.Context, 
 
 // Parameters:
 //  - BsName
-//  - BigsetID
-func (p *TStringBigSetKVServiceClient) AssignBigSetName(ctx context.Context, bsName TStringKey, bigsetID TContainerKey) (r *TBigSetInfoResult_, err error) {
-  var _args111 TStringBigSetKVServiceAssignBigSetNameArgs
+func (p *TStringBigSetKVServiceClient) GetBigSetInfoByName(ctx context.Context, bsName TStringKey) (r *TBigSetInfoResult_, err error) {
+  var _args111 TStringBigSetKVServiceGetBigSetInfoByNameArgs
   _args111.BsName = bsName
-  _args111.BigsetID = bigsetID
-  var _result112 TStringBigSetKVServiceAssignBigSetNameResult
-  if err = p.Client_().Call(ctx, "assignBigSetName", &_args111, &_result112); err != nil {
+  var _result112 TStringBigSetKVServiceGetBigSetInfoByNameResult
+  if err = p.Client_().Call(ctx, "getBigSetInfoByName", &_args111, &_result112); err != nil {
     return
   }
   return _result112.GetSuccess(), nil
@@ -9417,13 +9897,13 @@ func (p *TStringBigSetKVServiceClient) AssignBigSetName(ctx context.Context, bsN
 
 // Parameters:
 //  - BsName
-//  - Item
-func (p *TStringBigSetKVServiceClient) BsPutItem(ctx context.Context, bsName TStringKey, item *TItem) (r *TPutItemResult_, err error) {
-  var _args113 TStringBigSetKVServiceBsPutItemArgs
+//  - BigsetID
+func (p *TStringBigSetKVServiceClient) AssignBigSetName(ctx context.Context, bsName TStringKey, bigsetID TContainerKey) (r *TBigSetInfoResult_, err error) {
+  var _args113 TStringBigSetKVServiceAssignBigSetNameArgs
   _args113.BsName = bsName
-  _args113.Item = item
-  var _result114 TStringBigSetKVServiceBsPutItemResult
-  if err = p.Client_().Call(ctx, "bsPutItem", &_args113, &_result114); err != nil {
+  _args113.BigsetID = bigsetID
+  var _result114 TStringBigSetKVServiceAssignBigSetNameResult
+  if err = p.Client_().Call(ctx, "assignBigSetName", &_args113, &_result114); err != nil {
     return
   }
   return _result114.GetSuccess(), nil
@@ -9431,13 +9911,13 @@ func (p *TStringBigSetKVServiceClient) BsPutItem(ctx context.Context, bsName TSt
 
 // Parameters:
 //  - BsName
-//  - ItemKey
-func (p *TStringBigSetKVServiceClient) BsRemoveItem(ctx context.Context, bsName TStringKey, itemKey TItemKey) (r bool, err error) {
-  var _args115 TStringBigSetKVServiceBsRemoveItemArgs
+//  - Item
+func (p *TStringBigSetKVServiceClient) BsPutItem(ctx context.Context, bsName TStringKey, item *TItem) (r *TPutItemResult_, err error) {
+  var _args115 TStringBigSetKVServiceBsPutItemArgs
   _args115.BsName = bsName
-  _args115.ItemKey = itemKey
-  var _result116 TStringBigSetKVServiceBsRemoveItemResult
-  if err = p.Client_().Call(ctx, "bsRemoveItem", &_args115, &_result116); err != nil {
+  _args115.Item = item
+  var _result116 TStringBigSetKVServiceBsPutItemResult
+  if err = p.Client_().Call(ctx, "bsPutItem", &_args115, &_result116); err != nil {
     return
   }
   return _result116.GetSuccess(), nil
@@ -9446,12 +9926,12 @@ func (p *TStringBigSetKVServiceClient) BsRemoveItem(ctx context.Context, bsName 
 // Parameters:
 //  - BsName
 //  - ItemKey
-func (p *TStringBigSetKVServiceClient) BsExisted(ctx context.Context, bsName TStringKey, itemKey TItemKey) (r *TExistedResult_, err error) {
-  var _args117 TStringBigSetKVServiceBsExistedArgs
+func (p *TStringBigSetKVServiceClient) BsRemoveItem(ctx context.Context, bsName TStringKey, itemKey TItemKey) (r bool, err error) {
+  var _args117 TStringBigSetKVServiceBsRemoveItemArgs
   _args117.BsName = bsName
   _args117.ItemKey = itemKey
-  var _result118 TStringBigSetKVServiceBsExistedResult
-  if err = p.Client_().Call(ctx, "bsExisted", &_args117, &_result118); err != nil {
+  var _result118 TStringBigSetKVServiceBsRemoveItemResult
+  if err = p.Client_().Call(ctx, "bsRemoveItem", &_args117, &_result118); err != nil {
     return
   }
   return _result118.GetSuccess(), nil
@@ -9460,12 +9940,12 @@ func (p *TStringBigSetKVServiceClient) BsExisted(ctx context.Context, bsName TSt
 // Parameters:
 //  - BsName
 //  - ItemKey
-func (p *TStringBigSetKVServiceClient) BsGetItem(ctx context.Context, bsName TStringKey, itemKey TItemKey) (r *TItemResult_, err error) {
-  var _args119 TStringBigSetKVServiceBsGetItemArgs
+func (p *TStringBigSetKVServiceClient) BsExisted(ctx context.Context, bsName TStringKey, itemKey TItemKey) (r *TExistedResult_, err error) {
+  var _args119 TStringBigSetKVServiceBsExistedArgs
   _args119.BsName = bsName
   _args119.ItemKey = itemKey
-  var _result120 TStringBigSetKVServiceBsGetItemResult
-  if err = p.Client_().Call(ctx, "bsGetItem", &_args119, &_result120); err != nil {
+  var _result120 TStringBigSetKVServiceBsExistedResult
+  if err = p.Client_().Call(ctx, "bsExisted", &_args119, &_result120); err != nil {
     return
   }
   return _result120.GetSuccess(), nil
@@ -9473,15 +9953,13 @@ func (p *TStringBigSetKVServiceClient) BsGetItem(ctx context.Context, bsName TSt
 
 // Parameters:
 //  - BsName
-//  - FromPos
-//  - Count
-func (p *TStringBigSetKVServiceClient) BsGetSlice(ctx context.Context, bsName TStringKey, fromPos int32, count int32) (r *TItemSetResult_, err error) {
-  var _args121 TStringBigSetKVServiceBsGetSliceArgs
+//  - ItemKey
+func (p *TStringBigSetKVServiceClient) BsGetItem(ctx context.Context, bsName TStringKey, itemKey TItemKey) (r *TItemResult_, err error) {
+  var _args121 TStringBigSetKVServiceBsGetItemArgs
   _args121.BsName = bsName
-  _args121.FromPos = fromPos
-  _args121.Count = count
-  var _result122 TStringBigSetKVServiceBsGetSliceResult
-  if err = p.Client_().Call(ctx, "bsGetSlice", &_args121, &_result122); err != nil {
+  _args121.ItemKey = itemKey
+  var _result122 TStringBigSetKVServiceBsGetItemResult
+  if err = p.Client_().Call(ctx, "bsGetItem", &_args121, &_result122); err != nil {
     return
   }
   return _result122.GetSuccess(), nil
@@ -9489,15 +9967,15 @@ func (p *TStringBigSetKVServiceClient) BsGetSlice(ctx context.Context, bsName TS
 
 // Parameters:
 //  - BsName
-//  - FromKey
+//  - FromPos
 //  - Count
-func (p *TStringBigSetKVServiceClient) BsGetSliceFromItem(ctx context.Context, bsName TStringKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
-  var _args123 TStringBigSetKVServiceBsGetSliceFromItemArgs
+func (p *TStringBigSetKVServiceClient) BsGetSlice(ctx context.Context, bsName TStringKey, fromPos int32, count int32) (r *TItemSetResult_, err error) {
+  var _args123 TStringBigSetKVServiceBsGetSliceArgs
   _args123.BsName = bsName
-  _args123.FromKey = fromKey
+  _args123.FromPos = fromPos
   _args123.Count = count
-  var _result124 TStringBigSetKVServiceBsGetSliceFromItemResult
-  if err = p.Client_().Call(ctx, "bsGetSliceFromItem", &_args123, &_result124); err != nil {
+  var _result124 TStringBigSetKVServiceBsGetSliceResult
+  if err = p.Client_().Call(ctx, "bsGetSlice", &_args123, &_result124); err != nil {
     return
   }
   return _result124.GetSuccess(), nil
@@ -9505,15 +9983,15 @@ func (p *TStringBigSetKVServiceClient) BsGetSliceFromItem(ctx context.Context, b
 
 // Parameters:
 //  - BsName
-//  - FromPos
+//  - FromKey
 //  - Count
-func (p *TStringBigSetKVServiceClient) BsGetSliceR(ctx context.Context, bsName TStringKey, fromPos int32, count int32) (r *TItemSetResult_, err error) {
-  var _args125 TStringBigSetKVServiceBsGetSliceRArgs
+func (p *TStringBigSetKVServiceClient) BsGetSliceFromItem(ctx context.Context, bsName TStringKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
+  var _args125 TStringBigSetKVServiceBsGetSliceFromItemArgs
   _args125.BsName = bsName
-  _args125.FromPos = fromPos
+  _args125.FromKey = fromKey
   _args125.Count = count
-  var _result126 TStringBigSetKVServiceBsGetSliceRResult
-  if err = p.Client_().Call(ctx, "bsGetSliceR", &_args125, &_result126); err != nil {
+  var _result126 TStringBigSetKVServiceBsGetSliceFromItemResult
+  if err = p.Client_().Call(ctx, "bsGetSliceFromItem", &_args125, &_result126); err != nil {
     return
   }
   return _result126.GetSuccess(), nil
@@ -9521,15 +9999,15 @@ func (p *TStringBigSetKVServiceClient) BsGetSliceR(ctx context.Context, bsName T
 
 // Parameters:
 //  - BsName
-//  - FromKey
+//  - FromPos
 //  - Count
-func (p *TStringBigSetKVServiceClient) BsGetSliceFromItemR(ctx context.Context, bsName TStringKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
-  var _args127 TStringBigSetKVServiceBsGetSliceFromItemRArgs
+func (p *TStringBigSetKVServiceClient) BsGetSliceR(ctx context.Context, bsName TStringKey, fromPos int32, count int32) (r *TItemSetResult_, err error) {
+  var _args127 TStringBigSetKVServiceBsGetSliceRArgs
   _args127.BsName = bsName
-  _args127.FromKey = fromKey
+  _args127.FromPos = fromPos
   _args127.Count = count
-  var _result128 TStringBigSetKVServiceBsGetSliceFromItemRResult
-  if err = p.Client_().Call(ctx, "bsGetSliceFromItemR", &_args127, &_result128); err != nil {
+  var _result128 TStringBigSetKVServiceBsGetSliceRResult
+  if err = p.Client_().Call(ctx, "bsGetSliceR", &_args127, &_result128); err != nil {
     return
   }
   return _result128.GetSuccess(), nil
@@ -9537,15 +10015,15 @@ func (p *TStringBigSetKVServiceClient) BsGetSliceFromItemR(ctx context.Context, 
 
 // Parameters:
 //  - BsName
-//  - StartKey
-//  - EndKey
-func (p *TStringBigSetKVServiceClient) BsRangeQuery(ctx context.Context, bsName TStringKey, startKey TItemKey, endKey TItemKey) (r *TItemSetResult_, err error) {
-  var _args129 TStringBigSetKVServiceBsRangeQueryArgs
+//  - FromKey
+//  - Count
+func (p *TStringBigSetKVServiceClient) BsGetSliceFromItemR(ctx context.Context, bsName TStringKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
+  var _args129 TStringBigSetKVServiceBsGetSliceFromItemRArgs
   _args129.BsName = bsName
-  _args129.StartKey = startKey
-  _args129.EndKey = endKey
-  var _result130 TStringBigSetKVServiceBsRangeQueryResult
-  if err = p.Client_().Call(ctx, "bsRangeQuery", &_args129, &_result130); err != nil {
+  _args129.FromKey = fromKey
+  _args129.Count = count
+  var _result130 TStringBigSetKVServiceBsGetSliceFromItemRResult
+  if err = p.Client_().Call(ctx, "bsGetSliceFromItemR", &_args129, &_result130); err != nil {
     return
   }
   return _result130.GetSuccess(), nil
@@ -9553,13 +10031,15 @@ func (p *TStringBigSetKVServiceClient) BsRangeQuery(ctx context.Context, bsName 
 
 // Parameters:
 //  - BsName
-//  - SetData
-func (p *TStringBigSetKVServiceClient) BsBulkLoad(ctx context.Context, bsName TStringKey, setData *TItemSet) (r bool, err error) {
-  var _args131 TStringBigSetKVServiceBsBulkLoadArgs
+//  - StartKey
+//  - EndKey
+func (p *TStringBigSetKVServiceClient) BsRangeQuery(ctx context.Context, bsName TStringKey, startKey TItemKey, endKey TItemKey) (r *TItemSetResult_, err error) {
+  var _args131 TStringBigSetKVServiceBsRangeQueryArgs
   _args131.BsName = bsName
-  _args131.SetData = setData
-  var _result132 TStringBigSetKVServiceBsBulkLoadResult
-  if err = p.Client_().Call(ctx, "bsBulkLoad", &_args131, &_result132); err != nil {
+  _args131.StartKey = startKey
+  _args131.EndKey = endKey
+  var _result132 TStringBigSetKVServiceBsRangeQueryResult
+  if err = p.Client_().Call(ctx, "bsRangeQuery", &_args131, &_result132); err != nil {
     return
   }
   return _result132.GetSuccess(), nil
@@ -9568,16 +10048,12 @@ func (p *TStringBigSetKVServiceClient) BsBulkLoad(ctx context.Context, bsName TS
 // Parameters:
 //  - BsName
 //  - SetData
-//  - GetAddedItems
-//  - GetReplacedItems
-func (p *TStringBigSetKVServiceClient) BsMultiPut(ctx context.Context, bsName TStringKey, setData *TItemSet, getAddedItems bool, getReplacedItems bool) (r *TMultiPutItemResult_, err error) {
-  var _args133 TStringBigSetKVServiceBsMultiPutArgs
+func (p *TStringBigSetKVServiceClient) BsBulkLoad(ctx context.Context, bsName TStringKey, setData *TItemSet) (r bool, err error) {
+  var _args133 TStringBigSetKVServiceBsBulkLoadArgs
   _args133.BsName = bsName
   _args133.SetData = setData
-  _args133.GetAddedItems = getAddedItems
-  _args133.GetReplacedItems = getReplacedItems
-  var _result134 TStringBigSetKVServiceBsMultiPutResult
-  if err = p.Client_().Call(ctx, "bsMultiPut", &_args133, &_result134); err != nil {
+  var _result134 TStringBigSetKVServiceBsBulkLoadResult
+  if err = p.Client_().Call(ctx, "bsBulkLoad", &_args133, &_result134); err != nil {
     return
   }
   return _result134.GetSuccess(), nil
@@ -9585,11 +10061,17 @@ func (p *TStringBigSetKVServiceClient) BsMultiPut(ctx context.Context, bsName TS
 
 // Parameters:
 //  - BsName
-func (p *TStringBigSetKVServiceClient) GetTotalCount(ctx context.Context, bsName TStringKey) (r int64, err error) {
-  var _args135 TStringBigSetKVServiceGetTotalCountArgs
+//  - SetData
+//  - GetAddedItems
+//  - GetReplacedItems
+func (p *TStringBigSetKVServiceClient) BsMultiPut(ctx context.Context, bsName TStringKey, setData *TItemSet, getAddedItems bool, getReplacedItems bool) (r *TMultiPutItemResult_, err error) {
+  var _args135 TStringBigSetKVServiceBsMultiPutArgs
   _args135.BsName = bsName
-  var _result136 TStringBigSetKVServiceGetTotalCountResult
-  if err = p.Client_().Call(ctx, "getTotalCount", &_args135, &_result136); err != nil {
+  _args135.SetData = setData
+  _args135.GetAddedItems = getAddedItems
+  _args135.GetReplacedItems = getReplacedItems
+  var _result136 TStringBigSetKVServiceBsMultiPutResult
+  if err = p.Client_().Call(ctx, "bsMultiPut", &_args135, &_result136); err != nil {
     return
   }
   return _result136.GetSuccess(), nil
@@ -9597,51 +10079,87 @@ func (p *TStringBigSetKVServiceClient) GetTotalCount(ctx context.Context, bsName
 
 // Parameters:
 //  - BsName
-func (p *TStringBigSetKVServiceClient) RemoveAll(ctx context.Context, bsName TStringKey) (r int64, err error) {
-  var _args137 TStringBigSetKVServiceRemoveAllArgs
+func (p *TStringBigSetKVServiceClient) GetTotalCount(ctx context.Context, bsName TStringKey) (r int64, err error) {
+  var _args137 TStringBigSetKVServiceGetTotalCountArgs
   _args137.BsName = bsName
-  var _result138 TStringBigSetKVServiceRemoveAllResult
-  if err = p.Client_().Call(ctx, "removeAll", &_args137, &_result138); err != nil {
+  var _result138 TStringBigSetKVServiceGetTotalCountResult
+  if err = p.Client_().Call(ctx, "getTotalCount", &_args137, &_result138); err != nil {
     return
   }
   return _result138.GetSuccess(), nil
 }
 
-func (p *TStringBigSetKVServiceClient) TotalStringKeyCount(ctx context.Context) (r int64, err error) {
-  var _args139 TStringBigSetKVServiceTotalStringKeyCountArgs
-  var _result140 TStringBigSetKVServiceTotalStringKeyCountResult
-  if err = p.Client_().Call(ctx, "totalStringKeyCount", &_args139, &_result140); err != nil {
+// Parameters:
+//  - BsName
+func (p *TStringBigSetKVServiceClient) RemoveAll(ctx context.Context, bsName TStringKey) (r int64, err error) {
+  var _args139 TStringBigSetKVServiceRemoveAllArgs
+  _args139.BsName = bsName
+  var _result140 TStringBigSetKVServiceRemoveAllResult
+  if err = p.Client_().Call(ctx, "removeAll", &_args139, &_result140); err != nil {
     return
   }
   return _result140.GetSuccess(), nil
 }
 
-// Parameters:
-//  - FromIndex
-//  - Count
-func (p *TStringBigSetKVServiceClient) GetListKey(ctx context.Context, fromIndex int64, count int32) (r []TStringKey, err error) {
-  var _args141 TStringBigSetKVServiceGetListKeyArgs
-  _args141.FromIndex = fromIndex
-  _args141.Count = count
-  var _result142 TStringBigSetKVServiceGetListKeyResult
-  if err = p.Client_().Call(ctx, "getListKey", &_args141, &_result142); err != nil {
+func (p *TStringBigSetKVServiceClient) TotalStringKeyCount(ctx context.Context) (r int64, err error) {
+  var _args141 TStringBigSetKVServiceTotalStringKeyCountArgs
+  var _result142 TStringBigSetKVServiceTotalStringKeyCountResult
+  if err = p.Client_().Call(ctx, "totalStringKeyCount", &_args141, &_result142); err != nil {
     return
   }
   return _result142.GetSuccess(), nil
 }
 
 // Parameters:
-//  - KeyFrom
+//  - FromIndex
 //  - Count
-func (p *TStringBigSetKVServiceClient) GetListKeyFrom(ctx context.Context, keyFrom TStringKey, count int32) (r []TStringKey, err error) {
-  var _args143 TStringBigSetKVServiceGetListKeyFromArgs
-  _args143.KeyFrom = keyFrom
+func (p *TStringBigSetKVServiceClient) GetListKey(ctx context.Context, fromIndex int64, count int32) (r []TStringKey, err error) {
+  var _args143 TStringBigSetKVServiceGetListKeyArgs
+  _args143.FromIndex = fromIndex
   _args143.Count = count
-  var _result144 TStringBigSetKVServiceGetListKeyFromResult
-  if err = p.Client_().Call(ctx, "getListKeyFrom", &_args143, &_result144); err != nil {
+  var _result144 TStringBigSetKVServiceGetListKeyResult
+  if err = p.Client_().Call(ctx, "getListKey", &_args143, &_result144); err != nil {
     return
   }
   return _result144.GetSuccess(), nil
+}
+
+// Parameters:
+//  - KeyFrom
+//  - Count
+func (p *TStringBigSetKVServiceClient) GetListKeyFrom(ctx context.Context, keyFrom TStringKey, count int32) (r []TStringKey, err error) {
+  var _args145 TStringBigSetKVServiceGetListKeyFromArgs
+  _args145.KeyFrom = keyFrom
+  _args145.Count = count
+  var _result146 TStringBigSetKVServiceGetListKeyFromResult
+  if err = p.Client_().Call(ctx, "getListKeyFrom", &_args145, &_result146); err != nil {
+    return
+  }
+  return _result146.GetSuccess(), nil
+}
+
+// Parameters:
+//  - ListBsItems
+func (p *TStringBigSetKVServiceClient) BsMultiPutBsItem(ctx context.Context, listBsItems []*TBigsetItem) (r *TMultiPutBigsetItemResult_, err error) {
+  var _args147 TStringBigSetKVServiceBsMultiPutBsItemArgs
+  _args147.ListBsItems = listBsItems
+  var _result148 TStringBigSetKVServiceBsMultiPutBsItemResult
+  if err = p.Client_().Call(ctx, "bsMultiPutBsItem", &_args147, &_result148); err != nil {
+    return
+  }
+  return _result148.GetSuccess(), nil
+}
+
+// Parameters:
+//  - ListBsItems
+func (p *TStringBigSetKVServiceClient) BsMultiRemoveBsItem(ctx context.Context, listBsItems []*TBigsetItem) (r *TMultiRemoveBigsetItemResult_, err error) {
+  var _args149 TStringBigSetKVServiceBsMultiRemoveBsItemArgs
+  _args149.ListBsItems = listBsItems
+  var _result150 TStringBigSetKVServiceBsMultiRemoveBsItemResult
+  if err = p.Client_().Call(ctx, "bsMultiRemoveBsItem", &_args149, &_result150); err != nil {
+    return
+  }
+  return _result150.GetSuccess(), nil
 }
 
 type TStringBigSetKVServiceProcessor struct {
@@ -9664,27 +10182,29 @@ func (p *TStringBigSetKVServiceProcessor) ProcessorMap() map[string]thrift.TProc
 
 func NewTStringBigSetKVServiceProcessor(handler TStringBigSetKVService) *TStringBigSetKVServiceProcessor {
 
-  self145 := &TStringBigSetKVServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self145.processorMap["createStringBigSet"] = &tStringBigSetKVServiceProcessorCreateStringBigSet{handler:handler}
-  self145.processorMap["getBigSetInfoByName"] = &tStringBigSetKVServiceProcessorGetBigSetInfoByName{handler:handler}
-  self145.processorMap["assignBigSetName"] = &tStringBigSetKVServiceProcessorAssignBigSetName{handler:handler}
-  self145.processorMap["bsPutItem"] = &tStringBigSetKVServiceProcessorBsPutItem{handler:handler}
-  self145.processorMap["bsRemoveItem"] = &tStringBigSetKVServiceProcessorBsRemoveItem{handler:handler}
-  self145.processorMap["bsExisted"] = &tStringBigSetKVServiceProcessorBsExisted{handler:handler}
-  self145.processorMap["bsGetItem"] = &tStringBigSetKVServiceProcessorBsGetItem{handler:handler}
-  self145.processorMap["bsGetSlice"] = &tStringBigSetKVServiceProcessorBsGetSlice{handler:handler}
-  self145.processorMap["bsGetSliceFromItem"] = &tStringBigSetKVServiceProcessorBsGetSliceFromItem{handler:handler}
-  self145.processorMap["bsGetSliceR"] = &tStringBigSetKVServiceProcessorBsGetSliceR{handler:handler}
-  self145.processorMap["bsGetSliceFromItemR"] = &tStringBigSetKVServiceProcessorBsGetSliceFromItemR{handler:handler}
-  self145.processorMap["bsRangeQuery"] = &tStringBigSetKVServiceProcessorBsRangeQuery{handler:handler}
-  self145.processorMap["bsBulkLoad"] = &tStringBigSetKVServiceProcessorBsBulkLoad{handler:handler}
-  self145.processorMap["bsMultiPut"] = &tStringBigSetKVServiceProcessorBsMultiPut{handler:handler}
-  self145.processorMap["getTotalCount"] = &tStringBigSetKVServiceProcessorGetTotalCount{handler:handler}
-  self145.processorMap["removeAll"] = &tStringBigSetKVServiceProcessorRemoveAll{handler:handler}
-  self145.processorMap["totalStringKeyCount"] = &tStringBigSetKVServiceProcessorTotalStringKeyCount{handler:handler}
-  self145.processorMap["getListKey"] = &tStringBigSetKVServiceProcessorGetListKey{handler:handler}
-  self145.processorMap["getListKeyFrom"] = &tStringBigSetKVServiceProcessorGetListKeyFrom{handler:handler}
-return self145
+  self151 := &TStringBigSetKVServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self151.processorMap["createStringBigSet"] = &tStringBigSetKVServiceProcessorCreateStringBigSet{handler:handler}
+  self151.processorMap["getBigSetInfoByName"] = &tStringBigSetKVServiceProcessorGetBigSetInfoByName{handler:handler}
+  self151.processorMap["assignBigSetName"] = &tStringBigSetKVServiceProcessorAssignBigSetName{handler:handler}
+  self151.processorMap["bsPutItem"] = &tStringBigSetKVServiceProcessorBsPutItem{handler:handler}
+  self151.processorMap["bsRemoveItem"] = &tStringBigSetKVServiceProcessorBsRemoveItem{handler:handler}
+  self151.processorMap["bsExisted"] = &tStringBigSetKVServiceProcessorBsExisted{handler:handler}
+  self151.processorMap["bsGetItem"] = &tStringBigSetKVServiceProcessorBsGetItem{handler:handler}
+  self151.processorMap["bsGetSlice"] = &tStringBigSetKVServiceProcessorBsGetSlice{handler:handler}
+  self151.processorMap["bsGetSliceFromItem"] = &tStringBigSetKVServiceProcessorBsGetSliceFromItem{handler:handler}
+  self151.processorMap["bsGetSliceR"] = &tStringBigSetKVServiceProcessorBsGetSliceR{handler:handler}
+  self151.processorMap["bsGetSliceFromItemR"] = &tStringBigSetKVServiceProcessorBsGetSliceFromItemR{handler:handler}
+  self151.processorMap["bsRangeQuery"] = &tStringBigSetKVServiceProcessorBsRangeQuery{handler:handler}
+  self151.processorMap["bsBulkLoad"] = &tStringBigSetKVServiceProcessorBsBulkLoad{handler:handler}
+  self151.processorMap["bsMultiPut"] = &tStringBigSetKVServiceProcessorBsMultiPut{handler:handler}
+  self151.processorMap["getTotalCount"] = &tStringBigSetKVServiceProcessorGetTotalCount{handler:handler}
+  self151.processorMap["removeAll"] = &tStringBigSetKVServiceProcessorRemoveAll{handler:handler}
+  self151.processorMap["totalStringKeyCount"] = &tStringBigSetKVServiceProcessorTotalStringKeyCount{handler:handler}
+  self151.processorMap["getListKey"] = &tStringBigSetKVServiceProcessorGetListKey{handler:handler}
+  self151.processorMap["getListKeyFrom"] = &tStringBigSetKVServiceProcessorGetListKeyFrom{handler:handler}
+  self151.processorMap["bsMultiPutBsItem"] = &tStringBigSetKVServiceProcessorBsMultiPutBsItem{handler:handler}
+  self151.processorMap["bsMultiRemoveBsItem"] = &tStringBigSetKVServiceProcessorBsMultiRemoveBsItem{handler:handler}
+return self151
 }
 
 func (p *TStringBigSetKVServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -9695,12 +10215,12 @@ func (p *TStringBigSetKVServiceProcessor) Process(ctx context.Context, iprot, op
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x146 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x152 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x146.Write(oprot)
+  x152.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x146
+  return false, x152
 
 }
 
@@ -10599,6 +11119,102 @@ var retval []TStringKey
     result.Success = retval
 }
   if err2 = oprot.WriteMessageBegin("getListKeyFrom", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type tStringBigSetKVServiceProcessorBsMultiPutBsItem struct {
+  handler TStringBigSetKVService
+}
+
+func (p *tStringBigSetKVServiceProcessorBsMultiPutBsItem) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := TStringBigSetKVServiceBsMultiPutBsItemArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("bsMultiPutBsItem", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := TStringBigSetKVServiceBsMultiPutBsItemResult{}
+var retval *TMultiPutBigsetItemResult_
+  var err2 error
+  if retval, err2 = p.handler.BsMultiPutBsItem(ctx, args.ListBsItems); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing bsMultiPutBsItem: " + err2.Error())
+    oprot.WriteMessageBegin("bsMultiPutBsItem", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return true, err2
+  } else {
+    result.Success = retval
+}
+  if err2 = oprot.WriteMessageBegin("bsMultiPutBsItem", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type tStringBigSetKVServiceProcessorBsMultiRemoveBsItem struct {
+  handler TStringBigSetKVService
+}
+
+func (p *tStringBigSetKVServiceProcessorBsMultiRemoveBsItem) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := TStringBigSetKVServiceBsMultiRemoveBsItemArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("bsMultiRemoveBsItem", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := TStringBigSetKVServiceBsMultiRemoveBsItemResult{}
+var retval *TMultiRemoveBigsetItemResult_
+  var err2 error
+  if retval, err2 = p.handler.BsMultiRemoveBsItem(ctx, args.ListBsItems); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing bsMultiRemoveBsItem: " + err2.Error())
+    oprot.WriteMessageBegin("bsMultiRemoveBsItem", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return true, err2
+  } else {
+    result.Success = retval
+}
+  if err2 = oprot.WriteMessageBegin("bsMultiRemoveBsItem", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -14747,14 +15363,14 @@ func (p *TStringBigSetKVServiceGetListKeyResult)  ReadField0(iprot thrift.TProto
   tSlice := make([]TStringKey, 0, size)
   p.Success =  tSlice
   for i := 0; i < size; i ++ {
-var _elem147 TStringKey
+var _elem153 TStringKey
     if v, err := iprot.ReadString(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
     temp := TStringKey(v)
-    _elem147 = temp
+    _elem153 = temp
 }
-    p.Success = append(p.Success, _elem147)
+    p.Success = append(p.Success, _elem153)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -14995,14 +15611,14 @@ func (p *TStringBigSetKVServiceGetListKeyFromResult)  ReadField0(iprot thrift.TP
   tSlice := make([]TStringKey, 0, size)
   p.Success =  tSlice
   for i := 0; i < size; i ++ {
-var _elem148 TStringKey
+var _elem154 TStringKey
     if v, err := iprot.ReadString(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
     temp := TStringKey(v)
-    _elem148 = temp
+    _elem154 = temp
 }
-    p.Success = append(p.Success, _elem148)
+    p.Success = append(p.Success, _elem154)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -15048,6 +15664,428 @@ func (p *TStringBigSetKVServiceGetListKeyFromResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("TStringBigSetKVServiceGetListKeyFromResult(%+v)", *p)
+}
+
+// Attributes:
+//  - ListBsItems
+type TStringBigSetKVServiceBsMultiPutBsItemArgs struct {
+  ListBsItems []*TBigsetItem `thrift:"listBsItems,1" db:"listBsItems" json:"listBsItems"`
+}
+
+func NewTStringBigSetKVServiceBsMultiPutBsItemArgs() *TStringBigSetKVServiceBsMultiPutBsItemArgs {
+  return &TStringBigSetKVServiceBsMultiPutBsItemArgs{}
+}
+
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemArgs) GetListBsItems() []*TBigsetItem {
+  return p.ListBsItems
+}
+func (p *TStringBigSetKVServiceBsMultiPutBsItemArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.LIST {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemArgs)  ReadField1(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*TBigsetItem, 0, size)
+  p.ListBsItems =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem155 := &TBigsetItem{}
+    if err := _elem155.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem155), err)
+    }
+    p.ListBsItems = append(p.ListBsItems, _elem155)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("bsMultiPutBsItem_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("listBsItems", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:listBsItems: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRUCT, len(p.ListBsItems)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.ListBsItems {
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:listBsItems: ", p), err) }
+  return err
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TStringBigSetKVServiceBsMultiPutBsItemArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type TStringBigSetKVServiceBsMultiPutBsItemResult struct {
+  Success *TMultiPutBigsetItemResult_ `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewTStringBigSetKVServiceBsMultiPutBsItemResult() *TStringBigSetKVServiceBsMultiPutBsItemResult {
+  return &TStringBigSetKVServiceBsMultiPutBsItemResult{}
+}
+
+var TStringBigSetKVServiceBsMultiPutBsItemResult_Success_DEFAULT *TMultiPutBigsetItemResult_
+func (p *TStringBigSetKVServiceBsMultiPutBsItemResult) GetSuccess() *TMultiPutBigsetItemResult_ {
+  if !p.IsSetSuccess() {
+    return TStringBigSetKVServiceBsMultiPutBsItemResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *TStringBigSetKVServiceBsMultiPutBsItemResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.STRUCT {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemResult)  ReadField0(iprot thrift.TProtocol) error {
+  p.Success = &TMultiPutBigsetItemResult_{}
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("bsMultiPutBsItem_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *TStringBigSetKVServiceBsMultiPutBsItemResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TStringBigSetKVServiceBsMultiPutBsItemResult(%+v)", *p)
+}
+
+// Attributes:
+//  - ListBsItems
+type TStringBigSetKVServiceBsMultiRemoveBsItemArgs struct {
+  ListBsItems []*TBigsetItem `thrift:"listBsItems,1" db:"listBsItems" json:"listBsItems"`
+}
+
+func NewTStringBigSetKVServiceBsMultiRemoveBsItemArgs() *TStringBigSetKVServiceBsMultiRemoveBsItemArgs {
+  return &TStringBigSetKVServiceBsMultiRemoveBsItemArgs{}
+}
+
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemArgs) GetListBsItems() []*TBigsetItem {
+  return p.ListBsItems
+}
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.LIST {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemArgs)  ReadField1(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*TBigsetItem, 0, size)
+  p.ListBsItems =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem156 := &TBigsetItem{}
+    if err := _elem156.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem156), err)
+    }
+    p.ListBsItems = append(p.ListBsItems, _elem156)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("bsMultiRemoveBsItem_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("listBsItems", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:listBsItems: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRUCT, len(p.ListBsItems)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.ListBsItems {
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:listBsItems: ", p), err) }
+  return err
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TStringBigSetKVServiceBsMultiRemoveBsItemArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type TStringBigSetKVServiceBsMultiRemoveBsItemResult struct {
+  Success *TMultiRemoveBigsetItemResult_ `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewTStringBigSetKVServiceBsMultiRemoveBsItemResult() *TStringBigSetKVServiceBsMultiRemoveBsItemResult {
+  return &TStringBigSetKVServiceBsMultiRemoveBsItemResult{}
+}
+
+var TStringBigSetKVServiceBsMultiRemoveBsItemResult_Success_DEFAULT *TMultiRemoveBigsetItemResult_
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemResult) GetSuccess() *TMultiRemoveBigsetItemResult_ {
+  if !p.IsSetSuccess() {
+    return TStringBigSetKVServiceBsMultiRemoveBsItemResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.STRUCT {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemResult)  ReadField0(iprot thrift.TProtocol) error {
+  p.Success = &TMultiRemoveBigsetItemResult_{}
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("bsMultiRemoveBsItem_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *TStringBigSetKVServiceBsMultiRemoveBsItemResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TStringBigSetKVServiceBsMultiRemoveBsItemResult(%+v)", *p)
 }
 
 
@@ -15098,8 +16136,8 @@ func (p *TBSBigValueServiceProcessor) ProcessorMap() map[string]thrift.TProcesso
 
 func NewTBSBigValueServiceProcessor(handler TBSBigValueService) *TBSBigValueServiceProcessor {
 
-  self203 := &TBSBigValueServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-return self203
+  self223 := &TBSBigValueServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+return self223
 }
 
 func (p *TBSBigValueServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -15110,12 +16148,12 @@ func (p *TBSBigValueServiceProcessor) Process(ctx context.Context, iprot, oprot 
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x204 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x224 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x204.Write(oprot)
+  x224.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x204
+  return false, x224
 
 }
 
@@ -15212,56 +16250,56 @@ func (p *TIBSDataServiceClient) Client_() thrift.TClient {
 //  - BigsetID
 //  - Item
 func (p *TIBSDataServiceClient) PutItem(ctx context.Context, bigsetID TKey, item *TItem) (r *TPutItemResult_, err error) {
-  var _args205 TIBSDataServicePutItemArgs
-  _args205.BigsetID = bigsetID
-  _args205.Item = item
-  var _result206 TIBSDataServicePutItemResult
-  if err = p.Client_().Call(ctx, "putItem", &_args205, &_result206); err != nil {
+  var _args225 TIBSDataServicePutItemArgs
+  _args225.BigsetID = bigsetID
+  _args225.Item = item
+  var _result226 TIBSDataServicePutItemResult
+  if err = p.Client_().Call(ctx, "putItem", &_args225, &_result226); err != nil {
     return
   }
-  return _result206.GetSuccess(), nil
+  return _result226.GetSuccess(), nil
 }
 
 // Parameters:
 //  - BigsetID
 //  - ItemKey
 func (p *TIBSDataServiceClient) RemoveItem(ctx context.Context, bigsetID TKey, itemKey TItemKey) (r bool, err error) {
-  var _args207 TIBSDataServiceRemoveItemArgs
-  _args207.BigsetID = bigsetID
-  _args207.ItemKey = itemKey
-  var _result208 TIBSDataServiceRemoveItemResult
-  if err = p.Client_().Call(ctx, "removeItem", &_args207, &_result208); err != nil {
+  var _args227 TIBSDataServiceRemoveItemArgs
+  _args227.BigsetID = bigsetID
+  _args227.ItemKey = itemKey
+  var _result228 TIBSDataServiceRemoveItemResult
+  if err = p.Client_().Call(ctx, "removeItem", &_args227, &_result228); err != nil {
     return
   }
-  return _result208.GetSuccess(), nil
+  return _result228.GetSuccess(), nil
 }
 
 // Parameters:
 //  - BigsetID
 //  - ItemKey
 func (p *TIBSDataServiceClient) Existed(ctx context.Context, bigsetID TKey, itemKey TItemKey) (r *TExistedResult_, err error) {
-  var _args209 TIBSDataServiceExistedArgs
-  _args209.BigsetID = bigsetID
-  _args209.ItemKey = itemKey
-  var _result210 TIBSDataServiceExistedResult
-  if err = p.Client_().Call(ctx, "existed", &_args209, &_result210); err != nil {
+  var _args229 TIBSDataServiceExistedArgs
+  _args229.BigsetID = bigsetID
+  _args229.ItemKey = itemKey
+  var _result230 TIBSDataServiceExistedResult
+  if err = p.Client_().Call(ctx, "existed", &_args229, &_result230); err != nil {
     return
   }
-  return _result210.GetSuccess(), nil
+  return _result230.GetSuccess(), nil
 }
 
 // Parameters:
 //  - BigsetID
 //  - ItemKey
 func (p *TIBSDataServiceClient) GetItem(ctx context.Context, bigsetID TKey, itemKey TItemKey) (r *TItemResult_, err error) {
-  var _args211 TIBSDataServiceGetItemArgs
-  _args211.BigsetID = bigsetID
-  _args211.ItemKey = itemKey
-  var _result212 TIBSDataServiceGetItemResult
-  if err = p.Client_().Call(ctx, "getItem", &_args211, &_result212); err != nil {
+  var _args231 TIBSDataServiceGetItemArgs
+  _args231.BigsetID = bigsetID
+  _args231.ItemKey = itemKey
+  var _result232 TIBSDataServiceGetItemResult
+  if err = p.Client_().Call(ctx, "getItem", &_args231, &_result232); err != nil {
     return
   }
-  return _result212.GetSuccess(), nil
+  return _result232.GetSuccess(), nil
 }
 
 // Parameters:
@@ -15269,15 +16307,15 @@ func (p *TIBSDataServiceClient) GetItem(ctx context.Context, bigsetID TKey, item
 //  - FromPos
 //  - Count
 func (p *TIBSDataServiceClient) GetSlice(ctx context.Context, bigsetID TKey, fromPos int32, count int32) (r *TItemSetResult_, err error) {
-  var _args213 TIBSDataServiceGetSliceArgs
-  _args213.BigsetID = bigsetID
-  _args213.FromPos = fromPos
-  _args213.Count = count
-  var _result214 TIBSDataServiceGetSliceResult
-  if err = p.Client_().Call(ctx, "getSlice", &_args213, &_result214); err != nil {
+  var _args233 TIBSDataServiceGetSliceArgs
+  _args233.BigsetID = bigsetID
+  _args233.FromPos = fromPos
+  _args233.Count = count
+  var _result234 TIBSDataServiceGetSliceResult
+  if err = p.Client_().Call(ctx, "getSlice", &_args233, &_result234); err != nil {
     return
   }
-  return _result214.GetSuccess(), nil
+  return _result234.GetSuccess(), nil
 }
 
 // Parameters:
@@ -15285,15 +16323,15 @@ func (p *TIBSDataServiceClient) GetSlice(ctx context.Context, bigsetID TKey, fro
 //  - FromKey
 //  - Count
 func (p *TIBSDataServiceClient) GetSliceFromItem(ctx context.Context, bigsetID TKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
-  var _args215 TIBSDataServiceGetSliceFromItemArgs
-  _args215.BigsetID = bigsetID
-  _args215.FromKey = fromKey
-  _args215.Count = count
-  var _result216 TIBSDataServiceGetSliceFromItemResult
-  if err = p.Client_().Call(ctx, "getSliceFromItem", &_args215, &_result216); err != nil {
+  var _args235 TIBSDataServiceGetSliceFromItemArgs
+  _args235.BigsetID = bigsetID
+  _args235.FromKey = fromKey
+  _args235.Count = count
+  var _result236 TIBSDataServiceGetSliceFromItemResult
+  if err = p.Client_().Call(ctx, "getSliceFromItem", &_args235, &_result236); err != nil {
     return
   }
-  return _result216.GetSuccess(), nil
+  return _result236.GetSuccess(), nil
 }
 
 // Parameters:
@@ -15301,15 +16339,15 @@ func (p *TIBSDataServiceClient) GetSliceFromItem(ctx context.Context, bigsetID T
 //  - FromPos
 //  - Count
 func (p *TIBSDataServiceClient) GetSliceR(ctx context.Context, bigsetID TKey, fromPos int32, count int32) (r *TItemSetResult_, err error) {
-  var _args217 TIBSDataServiceGetSliceRArgs
-  _args217.BigsetID = bigsetID
-  _args217.FromPos = fromPos
-  _args217.Count = count
-  var _result218 TIBSDataServiceGetSliceRResult
-  if err = p.Client_().Call(ctx, "getSliceR", &_args217, &_result218); err != nil {
+  var _args237 TIBSDataServiceGetSliceRArgs
+  _args237.BigsetID = bigsetID
+  _args237.FromPos = fromPos
+  _args237.Count = count
+  var _result238 TIBSDataServiceGetSliceRResult
+  if err = p.Client_().Call(ctx, "getSliceR", &_args237, &_result238); err != nil {
     return
   }
-  return _result218.GetSuccess(), nil
+  return _result238.GetSuccess(), nil
 }
 
 // Parameters:
@@ -15317,15 +16355,15 @@ func (p *TIBSDataServiceClient) GetSliceR(ctx context.Context, bigsetID TKey, fr
 //  - FromKey
 //  - Count
 func (p *TIBSDataServiceClient) GetSliceFromItemR(ctx context.Context, bigsetID TKey, fromKey TItemKey, count int32) (r *TItemSetResult_, err error) {
-  var _args219 TIBSDataServiceGetSliceFromItemRArgs
-  _args219.BigsetID = bigsetID
-  _args219.FromKey = fromKey
-  _args219.Count = count
-  var _result220 TIBSDataServiceGetSliceFromItemRResult
-  if err = p.Client_().Call(ctx, "getSliceFromItemR", &_args219, &_result220); err != nil {
+  var _args239 TIBSDataServiceGetSliceFromItemRArgs
+  _args239.BigsetID = bigsetID
+  _args239.FromKey = fromKey
+  _args239.Count = count
+  var _result240 TIBSDataServiceGetSliceFromItemRResult
+  if err = p.Client_().Call(ctx, "getSliceFromItemR", &_args239, &_result240); err != nil {
     return
   }
-  return _result220.GetSuccess(), nil
+  return _result240.GetSuccess(), nil
 }
 
 // Parameters:
@@ -15333,29 +16371,29 @@ func (p *TIBSDataServiceClient) GetSliceFromItemR(ctx context.Context, bigsetID 
 //  - StartKey
 //  - EndKey
 func (p *TIBSDataServiceClient) RangeQuery(ctx context.Context, bigsetID TKey, startKey TItemKey, endKey TItemKey) (r *TItemSetResult_, err error) {
-  var _args221 TIBSDataServiceRangeQueryArgs
-  _args221.BigsetID = bigsetID
-  _args221.StartKey = startKey
-  _args221.EndKey = endKey
-  var _result222 TIBSDataServiceRangeQueryResult
-  if err = p.Client_().Call(ctx, "rangeQuery", &_args221, &_result222); err != nil {
+  var _args241 TIBSDataServiceRangeQueryArgs
+  _args241.BigsetID = bigsetID
+  _args241.StartKey = startKey
+  _args241.EndKey = endKey
+  var _result242 TIBSDataServiceRangeQueryResult
+  if err = p.Client_().Call(ctx, "rangeQuery", &_args241, &_result242); err != nil {
     return
   }
-  return _result222.GetSuccess(), nil
+  return _result242.GetSuccess(), nil
 }
 
 // Parameters:
 //  - BigsetID
 //  - SetData
 func (p *TIBSDataServiceClient) BulkLoad(ctx context.Context, bigsetID TKey, setData *TItemSet) (r bool, err error) {
-  var _args223 TIBSDataServiceBulkLoadArgs
-  _args223.BigsetID = bigsetID
-  _args223.SetData = setData
-  var _result224 TIBSDataServiceBulkLoadResult
-  if err = p.Client_().Call(ctx, "bulkLoad", &_args223, &_result224); err != nil {
+  var _args243 TIBSDataServiceBulkLoadArgs
+  _args243.BigsetID = bigsetID
+  _args243.SetData = setData
+  var _result244 TIBSDataServiceBulkLoadResult
+  if err = p.Client_().Call(ctx, "bulkLoad", &_args243, &_result244); err != nil {
     return
   }
-  return _result224.GetSuccess(), nil
+  return _result244.GetSuccess(), nil
 }
 
 // Parameters:
@@ -15364,40 +16402,40 @@ func (p *TIBSDataServiceClient) BulkLoad(ctx context.Context, bigsetID TKey, set
 //  - GetAddedItems
 //  - GetReplacedItems
 func (p *TIBSDataServiceClient) MultiPut(ctx context.Context, bigsetID TKey, setData *TItemSet, getAddedItems bool, getReplacedItems bool) (r *TMultiPutItemResult_, err error) {
-  var _args225 TIBSDataServiceMultiPutArgs
-  _args225.BigsetID = bigsetID
-  _args225.SetData = setData
-  _args225.GetAddedItems = getAddedItems
-  _args225.GetReplacedItems = getReplacedItems
-  var _result226 TIBSDataServiceMultiPutResult
-  if err = p.Client_().Call(ctx, "multiPut", &_args225, &_result226); err != nil {
+  var _args245 TIBSDataServiceMultiPutArgs
+  _args245.BigsetID = bigsetID
+  _args245.SetData = setData
+  _args245.GetAddedItems = getAddedItems
+  _args245.GetReplacedItems = getReplacedItems
+  var _result246 TIBSDataServiceMultiPutResult
+  if err = p.Client_().Call(ctx, "multiPut", &_args245, &_result246); err != nil {
     return
   }
-  return _result226.GetSuccess(), nil
+  return _result246.GetSuccess(), nil
 }
 
 // Parameters:
 //  - BigsetID
 func (p *TIBSDataServiceClient) GetTotalCount(ctx context.Context, bigsetID TKey) (r int64, err error) {
-  var _args227 TIBSDataServiceGetTotalCountArgs
-  _args227.BigsetID = bigsetID
-  var _result228 TIBSDataServiceGetTotalCountResult
-  if err = p.Client_().Call(ctx, "getTotalCount", &_args227, &_result228); err != nil {
+  var _args247 TIBSDataServiceGetTotalCountArgs
+  _args247.BigsetID = bigsetID
+  var _result248 TIBSDataServiceGetTotalCountResult
+  if err = p.Client_().Call(ctx, "getTotalCount", &_args247, &_result248); err != nil {
     return
   }
-  return _result228.GetSuccess(), nil
+  return _result248.GetSuccess(), nil
 }
 
 // Parameters:
 //  - BigsetID
 func (p *TIBSDataServiceClient) RemoveAll(ctx context.Context, bigsetID TKey) (r int64, err error) {
-  var _args229 TIBSDataServiceRemoveAllArgs
-  _args229.BigsetID = bigsetID
-  var _result230 TIBSDataServiceRemoveAllResult
-  if err = p.Client_().Call(ctx, "removeAll", &_args229, &_result230); err != nil {
+  var _args249 TIBSDataServiceRemoveAllArgs
+  _args249.BigsetID = bigsetID
+  var _result250 TIBSDataServiceRemoveAllResult
+  if err = p.Client_().Call(ctx, "removeAll", &_args249, &_result250); err != nil {
     return
   }
-  return _result230.GetSuccess(), nil
+  return _result250.GetSuccess(), nil
 }
 
 type TIBSDataServiceProcessor struct {
@@ -15420,21 +16458,21 @@ func (p *TIBSDataServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFu
 
 func NewTIBSDataServiceProcessor(handler TIBSDataService) *TIBSDataServiceProcessor {
 
-  self231 := &TIBSDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self231.processorMap["putItem"] = &tIBSDataServiceProcessorPutItem{handler:handler}
-  self231.processorMap["removeItem"] = &tIBSDataServiceProcessorRemoveItem{handler:handler}
-  self231.processorMap["existed"] = &tIBSDataServiceProcessorExisted{handler:handler}
-  self231.processorMap["getItem"] = &tIBSDataServiceProcessorGetItem{handler:handler}
-  self231.processorMap["getSlice"] = &tIBSDataServiceProcessorGetSlice{handler:handler}
-  self231.processorMap["getSliceFromItem"] = &tIBSDataServiceProcessorGetSliceFromItem{handler:handler}
-  self231.processorMap["getSliceR"] = &tIBSDataServiceProcessorGetSliceR{handler:handler}
-  self231.processorMap["getSliceFromItemR"] = &tIBSDataServiceProcessorGetSliceFromItemR{handler:handler}
-  self231.processorMap["rangeQuery"] = &tIBSDataServiceProcessorRangeQuery{handler:handler}
-  self231.processorMap["bulkLoad"] = &tIBSDataServiceProcessorBulkLoad{handler:handler}
-  self231.processorMap["multiPut"] = &tIBSDataServiceProcessorMultiPut{handler:handler}
-  self231.processorMap["getTotalCount"] = &tIBSDataServiceProcessorGetTotalCount{handler:handler}
-  self231.processorMap["removeAll"] = &tIBSDataServiceProcessorRemoveAll{handler:handler}
-return self231
+  self251 := &TIBSDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self251.processorMap["putItem"] = &tIBSDataServiceProcessorPutItem{handler:handler}
+  self251.processorMap["removeItem"] = &tIBSDataServiceProcessorRemoveItem{handler:handler}
+  self251.processorMap["existed"] = &tIBSDataServiceProcessorExisted{handler:handler}
+  self251.processorMap["getItem"] = &tIBSDataServiceProcessorGetItem{handler:handler}
+  self251.processorMap["getSlice"] = &tIBSDataServiceProcessorGetSlice{handler:handler}
+  self251.processorMap["getSliceFromItem"] = &tIBSDataServiceProcessorGetSliceFromItem{handler:handler}
+  self251.processorMap["getSliceR"] = &tIBSDataServiceProcessorGetSliceR{handler:handler}
+  self251.processorMap["getSliceFromItemR"] = &tIBSDataServiceProcessorGetSliceFromItemR{handler:handler}
+  self251.processorMap["rangeQuery"] = &tIBSDataServiceProcessorRangeQuery{handler:handler}
+  self251.processorMap["bulkLoad"] = &tIBSDataServiceProcessorBulkLoad{handler:handler}
+  self251.processorMap["multiPut"] = &tIBSDataServiceProcessorMultiPut{handler:handler}
+  self251.processorMap["getTotalCount"] = &tIBSDataServiceProcessorGetTotalCount{handler:handler}
+  self251.processorMap["removeAll"] = &tIBSDataServiceProcessorRemoveAll{handler:handler}
+return self251
 }
 
 func (p *TIBSDataServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -15445,12 +16483,12 @@ func (p *TIBSDataServiceProcessor) Process(ctx context.Context, iprot, oprot thr
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x232 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x252 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x232.Write(oprot)
+  x252.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x232
+  return false, x252
 
 }
 
@@ -19294,11 +20332,11 @@ func (p *BSNotificationPoolClient) Client_() thrift.TClient {
 //  - RootID
 //  - SplitInfo
 func (p *BSNotificationPoolClient) NeedSplit(ctx context.Context, rootID TContainerKey, splitInfo *TNeedSplitInfo) (err error) {
-  var _args279 BSNotificationPoolNeedSplitArgs
-  _args279.RootID = rootID
-  _args279.SplitInfo = splitInfo
-  var _result280 BSNotificationPoolNeedSplitResult
-  if err = p.Client_().Call(ctx, "needSplit", &_args279, &_result280); err != nil {
+  var _args299 BSNotificationPoolNeedSplitArgs
+  _args299.RootID = rootID
+  _args299.SplitInfo = splitInfo
+  var _result300 BSNotificationPoolNeedSplitResult
+  if err = p.Client_().Call(ctx, "needSplit", &_args299, &_result300); err != nil {
     return
   }
   return nil
@@ -19307,22 +20345,22 @@ func (p *BSNotificationPoolClient) NeedSplit(ctx context.Context, rootID TContai
 // Parameters:
 //  - RootID
 func (p *BSNotificationPoolClient) SplitInfoUpdated(ctx context.Context, rootID TContainerKey) (err error) {
-  var _args281 BSNotificationPoolSplitInfoUpdatedArgs
-  _args281.RootID = rootID
-  var _result282 BSNotificationPoolSplitInfoUpdatedResult
-  if err = p.Client_().Call(ctx, "splitInfoUpdated", &_args281, &_result282); err != nil {
+  var _args301 BSNotificationPoolSplitInfoUpdatedArgs
+  _args301.RootID = rootID
+  var _result302 BSNotificationPoolSplitInfoUpdatedResult
+  if err = p.Client_().Call(ctx, "splitInfoUpdated", &_args301, &_result302); err != nil {
     return
   }
   return nil
 }
 
 func (p *BSNotificationPoolClient) GetJob(ctx context.Context) (r *SplitJob, err error) {
-  var _args283 BSNotificationPoolGetJobArgs
-  var _result284 BSNotificationPoolGetJobResult
-  if err = p.Client_().Call(ctx, "getJob", &_args283, &_result284); err != nil {
+  var _args303 BSNotificationPoolGetJobArgs
+  var _result304 BSNotificationPoolGetJobResult
+  if err = p.Client_().Call(ctx, "getJob", &_args303, &_result304); err != nil {
     return
   }
-  return _result284.GetSuccess(), nil
+  return _result304.GetSuccess(), nil
 }
 
 type BSNotificationPoolProcessor struct {
@@ -19345,11 +20383,11 @@ func (p *BSNotificationPoolProcessor) ProcessorMap() map[string]thrift.TProcesso
 
 func NewBSNotificationPoolProcessor(handler BSNotificationPool) *BSNotificationPoolProcessor {
 
-  self285 := &BSNotificationPoolProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self285.processorMap["needSplit"] = &bSNotificationPoolProcessorNeedSplit{handler:handler}
-  self285.processorMap["splitInfoUpdated"] = &bSNotificationPoolProcessorSplitInfoUpdated{handler:handler}
-  self285.processorMap["getJob"] = &bSNotificationPoolProcessorGetJob{handler:handler}
-return self285
+  self305 := &BSNotificationPoolProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self305.processorMap["needSplit"] = &bSNotificationPoolProcessorNeedSplit{handler:handler}
+  self305.processorMap["splitInfoUpdated"] = &bSNotificationPoolProcessorSplitInfoUpdated{handler:handler}
+  self305.processorMap["getJob"] = &bSNotificationPoolProcessorGetJob{handler:handler}
+return self305
 }
 
 func (p *BSNotificationPoolProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -19360,12 +20398,12 @@ func (p *BSNotificationPoolProcessor) Process(ctx context.Context, iprot, oprot 
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x286 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x306 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x286.Write(oprot)
+  x306.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x286
+  return false, x306
 
 }
 
@@ -20029,9 +21067,9 @@ func (p *TCluserOrdinatorServiceClient) Client_() thrift.TClient {
 // Parameters:
 //  - Key
 func (p *TCluserOrdinatorServiceClient) RemoveCache(ctx context.Context, key TContainerKey) (err error) {
-  var _args295 TCluserOrdinatorServiceRemoveCacheArgs
-  _args295.Key = key
-  if err := p.Client_().Call(ctx, "removeCache", &_args295, nil); err != nil {
+  var _args315 TCluserOrdinatorServiceRemoveCacheArgs
+  _args315.Key = key
+  if err := p.Client_().Call(ctx, "removeCache", &_args315, nil); err != nil {
     return err
   }
   return nil
@@ -20041,14 +21079,14 @@ func (p *TCluserOrdinatorServiceClient) RemoveCache(ctx context.Context, key TCo
 //  - Key
 //  - Value
 func (p *TCluserOrdinatorServiceClient) Put(ctx context.Context, key []byte, value []byte) (r int32, err error) {
-  var _args296 TCluserOrdinatorServicePutArgs
-  _args296.Key = key
-  _args296.Value = value
-  var _result297 TCluserOrdinatorServicePutResult
-  if err = p.Client_().Call(ctx, "put", &_args296, &_result297); err != nil {
+  var _args316 TCluserOrdinatorServicePutArgs
+  _args316.Key = key
+  _args316.Value = value
+  var _result317 TCluserOrdinatorServicePutResult
+  if err = p.Client_().Call(ctx, "put", &_args316, &_result317); err != nil {
     return
   }
-  return _result297.GetSuccess(), nil
+  return _result317.GetSuccess(), nil
 }
 
 type TCluserOrdinatorServiceProcessor struct {
@@ -20071,10 +21109,10 @@ func (p *TCluserOrdinatorServiceProcessor) ProcessorMap() map[string]thrift.TPro
 
 func NewTCluserOrdinatorServiceProcessor(handler TCluserOrdinatorService) *TCluserOrdinatorServiceProcessor {
 
-  self298 := &TCluserOrdinatorServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self298.processorMap["removeCache"] = &tCluserOrdinatorServiceProcessorRemoveCache{handler:handler}
-  self298.processorMap["put"] = &tCluserOrdinatorServiceProcessorPut{handler:handler}
-return self298
+  self318 := &TCluserOrdinatorServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self318.processorMap["removeCache"] = &tCluserOrdinatorServiceProcessorRemoveCache{handler:handler}
+  self318.processorMap["put"] = &tCluserOrdinatorServiceProcessorPut{handler:handler}
+return self318
 }
 
 func (p *TCluserOrdinatorServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -20085,12 +21123,12 @@ func (p *TCluserOrdinatorServiceProcessor) Process(ctx context.Context, iprot, o
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x299 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x319 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x299.Write(oprot)
+  x319.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x299
+  return false, x319
 
 }
 
