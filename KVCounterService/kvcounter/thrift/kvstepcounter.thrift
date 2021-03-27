@@ -39,14 +39,24 @@ exception InvalidOperation {
 	2: string message;
 }
 
-service KVStepCounterService{
-    TDataResult getData(1: TKey key), 
-    TErrorCode putData(1: TKVCounter data),
+struct TKVCounterItem{
+    1:string key
+    2:i64 value
+}
+struct ListTKVcounterItemResult{
+    1:TErrorCode errorCode,
+    2:list<TKVCounterItem> listItems,
+}
+service KVStepCounterService extends TDataService
+{
     i32 createGenerator(1: string genName),
     i32 removeGenerator(1: string genName),
     i64 getCurrentValue(1: string genName),
     i64 getValue(1: string genName) ,
-    i64 getStepValue(1: string genName, 2: i64 step) ,
+    i64 getStepValue(1: string genName, 2: i64 step),
+
+    ListTKVcounterItemResult getMultiCurrentValue(1:list<string> listKeys)
+    ListTKVcounterItemResult getMultiValue(1:list<string> listKeys)
 }
 
 

@@ -3,12 +3,11 @@
 
 package KVStepCounter
 
-import (
+import(
 	"bytes"
 	"context"
-	"fmt"
 	"reflect"
-
+	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
 )
 
@@ -19,5 +18,7 @@ var _ = context.Background
 var _ = reflect.DeepEqual
 var _ = bytes.Equal
 
+
 func init() {
 }
+

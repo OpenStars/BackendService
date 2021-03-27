@@ -54,6 +54,55 @@ func (m *KVCounterService) GetValue(genname string) (int64, error) {
 
 }
 
+func (m *KVCounterService) GetMultiValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error) {
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
+	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	if client == nil || client.Client == nil {
+		go m.notifyEndpointError()
+		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetMultiValue(context.Background(), listKeys)
+	if err != nil {
+		go m.notifyEndpointError()
+		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer client.BackToPool()
+	return r.ListItems, nil
+}
+func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error) {
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
+	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	if client == nil || client.Client == nil {
+		go m.notifyEndpointError()
+		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetMultiCurrentValue(context.Background(), listKeys)
+	if err != nil {
+		go m.notifyEndpointError()
+		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer client.BackToPool()
+	return r.ListItems, nil
+}
+
 func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)

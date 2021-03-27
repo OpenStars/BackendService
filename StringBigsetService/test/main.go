@@ -12,25 +12,37 @@ import (
 func TestSV() {
 	// 10.110.1.21:29810
 	svClient := StringBigsetService.NewClient(nil, "/test/", "10.9.0.17", "18407")
-	r, err := svClient.BsMultiPutBsItem([]*generic.TBigsetItem{
+	rfailed, err := svClient.BsMultiRemoveBsItem([]*generic.TBigsetItem{
 		&generic.TBigsetItem{
-			Bskey:     []byte("bskey1"),
-			Itemkey:   []byte("itemkey1"),
-			Itemvalue: []byte("itemval1"),
+			Bskey:   []byte("bskey1"),
+			Itemkey: []byte("itemkey1"),
 		},
 		&generic.TBigsetItem{
-			Bskey:     []byte("bskey1"),
-			Itemkey:   []byte("itemkey2"),
-			Itemvalue: []byte("itemval2"),
-		},
-		&generic.TBigsetItem{
-			Bskey:     []byte("bskey2"),
-			Itemkey:   []byte("itemkey1"),
-			Itemvalue: []byte("itemval1"),
+			Bskey:   []byte("bskey3"),
+			Itemkey: []byte("itemkey2"),
 		},
 	})
-	item, _ := svClient.BsGetItem("bskey1", "itemkey1")
-	log.Println("item value", string(item.Value))
+	log.Println("total failed ", len(rfailed))
+	log.Println("rfailed", string(rfailed[0].Bskey), "err", err)
+	// r, err := svClient.BsMultiPutBsItem([]*generic.TBigsetItem{
+	// 	&generic.TBigsetItem{
+	// 		Bskey:     []byte("bskey1"),
+	// 		Itemkey:   []byte("itemkey1"),
+	// 		Itemvalue: []byte("itemval1"),
+	// 	},
+	// 	&generic.TBigsetItem{
+	// 		Bskey:     []byte("bskey1"),
+	// 		Itemkey:   []byte("itemkey2"),
+	// 		Itemvalue: []byte("itemval2"),
+	// 	},
+	// 	&generic.TBigsetItem{
+	// 		Bskey:     []byte("bskey2"),
+	// 		Itemkey:   []byte("itemkey1"),
+	// 		Itemvalue: []byte("itemval1"),
+	// 	},
+	// })
+	// item, _ := svClient.BsGetItem("bskey1", "itemkey1")
+	// log.Println("item value", string(item.Value))
 	// bskey := generic.TStringKey("GiacNgoTVLinkPaper")
 	// // svClient.BsPutItem(bskey, &generic.TItem{
 	// // 	Key:   []byte("minhv2"),
