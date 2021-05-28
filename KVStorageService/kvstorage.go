@@ -105,7 +105,7 @@ func (m *kvstorageservice) RemoveData(key string) (bool, error) {
 	return true, nil
 }
 
-func (m *kvstorageservice) GetListData(keys []string) (results map[string]string, missingkeys []string, err error) {
+func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVItem, missingkeys []string, err error) {
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
@@ -122,11 +122,8 @@ func (m *kvstorageservice) GetListData(keys []string) (results map[string]string
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return nil, nil, nil
 	}
-	results = make(map[string]string)
-	for _, item := range r.Data {
-		results[item.Key] = item.Value
-	}
-	return results, r.Missingkeys, nil
+
+	return r.Data, r.Missingkeys, nil
 }
 
 func NewClient(sid string, host string, port string) Client {
