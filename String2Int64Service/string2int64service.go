@@ -3,9 +3,7 @@ package String2Int64Service
 import (
 	"context"
 	"errors"
-	"log"
 
-	"github.com/OpenStars/BackendService/EndpointsManager"
 	"github.com/OpenStars/BackendService/String2Int64Service/s2i64kv/thrift/gen-go/OpenStars/Common/S2I64KV"
 	"github.com/OpenStars/BackendService/String2Int64Service/s2i64kv/transports"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -16,7 +14,7 @@ type String2Int64Service struct {
 	port string
 	sid  string
 
-	etcdManager *EndpointsManager.EtcdBackendEndpointManager
+	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
 
 	bot_token  string
 	bot_chatID int64
@@ -31,15 +29,15 @@ func (m *String2Int64Service) notifyEndpointError() {
 }
 func (m *String2Int64Service) PutData(key string, value int64) error {
 
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetS2I64CompactClient(m.host, m.port)
 
@@ -65,15 +63,15 @@ func (m *String2Int64Service) PutData(key string, value int64) error {
 
 func (m *String2Int64Service) GetData(key string) (int64, error) {
 
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetS2I64CompactClient(m.host, m.port)
 
@@ -98,15 +96,15 @@ func (m *String2Int64Service) GetData(key string) (int64, error) {
 }
 
 func (m *String2Int64Service) CasData(key string, value int64) (sucess bool, oldvalue int64, err error) {
-	if m.etcdManager != nil {
-		h, p, err := m.etcdManager.GetEndpoint(m.sid)
-		if err != nil {
-			log.Println("EtcdManager get endpoints", "err", err)
-		} else {
-			m.host = h
-			m.port = p
-		}
-	}
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
 
 	client := transports.GetS2I64CompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
@@ -130,27 +128,27 @@ func (m *String2Int64Service) CasData(key string, value int64) (sucess bool, old
 
 func NewClient(etcdServers []string, sid, host, port string) Client {
 	s2isv := &String2Int64Service{
-		host:        host,
-		port:        port,
-		sid:         sid,
-		etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServers),
-		bot_chatID:  -1001469468779,
-		bot_token:   "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
-		botClient:   nil,
+		host: host,
+		port: port,
+		sid:  sid,
+		// etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServers),
+		bot_chatID: -1001469468779,
+		bot_token:  "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
+		botClient:  nil,
 	}
 	bot, err := tgbotapi.NewBotAPI(s2isv.bot_token)
 	if err == nil {
 		s2isv.botClient = bot
 	}
-	if s2isv.etcdManager == nil {
+	// if s2isv.etcdManager == nil {
 
-		return s2isv
-	}
-	err = s2isv.etcdManager.SetDefaultEntpoint(sid, host, port)
-	if err != nil {
-		log.Println("SetDefaultEndpoint sid", sid, "err", err)
-		return s2isv
-	}
+	// 	return s2isv
+	// }
+	// err = s2isv.etcdManager.SetDefaultEntpoint(sid, host, port)
+	// if err != nil {
+	// 	log.Println("SetDefaultEndpoint sid", sid, "err", err)
+	// 	return s2isv
+	// }
 	// s2isv.etcdManager.GetAllEndpoint(serviceID)
 	return s2isv
 }
