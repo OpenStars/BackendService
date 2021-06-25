@@ -186,6 +186,35 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 
 }
 
+func (m *KVCounterService) RemoveGenerator(genname string) (bool, error) {
+
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
+
+	client := transports.GetKVCounterCompactClient(m.host, m.port)
+
+	if client == nil || client.Client == nil {
+		go m.notifyEndpointError()
+		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	_, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).RemoveGenerator(context.Background(), genname)
+	if err != nil {
+		go m.notifyEndpointError()
+		return false, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer client.BackToPool()
+	return true, nil
+
+}
+
 func (m *KVCounterService) Close() {
 	transports.Close(m.host, m.port)
 }
