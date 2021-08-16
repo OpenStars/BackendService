@@ -7,6 +7,7 @@ import (
 
 	"github.com/OpenStars/BackendService/PublicProfileService/tpubprofileservice/thrift/gen-go/openstars/pubprofile"
 	"github.com/OpenStars/BackendService/PublicProfileService/tpubprofileservice/transports"
+	telenotification "github.com/OpenStars/BackendService/TeleNotification"
 	"github.com/bluele/gcache"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -23,10 +24,11 @@ type pubprofileclient struct {
 }
 
 func (m *pubprofileclient) notifyEndpointError() {
-	if m.botClient != nil {
-		msg := tgbotapi.NewMessage(m.bot_chatID, "Hệ thống kiểm soát endpoint phát hiện pubprofile endpoint address "+m.host+":"+m.port+" đang không hoạt động")
-		m.botClient.Send(msg)
-	}
+	telenotification.NotifyServiceError("pubprofile", m.host, m.port, nil)
+	// if m.botClient != nil {
+	// 	msg := tgbotapi.NewMessage(m.bot_chatID, "Hệ thống kiểm soát endpoint phát hiện pubprofile endpoint address "+m.host+":"+m.port+" đang không hoạt động")
+	// 	m.botClient.Send(msg)
+	// }
 }
 
 func (m *pubprofileclient) GetProfileByUID(uid int64) (r *pubprofile.ProfileData, err error) {

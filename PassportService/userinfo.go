@@ -6,6 +6,7 @@ import (
 
 	"github.com/OpenStars/BackendService/PassportService/ppassport/thrift/gen-go/OpenStars/Platform/Passport"
 	"github.com/OpenStars/BackendService/PassportService/ppassport/transports"
+	telenotification "github.com/OpenStars/BackendService/TeleNotification"
 )
 
 type ppassportservice struct {
@@ -18,12 +19,14 @@ func (m *ppassportservice) GetData(key int64) (*Passport.TPassportInfo, error) {
 
 	client := transports.GetPassportCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
+		telenotification.NotifyServiceError(m.sid, m.host, m.port, nil)
 		return nil, errors.New("Backend service " + m.sid + "connection refused")
 	}
 
 	r, err := client.Client.(*Passport.TPassportServiceClient).GetData(context.Background(), Passport.TKey(key))
 
 	if err != nil {
+		telenotification.NotifyServiceError(m.sid, m.host, m.port, err)
 		return nil, errors.New("Backend service " + m.sid + "connection refused")
 	}
 

@@ -7,6 +7,7 @@ import (
 	"github.com/OpenStars/BackendService/MoneyStorageService/money/moneyservice"
 	"github.com/OpenStars/BackendService/MoneyStorageService/money/mshared"
 	"github.com/OpenStars/BackendService/MoneyStorageService/money/transports"
+	telenotification "github.com/OpenStars/BackendService/TeleNotification"
 )
 
 type client struct {
@@ -19,12 +20,14 @@ func (m *client) AddMoney(uid int64, amount int64, purseType int64, uType int32,
 
 	client := transports.GetMoneyStorageServiceCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
+		telenotification.NotifyServiceError(m.sid, m.host, m.port, nil)
 		return -1, errors.New("Backend service " + m.sid + "connection refused")
 	}
 
 	r, err := client.Client.(*moneyservice.TMoneyAgentServiceClient).AddMoney(context.Background(), uid, mshared.TMONEY(amount), mshared.TPurseType(purseType), uType, description)
 
 	if err != nil {
+		telenotification.NotifyServiceError(m.sid, m.host, m.port, nil)
 		return -1, errors.New("Backend service " + m.sid + "connection refused")
 	}
 
