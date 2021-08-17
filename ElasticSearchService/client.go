@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	telenotification "github.com/OpenStars/BackendService/TeleNotification"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
@@ -127,6 +128,7 @@ func (m *client) Index(indexName, docID, documentJson string) (bool, error) {
 	}
 	res, err := req.Do(context.Background(), m.esclient)
 	if err != nil {
+		telenotification.NotifyServiceError("elasticsearch", m.url, "", err)
 		return false, err
 	}
 	if res.IsError() {

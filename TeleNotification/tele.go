@@ -1,6 +1,7 @@
 package telenotification
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -77,6 +78,7 @@ func NotifyServiceError(sid, host, port string, err error) {
 
 func worker() {
 	for msg := range msgChan {
+
 		if bot != nil {
 			msgTele := tgbotapi.NewMessage(id, msg)
 			_, err := bot.Send(msgTele)
@@ -85,4 +87,5 @@ func worker() {
 			}
 		}
 	}
+	fmt.Println("ket thu worker")
 }

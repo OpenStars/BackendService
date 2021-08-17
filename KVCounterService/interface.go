@@ -10,5 +10,4 @@ type Client interface {
 	GetMultiValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error)
 	GetMultiCurrentValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error)
 	RemoveGenerator(genname string) (bool, error)
-	Close()
 }

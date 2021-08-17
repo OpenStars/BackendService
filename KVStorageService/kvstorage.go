@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/OpenStars/BackendService/KVStorageService/kvstorage/thrift/gen-go/OpenStars/Platform/KVStorage"
-	"github.com/OpenStars/BackendService/KVStorageService/kvstorage/transports"
+	transports "github.com/OpenStars/BackendService/KVStorageService/kvstorage/transportsv2"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -22,16 +22,16 @@ type kvstorageservice struct {
 	botClient  *tgbotapi.BotAPI
 }
 
-func (m *kvstorageservice) notifyEndpointError() {
-	if m.botClient != nil {
-		msg := tgbotapi.NewMessage(m.bot_chatID, "Hệ thống kiểm soát phát hiện service kvstorageservice có địa chỉ "+m.host+":"+m.port+" đang không hoạt động")
-		m.botClient.Send(msg)
-	}
-}
+// func (m *kvstorageservice) notifyEndpointError() {
+// 	if m.botClient != nil {
+// 		msg := tgbotapi.NewMessage(m.bot_chatID, "Hệ thống kiểm soát phát hiện service kvstorageservice có địa chỉ "+m.host+":"+m.port+" đang không hoạt động")
+// 		m.botClient.Send(msg)
+// 	}
+// }
 
-func (m *kvstorageservice) Close() {
-	transports.Close(m.host, m.port)
-}
+// func (m *kvstorageservice) Close() {
+// 	transports.Close(m.host, m.port)
+// }
 
 func (m *kvstorageservice) GetData(key string) (string, error) {
 	// if m.etcdManager != nil {
@@ -46,16 +46,16 @@ func (m *kvstorageservice) GetData(key string) (string, error) {
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return "", errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStorage.KVStorageServiceClient).GetData(context.Background(), key)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return "", errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return "", nil
 	}
@@ -66,7 +66,7 @@ func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
@@ -75,10 +75,10 @@ func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
 		Value: value,
 	})
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return false, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	if r != KVStorage.TErrorCode_EGood {
 		return false, nil
 	}
@@ -89,16 +89,16 @@ func (m *kvstorageservice) RemoveData(key string) (bool, error) {
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStorage.KVStorageServiceClient).RemoveData(context.Background(), key)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return false, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	if r != KVStorage.TErrorCode_EGood {
 		return false, nil
 	}
@@ -109,16 +109,16 @@ func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVIt
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return nil, nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStorage.KVStorageServiceClient).GetListData(context.Background(), keys)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return nil, nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return nil, nil, nil
 	}
@@ -135,14 +135,7 @@ func NewClient(sid string, host string, port string) Client {
 		host: host,
 		port: port,
 		sid:  sid,
+	}
 
-		bot_chatID: -1001469468779,
-		bot_token:  "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
-		botClient:  nil,
-	}
-	bot, err := tgbotapi.NewBotAPI(kvstorage.bot_token)
-	if err == nil {
-		kvstorage.botClient = bot
-	}
 	return kvstorage
 }

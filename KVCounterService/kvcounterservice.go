@@ -5,27 +5,13 @@ import (
 	"errors"
 
 	"github.com/OpenStars/BackendService/KVCounterService/kvcounter/thrift/gen-go/OpenStars/Counters/KVStepCounter"
-	"github.com/OpenStars/BackendService/KVCounterService/kvcounter/transports"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	transports "github.com/OpenStars/BackendService/KVCounterService/kvcounter/transportsv2"
 )
 
 type KVCounterService struct {
 	host string
 	port string
 	sid  string
-
-	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
-
-	bot_token  string
-	bot_chatID int64
-	botClient  *tgbotapi.BotAPI
-}
-
-func (m *KVCounterService) notifyEndpointError() {
-	if m.botClient != nil {
-		msg := tgbotapi.NewMessage(m.bot_chatID, "Hệ thống kiểm soát phát hiện service kvstepcounter có địa chỉ "+m.host+":"+m.port+" đang không hoạt động")
-		m.botClient.Send(msg)
-	}
 }
 
 func (m *KVCounterService) GetValue(genname string) (int64, error) {
@@ -40,16 +26,15 @@ func (m *KVCounterService) GetValue(genname string) (int64, error) {
 	// }
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
 		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetValue(context.Background(), genname)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return -1, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	return r, nil
 
 }
@@ -66,16 +51,16 @@ func (m *KVCounterService) GetMultiValue(listKeys []string) ([]*KVStepCounter.TK
 	// }
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetMultiValue(context.Background(), listKeys)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	return r.ListItems, nil
 }
 func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error) {
@@ -90,16 +75,16 @@ func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCou
 	// }
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetMultiCurrentValue(context.Background(), listKeys)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	return r.ListItems, nil
 }
 
@@ -116,16 +101,16 @@ func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetCurrentValue(context.Background(), genname)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return -1, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	return r, nil
 }
 
@@ -143,17 +128,17 @@ func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, erro
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetStepValue(context.Background(), genname, step)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		// client = transports.NewGetKVCounterCompactClient(m.host, m.port)
 		return -1, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	return r, nil
 }
 
@@ -172,16 +157,16 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).CreateGenerator(context.Background(), genname)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return -1, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	return r, nil
 
 }
@@ -201,22 +186,18 @@ func (m *KVCounterService) RemoveGenerator(genname string) (bool, error) {
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
 
 	if client == nil || client.Client == nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
 
 	_, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).RemoveGenerator(context.Background(), genname)
 	if err != nil {
-		go m.notifyEndpointError()
+		transports.ServiceDisconnect(client)
 		return false, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer client.BackToPool()
+	defer transports.BackToPool(client)
 	return true, nil
 
-}
-
-func (m *KVCounterService) Close() {
-	transports.Close(m.host, m.port)
 }
 
 func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Client {
@@ -228,15 +209,8 @@ func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Clien
 		host: defaultHost,
 		port: defaultPort,
 		sid:  sid,
-		// etcdManager: EndpointsManager.GetEtcdBackendEndpointManagerSingleton(etcdServers),
-		bot_chatID: -1001469468779,
-		bot_token:  "1108341214:AAEKNbFf6PO7Y6UJGK-xepDDOGKlBU2QVCg",
-		botClient:  nil,
 	}
-	bot, err := tgbotapi.NewBotAPI(kvcounter.bot_token)
-	if err == nil {
-		kvcounter.botClient = bot
-	}
+
 	// if kvcounter.etcdManager == nil {
 	// 	return kvcounter
 	// }
