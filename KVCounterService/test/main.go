@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	kvcounter := KVCounterService.NewClient(nil, "/test", "10.60.68.103", "7974")
+	kvcounter := KVCounterService.NewClient(nil, "/test", "127.0.0.1", "8883")
 
 	k, err := kvcounter.GetValue("test")
 	fmt.Println("k", k, "err", err)

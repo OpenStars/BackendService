@@ -92,7 +92,7 @@ func TDataPtr(v TData) *TData { return &v }
 //  - Value
 type KVItem struct {
   Key string `thrift:"key,1" db:"key" json:"key"`
-  Value string `thrift:"value,2" db:"value" json:"value"`
+  Value []byte `thrift:"value,2" db:"value" json:"value"`
 }
 
 func NewKVItem() *KVItem {
@@ -104,7 +104,7 @@ func (p *KVItem) GetKey() string {
   return p.Key
 }
 
-func (p *KVItem) GetValue() string {
+func (p *KVItem) GetValue() []byte {
   return p.Value
 }
 func (p *KVItem) Read(iprot thrift.TProtocol) error {
@@ -165,7 +165,7 @@ func (p *KVItem)  ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *KVItem)  ReadField2(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadString(); err != nil {
+  if v, err := iprot.ReadBinary(); err != nil {
   return thrift.PrependError("error reading field 2: ", err)
 } else {
   p.Value = v
@@ -200,7 +200,7 @@ func (p *KVItem) writeField1(oprot thrift.TProtocol) (err error) {
 func (p *KVItem) writeField2(oprot thrift.TProtocol) (err error) {
   if err := oprot.WriteFieldBegin("value", thrift.STRING, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:value: ", p), err) }
-  if err := oprot.WriteString(string(p.Value)); err != nil {
+  if err := oprot.WriteBinary(p.Value); err != nil {
   return thrift.PrependError(fmt.Sprintf("%T.value (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 2:value: ", p), err) }
@@ -912,13 +912,6 @@ type TDataService interface {
   // Parameters:
   //  - Key
   RemoveData(ctx context.Context, key string) (r TErrorCode, err error)
-  OpenIterate(ctx context.Context) (r int64, err error)
-  // Parameters:
-  //  - Sessionkey
-  NextItem(ctx context.Context, sessionkey int64) (r *TDataResult_, err error)
-  // Parameters:
-  //  - Sessionkey
-  CloseIterate(ctx context.Context, sessionkey int64) (r TErrorCode, err error)
 }
 
 type TDataServiceClient struct {
@@ -996,39 +989,6 @@ func (p *TDataServiceClient) RemoveData(ctx context.Context, key string) (r TErr
   return _result14.GetSuccess(), nil
 }
 
-func (p *TDataServiceClient) OpenIterate(ctx context.Context) (r int64, err error) {
-  var _args15 TDataServiceOpenIterateArgs
-  var _result16 TDataServiceOpenIterateResult
-  if err = p.Client_().Call(ctx, "openIterate", &_args15, &_result16); err != nil {
-    return
-  }
-  return _result16.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Sessionkey
-func (p *TDataServiceClient) NextItem(ctx context.Context, sessionkey int64) (r *TDataResult_, err error) {
-  var _args17 TDataServiceNextItemArgs
-  _args17.Sessionkey = sessionkey
-  var _result18 TDataServiceNextItemResult
-  if err = p.Client_().Call(ctx, "nextItem", &_args17, &_result18); err != nil {
-    return
-  }
-  return _result18.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Sessionkey
-func (p *TDataServiceClient) CloseIterate(ctx context.Context, sessionkey int64) (r TErrorCode, err error) {
-  var _args19 TDataServiceCloseIterateArgs
-  _args19.Sessionkey = sessionkey
-  var _result20 TDataServiceCloseIterateResult
-  if err = p.Client_().Call(ctx, "closeIterate", &_args19, &_result20); err != nil {
-    return
-  }
-  return _result20.GetSuccess(), nil
-}
-
 type TDataServiceProcessor struct {
   processorMap map[string]thrift.TProcessorFunction
   handler TDataService
@@ -1049,15 +1009,12 @@ func (p *TDataServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunct
 
 func NewTDataServiceProcessor(handler TDataService) *TDataServiceProcessor {
 
-  self21 := &TDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self21.processorMap["getData"] = &tDataServiceProcessorGetData{handler:handler}
-  self21.processorMap["putData"] = &tDataServiceProcessorPutData{handler:handler}
-  self21.processorMap["getListData"] = &tDataServiceProcessorGetListData{handler:handler}
-  self21.processorMap["removeData"] = &tDataServiceProcessorRemoveData{handler:handler}
-  self21.processorMap["openIterate"] = &tDataServiceProcessorOpenIterate{handler:handler}
-  self21.processorMap["nextItem"] = &tDataServiceProcessorNextItem{handler:handler}
-  self21.processorMap["closeIterate"] = &tDataServiceProcessorCloseIterate{handler:handler}
-return self21
+  self15 := &TDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self15.processorMap["getData"] = &tDataServiceProcessorGetData{handler:handler}
+  self15.processorMap["putData"] = &tDataServiceProcessorPutData{handler:handler}
+  self15.processorMap["getListData"] = &tDataServiceProcessorGetListData{handler:handler}
+  self15.processorMap["removeData"] = &tDataServiceProcessorRemoveData{handler:handler}
+return self15
 }
 
 func (p *TDataServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -1068,12 +1025,12 @@ func (p *TDataServiceProcessor) Process(ctx context.Context, iprot, oprot thrift
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x22 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x16 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x22.Write(oprot)
+  x16.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x22
+  return false, x16
 
 }
 
@@ -1252,150 +1209,6 @@ var retval TErrorCode
     result.Success = &retval
 }
   if err2 = oprot.WriteMessageBegin("removeData", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
-}
-
-type tDataServiceProcessorOpenIterate struct {
-  handler TDataService
-}
-
-func (p *tDataServiceProcessorOpenIterate) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := TDataServiceOpenIterateArgs{}
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("openIterate", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush(ctx)
-    return false, err
-  }
-
-  iprot.ReadMessageEnd()
-  result := TDataServiceOpenIterateResult{}
-var retval int64
-  var err2 error
-  if retval, err2 = p.handler.OpenIterate(ctx); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing openIterate: " + err2.Error())
-    oprot.WriteMessageBegin("openIterate", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush(ctx)
-    return true, err2
-  } else {
-    result.Success = &retval
-}
-  if err2 = oprot.WriteMessageBegin("openIterate", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
-}
-
-type tDataServiceProcessorNextItem struct {
-  handler TDataService
-}
-
-func (p *tDataServiceProcessorNextItem) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := TDataServiceNextItemArgs{}
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("nextItem", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush(ctx)
-    return false, err
-  }
-
-  iprot.ReadMessageEnd()
-  result := TDataServiceNextItemResult{}
-var retval *TDataResult_
-  var err2 error
-  if retval, err2 = p.handler.NextItem(ctx, args.Sessionkey); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing nextItem: " + err2.Error())
-    oprot.WriteMessageBegin("nextItem", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush(ctx)
-    return true, err2
-  } else {
-    result.Success = retval
-}
-  if err2 = oprot.WriteMessageBegin("nextItem", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
-}
-
-type tDataServiceProcessorCloseIterate struct {
-  handler TDataService
-}
-
-func (p *tDataServiceProcessorCloseIterate) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := TDataServiceCloseIterateArgs{}
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("closeIterate", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush(ctx)
-    return false, err
-  }
-
-  iprot.ReadMessageEnd()
-  result := TDataServiceCloseIterateResult{}
-var retval TErrorCode
-  var err2 error
-  if retval, err2 = p.handler.CloseIterate(ctx, args.Sessionkey); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing closeIterate: " + err2.Error())
-    oprot.WriteMessageBegin("closeIterate", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush(ctx)
-    return true, err2
-  } else {
-    result.Success = &retval
-}
-  if err2 = oprot.WriteMessageBegin("closeIterate", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1902,13 +1715,13 @@ func (p *TDataServiceGetListDataArgs)  ReadField1(iprot thrift.TProtocol) error 
   tSlice := make([]string, 0, size)
   p.Lskeys =  tSlice
   for i := 0; i < size; i ++ {
-var _elem23 string
+var _elem17 string
     if v, err := iprot.ReadString(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
-    _elem23 = v
+    _elem17 = v
 }
-    p.Lskeys = append(p.Lskeys, _elem23)
+    p.Lskeys = append(p.Lskeys, _elem17)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -2246,540 +2059,6 @@ func (p *TDataServiceRemoveDataResult) String() string {
   return fmt.Sprintf("TDataServiceRemoveDataResult(%+v)", *p)
 }
 
-type TDataServiceOpenIterateArgs struct {
-}
-
-func NewTDataServiceOpenIterateArgs() *TDataServiceOpenIterateArgs {
-  return &TDataServiceOpenIterateArgs{}
-}
-
-func (p *TDataServiceOpenIterateArgs) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if err := iprot.Skip(fieldTypeId); err != nil {
-      return err
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *TDataServiceOpenIterateArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("openIterate_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *TDataServiceOpenIterateArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("TDataServiceOpenIterateArgs(%+v)", *p)
-}
-
-// Attributes:
-//  - Success
-type TDataServiceOpenIterateResult struct {
-  Success *int64 `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewTDataServiceOpenIterateResult() *TDataServiceOpenIterateResult {
-  return &TDataServiceOpenIterateResult{}
-}
-
-var TDataServiceOpenIterateResult_Success_DEFAULT int64
-func (p *TDataServiceOpenIterateResult) GetSuccess() int64 {
-  if !p.IsSetSuccess() {
-    return TDataServiceOpenIterateResult_Success_DEFAULT
-  }
-return *p.Success
-}
-func (p *TDataServiceOpenIterateResult) IsSetSuccess() bool {
-  return p.Success != nil
-}
-
-func (p *TDataServiceOpenIterateResult) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if fieldTypeId == thrift.I64 {
-        if err := p.ReadField0(iprot); err != nil {
-          return err
-        }
-      } else {
-        if err := iprot.Skip(fieldTypeId); err != nil {
-          return err
-        }
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *TDataServiceOpenIterateResult)  ReadField0(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 0: ", err)
-} else {
-  p.Success = &v
-}
-  return nil
-}
-
-func (p *TDataServiceOpenIterateResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("openIterate_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-    if err := p.writeField0(oprot); err != nil { return err }
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *TDataServiceOpenIterateResult) writeField0(oprot thrift.TProtocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.I64, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := oprot.WriteI64(int64(*p.Success)); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *TDataServiceOpenIterateResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("TDataServiceOpenIterateResult(%+v)", *p)
-}
-
-// Attributes:
-//  - Sessionkey
-type TDataServiceNextItemArgs struct {
-  Sessionkey int64 `thrift:"sessionkey,1" db:"sessionkey" json:"sessionkey"`
-}
-
-func NewTDataServiceNextItemArgs() *TDataServiceNextItemArgs {
-  return &TDataServiceNextItemArgs{}
-}
-
-
-func (p *TDataServiceNextItemArgs) GetSessionkey() int64 {
-  return p.Sessionkey
-}
-func (p *TDataServiceNextItemArgs) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if fieldTypeId == thrift.I64 {
-        if err := p.ReadField1(iprot); err != nil {
-          return err
-        }
-      } else {
-        if err := iprot.Skip(fieldTypeId); err != nil {
-          return err
-        }
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *TDataServiceNextItemArgs)  ReadField1(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Sessionkey = v
-}
-  return nil
-}
-
-func (p *TDataServiceNextItemArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("nextItem_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-    if err := p.writeField1(oprot); err != nil { return err }
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *TDataServiceNextItemArgs) writeField1(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("sessionkey", thrift.I64, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:sessionkey: ", p), err) }
-  if err := oprot.WriteI64(int64(p.Sessionkey)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.sessionkey (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:sessionkey: ", p), err) }
-  return err
-}
-
-func (p *TDataServiceNextItemArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("TDataServiceNextItemArgs(%+v)", *p)
-}
-
-// Attributes:
-//  - Success
-type TDataServiceNextItemResult struct {
-  Success *TDataResult_ `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewTDataServiceNextItemResult() *TDataServiceNextItemResult {
-  return &TDataServiceNextItemResult{}
-}
-
-var TDataServiceNextItemResult_Success_DEFAULT *TDataResult_
-func (p *TDataServiceNextItemResult) GetSuccess() *TDataResult_ {
-  if !p.IsSetSuccess() {
-    return TDataServiceNextItemResult_Success_DEFAULT
-  }
-return p.Success
-}
-func (p *TDataServiceNextItemResult) IsSetSuccess() bool {
-  return p.Success != nil
-}
-
-func (p *TDataServiceNextItemResult) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if fieldTypeId == thrift.STRUCT {
-        if err := p.ReadField0(iprot); err != nil {
-          return err
-        }
-      } else {
-        if err := iprot.Skip(fieldTypeId); err != nil {
-          return err
-        }
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *TDataServiceNextItemResult)  ReadField0(iprot thrift.TProtocol) error {
-  p.Success = &TDataResult_{}
-  if err := p.Success.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
-  }
-  return nil
-}
-
-func (p *TDataServiceNextItemResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("nextItem_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-    if err := p.writeField0(oprot); err != nil { return err }
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *TDataServiceNextItemResult) writeField0(oprot thrift.TProtocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := p.Success.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
-    }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *TDataServiceNextItemResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("TDataServiceNextItemResult(%+v)", *p)
-}
-
-// Attributes:
-//  - Sessionkey
-type TDataServiceCloseIterateArgs struct {
-  Sessionkey int64 `thrift:"sessionkey,1" db:"sessionkey" json:"sessionkey"`
-}
-
-func NewTDataServiceCloseIterateArgs() *TDataServiceCloseIterateArgs {
-  return &TDataServiceCloseIterateArgs{}
-}
-
-
-func (p *TDataServiceCloseIterateArgs) GetSessionkey() int64 {
-  return p.Sessionkey
-}
-func (p *TDataServiceCloseIterateArgs) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if fieldTypeId == thrift.I64 {
-        if err := p.ReadField1(iprot); err != nil {
-          return err
-        }
-      } else {
-        if err := iprot.Skip(fieldTypeId); err != nil {
-          return err
-        }
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *TDataServiceCloseIterateArgs)  ReadField1(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Sessionkey = v
-}
-  return nil
-}
-
-func (p *TDataServiceCloseIterateArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("closeIterate_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-    if err := p.writeField1(oprot); err != nil { return err }
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *TDataServiceCloseIterateArgs) writeField1(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("sessionkey", thrift.I64, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:sessionkey: ", p), err) }
-  if err := oprot.WriteI64(int64(p.Sessionkey)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.sessionkey (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:sessionkey: ", p), err) }
-  return err
-}
-
-func (p *TDataServiceCloseIterateArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("TDataServiceCloseIterateArgs(%+v)", *p)
-}
-
-// Attributes:
-//  - Success
-type TDataServiceCloseIterateResult struct {
-  Success *TErrorCode `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewTDataServiceCloseIterateResult() *TDataServiceCloseIterateResult {
-  return &TDataServiceCloseIterateResult{}
-}
-
-var TDataServiceCloseIterateResult_Success_DEFAULT TErrorCode
-func (p *TDataServiceCloseIterateResult) GetSuccess() TErrorCode {
-  if !p.IsSetSuccess() {
-    return TDataServiceCloseIterateResult_Success_DEFAULT
-  }
-return *p.Success
-}
-func (p *TDataServiceCloseIterateResult) IsSetSuccess() bool {
-  return p.Success != nil
-}
-
-func (p *TDataServiceCloseIterateResult) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if fieldTypeId == thrift.I32 {
-        if err := p.ReadField0(iprot); err != nil {
-          return err
-        }
-      } else {
-        if err := iprot.Skip(fieldTypeId); err != nil {
-          return err
-        }
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *TDataServiceCloseIterateResult)  ReadField0(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 0: ", err)
-} else {
-  temp := TErrorCode(v)
-  p.Success = &temp
-}
-  return nil
-}
-
-func (p *TDataServiceCloseIterateResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("closeIterate_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-    if err := p.writeField0(oprot); err != nil { return err }
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *TDataServiceCloseIterateResult) writeField0(oprot thrift.TProtocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.I32, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := oprot.WriteI32(int32(*p.Success)); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *TDataServiceCloseIterateResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("TDataServiceCloseIterateResult(%+v)", *p)
-}
-
 
 type KVStorageService interface {
 TDataService
@@ -2807,8 +2086,8 @@ type KVStorageServiceProcessor struct {
 }
 
 func NewKVStorageServiceProcessor(handler KVStorageService) *KVStorageServiceProcessor {
-  self41 := &KVStorageServiceProcessor{NewTDataServiceProcessor(handler)}
-  return self41
+  self33 := &KVStorageServiceProcessor{NewTDataServiceProcessor(handler)}
+  return self33
 }
 
 

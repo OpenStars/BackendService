@@ -1,16 +1,34 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/OpenStars/BackendService/KVStorageService"
 )
 
 func main() {
-	kvstorageclient := KVStorageService.NewClient("/tets", "10.60.68.100", "8893")
-	kvstorageclient.PutData("1", "1")
-	item, err := kvstorageclient.GetData("1")
-	log.Println("multiget", item, "err", err)
+	kvstorageclient := KVStorageService.NewClient("/tets", "10.60.68.100", "8873")
+	fmt.Println(kvstorageclient.NextItem(1))
+	// fmt.Println(kvstorageclient.OpenIterate())
+	// kvstorageclient.PutData("le", "a")
+	// kvstorageclient.PutData("hai", "b")
+	// kvstorageclient.PutData("son", "c")
+	// kvstorageclient.PutData("4", "d")
+	// fmt.Println(kvstorageclient.GetData("1"))
+	// fmt.Println(kvstorageclient.GetData("2"))
+	// fmt.Println(kvstorageclient.GetData("3"))
+	// fmt.Println(kvstorageclient.GetData("4"))
+	// err := kvstorageclient.OpenIterate()
+	// fmt.Println(err)
+	// item, err := kvstorageclient.NextItem()
+	// if err != nil {
+	// 	fmt.Println("err", err)
+	// 	return
+	// }
+	// fmt.Println("key", item.Key, "value", item.Value)
+	// kvstorageclient.PutData("2", "2")
+	// item, err := kvstorageclient.GetData("2")
+	// log.Println("multiget", item, "err", err)
 	// for i := 0; i < 1000; i++ {
 	// 	kvstorageclient.PutData(strconv.Itoa(i), strconv.Itoa(i*i))
 	// }

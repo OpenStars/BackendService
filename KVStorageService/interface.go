@@ -7,4 +7,7 @@ type Client interface {
 	PutData(key string, value string) (bool, error)
 	RemoveData(key string) (bool, error)
 	GetListData(keys []string) (results []*KVStorage.KVItem, missingkeys []string, err error)
+	NextItem(sessionKey int64) (*KVStorage.KVItem, error)
+	OpenIterate() (int64, error)
+	CloseIterate(sessionKey int64) error
 }

@@ -19,7 +19,7 @@ var (
 )
 
 func init() {
-	fmt.Println("init thrift kvstorage client ")
+	fmt.Println("init thrift kvcounter client ")
 }
 
 //GetKVCounterBinaryClient client by host:port

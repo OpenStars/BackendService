@@ -13,7 +13,7 @@ enum TErrorCode{
 
 struct KVItem{
     1: string key
-    2: string value,
+    2: binary value,
 }
 
 typedef KVItem TData
@@ -40,10 +40,6 @@ service TDataService{
     TErrorCode putData(1:string key, 2: KVItem data)
     TListDataResult getListData(1:list<string> lskeys)
     TErrorCode removeData(1:string key) 
-
-  i64 openIterate()
-    TDataResult nextItem(1:i64 sessionkey);
-    TErrorCode closeIterate(1:i64 sessionkey);
 }
 
 service KVStorageService extends TDataService{
