@@ -8,7 +8,8 @@ enum TErrorCode{
     EGood = 0,
     ENotFound = -1,
     EUnknown = -2 ,
-    EDataExisted = -3
+    EDataExisted = -3,
+      EIterExceed = -4
 }
 
 struct KVItem{
@@ -44,6 +45,7 @@ service TDataService{
   i64 openIterate()
     TDataResult nextItem(1:i64 sessionkey);
     TErrorCode closeIterate(1:i64 sessionkey);
+        TListDataResult nexListItems(1:i64 sessionkey,2:i64 count);
 }
 
 service KVStorageService extends TDataService{

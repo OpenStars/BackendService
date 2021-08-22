@@ -80,7 +80,6 @@ func (m *kvstorageservice) OpenIterate() (int64, error) {
 		return -1, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
-
 	return r, nil
 }
 
@@ -137,6 +136,35 @@ func (m *kvstorageservice) NextItem(sessionKey int64) (*KVStorage.KVItem, error)
 	defer transports.BackToPool(client)
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return nil, errors.New(r.String())
+	}
+	return r.Data, nil
+}
+
+func (m *kvstorageservice) NextListItems(sessionKey, count int64) ([]*KVStorage.KVItem, error) {
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
+	client := transports.GetKVStorageCompactClient(m.host, m.port)
+
+	if client == nil || client.Client == nil {
+		transports.ServiceDisconnect(client)
+		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	r, err := client.Client.(*KVStorage.KVStorageServiceClient).NexListItems(context.Background(), sessionKey, count)
+	if err != nil {
+		transports.ServiceDisconnect(client)
+		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer transports.BackToPool(client)
+	if r.ErrorCode != KVStorage.TErrorCode_EGood {
+		return nil, errors.New(r.ErrorCode.String())
 	}
 	return r.Data, nil
 }
