@@ -11,4 +11,5 @@ type Client interface {
 	OpenIterate() (int64, error)
 	CloseIterate(sessionKey int64) error
 	NextListItems(sessionKey, count int64) ([]*KVStorage.KVItem, error)
+	PutMultiData(listData []*KVStorage.KVItem) (err error)
 }

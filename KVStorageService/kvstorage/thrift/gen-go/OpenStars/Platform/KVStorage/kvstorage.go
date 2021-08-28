@@ -915,6 +915,9 @@ type TDataService interface {
   // Parameters:
   //  - Key
   RemoveData(ctx context.Context, key string) (r TErrorCode, err error)
+  // Parameters:
+  //  - ListData
+  PutMultiData(ctx context.Context, listData []*KVItem) (r TErrorCode, err error)
   OpenIterate(ctx context.Context) (r int64, err error)
   // Parameters:
   //  - Sessionkey
@@ -1003,22 +1006,22 @@ func (p *TDataServiceClient) RemoveData(ctx context.Context, key string) (r TErr
   return _result14.GetSuccess(), nil
 }
 
-func (p *TDataServiceClient) OpenIterate(ctx context.Context) (r int64, err error) {
-  var _args15 TDataServiceOpenIterateArgs
-  var _result16 TDataServiceOpenIterateResult
-  if err = p.Client_().Call(ctx, "openIterate", &_args15, &_result16); err != nil {
+// Parameters:
+//  - ListData
+func (p *TDataServiceClient) PutMultiData(ctx context.Context, listData []*KVItem) (r TErrorCode, err error) {
+  var _args15 TDataServicePutMultiDataArgs
+  _args15.ListData = listData
+  var _result16 TDataServicePutMultiDataResult
+  if err = p.Client_().Call(ctx, "putMultiData", &_args15, &_result16); err != nil {
     return
   }
   return _result16.GetSuccess(), nil
 }
 
-// Parameters:
-//  - Sessionkey
-func (p *TDataServiceClient) NextItem(ctx context.Context, sessionkey int64) (r *TDataResult_, err error) {
-  var _args17 TDataServiceNextItemArgs
-  _args17.Sessionkey = sessionkey
-  var _result18 TDataServiceNextItemResult
-  if err = p.Client_().Call(ctx, "nextItem", &_args17, &_result18); err != nil {
+func (p *TDataServiceClient) OpenIterate(ctx context.Context) (r int64, err error) {
+  var _args17 TDataServiceOpenIterateArgs
+  var _result18 TDataServiceOpenIterateResult
+  if err = p.Client_().Call(ctx, "openIterate", &_args17, &_result18); err != nil {
     return
   }
   return _result18.GetSuccess(), nil
@@ -1026,11 +1029,11 @@ func (p *TDataServiceClient) NextItem(ctx context.Context, sessionkey int64) (r 
 
 // Parameters:
 //  - Sessionkey
-func (p *TDataServiceClient) CloseIterate(ctx context.Context, sessionkey int64) (r TErrorCode, err error) {
-  var _args19 TDataServiceCloseIterateArgs
+func (p *TDataServiceClient) NextItem(ctx context.Context, sessionkey int64) (r *TDataResult_, err error) {
+  var _args19 TDataServiceNextItemArgs
   _args19.Sessionkey = sessionkey
-  var _result20 TDataServiceCloseIterateResult
-  if err = p.Client_().Call(ctx, "closeIterate", &_args19, &_result20); err != nil {
+  var _result20 TDataServiceNextItemResult
+  if err = p.Client_().Call(ctx, "nextItem", &_args19, &_result20); err != nil {
     return
   }
   return _result20.GetSuccess(), nil
@@ -1038,16 +1041,28 @@ func (p *TDataServiceClient) CloseIterate(ctx context.Context, sessionkey int64)
 
 // Parameters:
 //  - Sessionkey
-//  - Count
-func (p *TDataServiceClient) NexListItems(ctx context.Context, sessionkey int64, count int64) (r *TListDataResult_, err error) {
-  var _args21 TDataServiceNexListItemsArgs
+func (p *TDataServiceClient) CloseIterate(ctx context.Context, sessionkey int64) (r TErrorCode, err error) {
+  var _args21 TDataServiceCloseIterateArgs
   _args21.Sessionkey = sessionkey
-  _args21.Count = count
-  var _result22 TDataServiceNexListItemsResult
-  if err = p.Client_().Call(ctx, "nexListItems", &_args21, &_result22); err != nil {
+  var _result22 TDataServiceCloseIterateResult
+  if err = p.Client_().Call(ctx, "closeIterate", &_args21, &_result22); err != nil {
     return
   }
   return _result22.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Sessionkey
+//  - Count
+func (p *TDataServiceClient) NexListItems(ctx context.Context, sessionkey int64, count int64) (r *TListDataResult_, err error) {
+  var _args23 TDataServiceNexListItemsArgs
+  _args23.Sessionkey = sessionkey
+  _args23.Count = count
+  var _result24 TDataServiceNexListItemsResult
+  if err = p.Client_().Call(ctx, "nexListItems", &_args23, &_result24); err != nil {
+    return
+  }
+  return _result24.GetSuccess(), nil
 }
 
 type TDataServiceProcessor struct {
@@ -1070,16 +1085,17 @@ func (p *TDataServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunct
 
 func NewTDataServiceProcessor(handler TDataService) *TDataServiceProcessor {
 
-  self23 := &TDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self23.processorMap["getData"] = &tDataServiceProcessorGetData{handler:handler}
-  self23.processorMap["putData"] = &tDataServiceProcessorPutData{handler:handler}
-  self23.processorMap["getListData"] = &tDataServiceProcessorGetListData{handler:handler}
-  self23.processorMap["removeData"] = &tDataServiceProcessorRemoveData{handler:handler}
-  self23.processorMap["openIterate"] = &tDataServiceProcessorOpenIterate{handler:handler}
-  self23.processorMap["nextItem"] = &tDataServiceProcessorNextItem{handler:handler}
-  self23.processorMap["closeIterate"] = &tDataServiceProcessorCloseIterate{handler:handler}
-  self23.processorMap["nexListItems"] = &tDataServiceProcessorNexListItems{handler:handler}
-return self23
+  self25 := &TDataServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self25.processorMap["getData"] = &tDataServiceProcessorGetData{handler:handler}
+  self25.processorMap["putData"] = &tDataServiceProcessorPutData{handler:handler}
+  self25.processorMap["getListData"] = &tDataServiceProcessorGetListData{handler:handler}
+  self25.processorMap["removeData"] = &tDataServiceProcessorRemoveData{handler:handler}
+  self25.processorMap["putMultiData"] = &tDataServiceProcessorPutMultiData{handler:handler}
+  self25.processorMap["openIterate"] = &tDataServiceProcessorOpenIterate{handler:handler}
+  self25.processorMap["nextItem"] = &tDataServiceProcessorNextItem{handler:handler}
+  self25.processorMap["closeIterate"] = &tDataServiceProcessorCloseIterate{handler:handler}
+  self25.processorMap["nexListItems"] = &tDataServiceProcessorNexListItems{handler:handler}
+return self25
 }
 
 func (p *TDataServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -1090,12 +1106,12 @@ func (p *TDataServiceProcessor) Process(ctx context.Context, iprot, oprot thrift
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x24 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x26 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x24.Write(oprot)
+  x26.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush(ctx)
-  return false, x24
+  return false, x26
 
 }
 
@@ -1274,6 +1290,54 @@ var retval TErrorCode
     result.Success = &retval
 }
   if err2 = oprot.WriteMessageBegin("removeData", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type tDataServiceProcessorPutMultiData struct {
+  handler TDataService
+}
+
+func (p *tDataServiceProcessorPutMultiData) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := TDataServicePutMultiDataArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("putMultiData", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := TDataServicePutMultiDataResult{}
+var retval TErrorCode
+  var err2 error
+  if retval, err2 = p.handler.PutMultiData(ctx, args.ListData); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing putMultiData: " + err2.Error())
+    oprot.WriteMessageBegin("putMultiData", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("putMultiData", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1972,13 +2036,13 @@ func (p *TDataServiceGetListDataArgs)  ReadField1(iprot thrift.TProtocol) error 
   tSlice := make([]string, 0, size)
   p.Lskeys =  tSlice
   for i := 0; i < size; i ++ {
-var _elem25 string
+var _elem27 string
     if v, err := iprot.ReadString(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
-    _elem25 = v
+    _elem27 = v
 }
-    p.Lskeys = append(p.Lskeys, _elem25)
+    p.Lskeys = append(p.Lskeys, _elem27)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -2314,6 +2378,218 @@ func (p *TDataServiceRemoveDataResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("TDataServiceRemoveDataResult(%+v)", *p)
+}
+
+// Attributes:
+//  - ListData
+type TDataServicePutMultiDataArgs struct {
+  ListData []*KVItem `thrift:"listData,1" db:"listData" json:"listData"`
+}
+
+func NewTDataServicePutMultiDataArgs() *TDataServicePutMultiDataArgs {
+  return &TDataServicePutMultiDataArgs{}
+}
+
+
+func (p *TDataServicePutMultiDataArgs) GetListData() []*KVItem {
+  return p.ListData
+}
+func (p *TDataServicePutMultiDataArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.LIST {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TDataServicePutMultiDataArgs)  ReadField1(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*KVItem, 0, size)
+  p.ListData =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem28 := &KVItem{}
+    if err := _elem28.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem28), err)
+    }
+    p.ListData = append(p.ListData, _elem28)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *TDataServicePutMultiDataArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("putMultiData_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TDataServicePutMultiDataArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("listData", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:listData: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRUCT, len(p.ListData)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.ListData {
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:listData: ", p), err) }
+  return err
+}
+
+func (p *TDataServicePutMultiDataArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TDataServicePutMultiDataArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type TDataServicePutMultiDataResult struct {
+  Success *TErrorCode `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewTDataServicePutMultiDataResult() *TDataServicePutMultiDataResult {
+  return &TDataServicePutMultiDataResult{}
+}
+
+var TDataServicePutMultiDataResult_Success_DEFAULT TErrorCode
+func (p *TDataServicePutMultiDataResult) GetSuccess() TErrorCode {
+  if !p.IsSetSuccess() {
+    return TDataServicePutMultiDataResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *TDataServicePutMultiDataResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *TDataServicePutMultiDataResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.I32 {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TDataServicePutMultiDataResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  temp := TErrorCode(v)
+  p.Success = &temp
+}
+  return nil
+}
+
+func (p *TDataServicePutMultiDataResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("putMultiData_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TDataServicePutMultiDataResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.I32, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteI32(int32(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *TDataServicePutMultiDataResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TDataServicePutMultiDataResult(%+v)", *p)
 }
 
 type TDataServiceOpenIterateArgs struct {
@@ -3104,8 +3380,8 @@ type KVStorageServiceProcessor struct {
 }
 
 func NewKVStorageServiceProcessor(handler KVStorageService) *KVStorageServiceProcessor {
-  self45 := &KVStorageServiceProcessor{NewTDataServiceProcessor(handler)}
-  return self45
+  self54 := &KVStorageServiceProcessor{NewTDataServiceProcessor(handler)}
+  return self54
 }
 
 

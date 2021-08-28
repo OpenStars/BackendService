@@ -41,6 +41,7 @@ service TDataService{
     TErrorCode putData(1:string key, 2: KVItem data)
     TListDataResult getListData(1:list<string> lskeys)
     TErrorCode removeData(1:string key) 
+    TErrorCode putMultiData(1:list<KVItem> listData)
 
   i64 openIterate()
     TDataResult nextItem(1:i64 sessionkey);

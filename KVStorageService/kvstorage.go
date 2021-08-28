@@ -168,6 +168,7 @@ func (m *kvstorageservice) NextListItems(sessionKey, count int64) ([]*KVStorage.
 	}
 	return r.Data, nil
 }
+
 func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 
@@ -230,6 +231,23 @@ func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVIt
 	}
 
 	return r.Data, r.Missingkeys, nil
+}
+
+func (m *kvstorageservice) PutMultiData(listData []*KVStorage.KVItem) (err error) {
+	client := transports.GetKVStorageCompactClient(m.host, m.port)
+
+	if client == nil || client.Client == nil {
+		transports.ServiceDisconnect(client)
+		return errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	_, err = client.Client.(*KVStorage.KVStorageServiceClient).PutMultiData(context.Background(), listData)
+	if err != nil {
+		transports.ServiceDisconnect(client)
+		return errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer transports.BackToPool(client)
+	return nil
 }
 
 func NewClient(sid string, host string, port string) Client {
