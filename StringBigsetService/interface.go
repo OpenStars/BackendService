@@ -21,4 +21,5 @@ type Client interface {
 	BsGetSliceR(bskey string, fromPos int32, count int32) ([]*generic.TItem, error)
 	BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (failedItem []*generic.TBigsetItem, err error)
 	BsMultiRemoveBsItem(listItems []*generic.TBigsetItem) (listFailedRemove []*generic.TBigsetItem, err error)
+	BsRangeQueryAll(bskey string) ([]*generic.TItem, error)
 }
