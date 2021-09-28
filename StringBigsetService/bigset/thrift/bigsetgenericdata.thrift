@@ -1,6 +1,6 @@
 namespace cpp OpenStars.Core.BigSet.Generic
 namespace java org.openstars.core.bigset.Generic
-namespace go openstars.core.bigset.generic
+namespace go OpenStars.Core.BigSetKV
 
 typedef binary TItemKey //key - index of an item, with simple set, itemkey is equivalent to item
 typedef binary TItemValue 
@@ -199,7 +199,27 @@ struct TCaSItem{
     3: TItemValue newValue,
 }
 
+struct TBigsetItem{
+    1: required binary bskey,
+    2: required binary itemkey,
+    3: required binary itemvalue
+}
+
+struct TMultiPutBigsetItemResult{
+    1: TErrorCode error,
+    2: optional list<TBigsetItem> failedPutbsItem
+}
+
+struct TMultiRemoveBigsetItemResult{
+    1: TErrorCode error,
+    2: optional list<TBigsetItem> failedRemovebsItem
+}
+
+
 service TStringBigSetKVService{
+
+    TMultiPutBigsetItemResult bsMultiPutBsItem(1:list<TBigsetItem> listBsItems)
+    TMultiRemoveBigsetItemResult bsMultiRemoveBsItem(1:list<TBigsetItem> listBsItems)
 
     TBigSetInfoResult createStringBigSet(1:TStringKey bsName),
 
@@ -247,8 +267,7 @@ service TStringBigSetKVService{
     list<TStringKey> getListKey(1: i64 fromIndex, 2: i32 count),
 
     list<TStringKey> getListKeyFrom(1: TStringKey keyFrom, 2: i32 count), // keyFrom="" => get from start
-    TMultiPutBigsetItemResult bsMultiPutBsItem(1:list<TBigsetItem> listBsItems)
- TMultiRemoveBigsetItemResult bsMultiRemoveBsItem(1:list<TBigsetItem> listBsItems)
+
 }
 
 //String key, big value.
@@ -256,21 +275,7 @@ service TBSBigValueService{
     
 }
 
-struct TBigsetItem{
-    1: required binary bskey,
-    2: required binary itemkey,
-    3: required binary itemvalue
-}
 
-struct TMultiPutBigsetItemResult{
-    1: TErrorCode error,
-    2: optional list<TBigsetItem> failedPutbsItem
-}
-
-struct TMultiRemoveBigsetItemResult{
-    1: TErrorCode error,
-    2: optional list<TBigsetItem> failedRemovebsItem
-}
 /* 
 * BigSet with Int BigSetID key-value items
 * This is a interface of a safer big set (a bit slower)
@@ -306,7 +311,6 @@ service TIBSDataService{
 
     i64 removeAll(1:TKey bigsetID)
 
-   
 
 }
 
@@ -333,6 +337,7 @@ service TCluserOrdinatorService{
     i32 put(1: binary key, 2: binary value),
     
 }
+
 
 
 

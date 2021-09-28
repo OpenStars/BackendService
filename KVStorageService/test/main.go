@@ -8,11 +8,12 @@ import (
 )
 
 func main() {
-	kvstorageclient := KVStorageService.NewClient("/tets", "10.60.68.100", "8873")
-	// kvstorageclient.PutData("sh1", "le hai son")
-	// kvstorageclient.PutData("sh2", "tran minh tuan")
-	// kvstorageclient.PutData("sh3", "nguyen thi mai anh")
-	// kvstorageclient.PutData("sh4", "tran van lam")
+	kvstorageclient := KVStorageService.NewClient("/tets", "10.110.69.97", "8863")
+
+	kvstorageclient.PutData("sh1", "le hai son")
+	kvstorageclient.PutData("sh2", "tran minh tuan")
+	kvstorageclient.PutData("sh3", "nguyen thi mai anh")
+	kvstorageclient.PutData("sh4", "tran van lam")
 	sessionKey, err := kvstorageclient.OpenIterate()
 	if err != nil {
 		log.Fatalln("open iterate err", err)
