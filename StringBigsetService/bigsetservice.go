@@ -9,35 +9,66 @@ import (
 
 	"github.com/OpenStars/BackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
 	transports "github.com/OpenStars/BackendService/StringBigsetService/transportsv2"
+	"github.com/lehaisonmath6/etcdconfig"
 )
 
 var reconnect = true
 var mureconnect sync.Mutex
 
 type StringBigsetService struct {
-	host string
-	port string
-	sid  string
+	host   string
+	port   string
+	sid    string
+	schema string
+	mu     *sync.RWMutex
 }
 
 func NewClient(etcdEndpoints []string, sid string, defaultEndpointsHost string, defaultEndpointPort string) Client {
-	log.Println("Init StringBigset Service sid", sid, "address", defaultEndpointsHost+":"+defaultEndpointPort)
-	client := transports.GetBsGenericClient(defaultEndpointsHost, defaultEndpointPort)
+	ep, _ := etcdconfig.GetEndpoint(sid, "thrift_binary")
+	if ep == nil {
+		ep = &etcdconfig.Endpoint{
+			Host: defaultEndpointsHost,
+			Port: defaultEndpointPort,
+			SID:  sid,
+		}
+	}
+	log.Println("Init StringBigset Service sid", ep.SID, "address", ep.Host+":"+ep.Port)
+
+	client := transports.GetBsGenericClient(ep.Host, ep.Port)
 	if client == nil || client.Client == nil {
+		log.Println("[ERROR] bigset sid", ep.SID, "address", ep.Host+":"+ep.Port, "connection refused")
 		return nil
 	}
+
 	stringbs := &StringBigsetService{
-		host: defaultEndpointsHost,
-		port: defaultEndpointPort,
-		sid:  sid,
+		host:   ep.Host,
+		port:   ep.Port,
+		sid:    ep.SID,
+		schema: ep.Schema,
+		mu:     &sync.RWMutex{},
 	}
+	go stringbs.WatchChangeEndpoint()
 	return stringbs
 }
 
+func (m *StringBigsetService) WatchChangeEndpoint() {
+	epChan := make(chan *etcdconfig.Endpoint)
+	go etcdconfig.WatchChangeService(m.sid, epChan)
+	for ep := range epChan {
+		log.Println("[EVENT CHANGE ENDPOINT] sid", m.sid, "to address", ep.Host+":"+ep.Port)
+		m.mu.Lock()
+		m.host = ep.Host
+		m.port = ep.Port
+		m.mu.Unlock()
+	}
+}
+
 func (m *StringBigsetService) TotalStringKeyCount() (r int64, err error) {
-
+	m.mu.RLock()
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
-
+	m.mu.RUnlock()
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		return 0, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -55,7 +86,11 @@ func (m *StringBigsetService) TotalStringKeyCount() (r int64, err error) {
 
 func (m *StringBigsetService) GetListKey(fromIndex int64, count int32) ([]string, error) {
 
+	m.mu.RLock()
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -78,7 +113,11 @@ func (m *StringBigsetService) GetListKey(fromIndex int64, count int32) ([]string
 }
 
 func (m *StringBigsetService) BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (failedItem []*generic.TBigsetItem, err error) {
+	m.mu.RLock()
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return lsItem, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -116,7 +155,9 @@ func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (
 	// 	}
 	// }
 	// log.Println("BsPutItem host", m.host+":"+m.port)
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -157,7 +198,9 @@ func (m *StringBigsetService) BsRangeQuery(bskey string, startKey string, endKey
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -191,7 +234,9 @@ func (m *StringBigsetService) BsRangeQueryAll(bskey string) ([]*generic.TItem, e
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -225,7 +270,9 @@ func (m *StringBigsetService) BsRangeQueryByPage(bskey string, startKey, endKey 
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 
 	if client == nil || client.Client == nil {
 
@@ -267,7 +314,9 @@ func (m *StringBigsetService) BsGetItem(bskey string, itemkey string) (*generic.
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	// fmt.Printf("[BsGetItem] get client host = %s, %s, key = %s, %s \n", m.host, m.port, bskey, itemkey)
 	if client == nil || client.Client == nil {
 
@@ -299,7 +348,9 @@ func (m *StringBigsetService) GetTotalCount(bskey string) (int64, error) {
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return 0, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -333,7 +384,9 @@ func (m *StringBigsetService) GetBigSetInfoByName(bskey string) (*generic.TStrin
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -366,7 +419,9 @@ func (m *StringBigsetService) RemoveAll(bskey string) (bool, error) {
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -393,7 +448,9 @@ func (m *StringBigsetService) CreateStringBigSet(bskey string) (*generic.TString
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -428,7 +485,9 @@ func (m *StringBigsetService) BsGetSlice(bskey string, fromPos int32, count int3
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -461,7 +520,9 @@ func (m *StringBigsetService) BsGetSliceR(bskey string, fromPos int32, count int
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -493,7 +554,9 @@ func (m *StringBigsetService) BsRemoveItem(bskey string, itemkey string) (bool, 
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -522,7 +585,9 @@ func (m *StringBigsetService) BsMultiPut(bskey string, lsItems []*generic.TItem)
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -548,7 +613,9 @@ func (m *StringBigsetService) BsMultiPut(bskey string, lsItems []*generic.TItem)
 }
 
 func (m *StringBigsetService) BsMultiRemoveBsItem(listItems []*generic.TBigsetItem) (listFailedRemove []*generic.TBigsetItem, err error) {
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -581,7 +648,9 @@ func (m *StringBigsetService) BsGetSliceFromItem(bskey string, fromKey string, c
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -614,7 +683,9 @@ func (m *StringBigsetService) BsGetSliceFromItemR(bskey string, fromKey string, 
 	// 	}
 	// }
 
+	m.mu.RLock()
 	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)

@@ -3,7 +3,6 @@ package transportsv2
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	telenotification "github.com/OpenStars/BackendService/TeleNotification"
@@ -37,6 +36,8 @@ func dial(addr, port string, connTimeout time.Duration) (*thriftpool.IdleClient,
 	return &thriftpool.IdleClient{
 		Client: client,
 		Socket: socket,
+		Host:   addr,
+		Port:   port,
 	}, nil
 }
 
@@ -46,7 +47,7 @@ func close(c *thriftpool.IdleClient) error {
 	return err
 }
 
-var bsGenericMapPool = thriftpool.NewMapPool(1000, 5, 3600, dial, close)
+var bsGenericMapPool = thriftpool.NewMapPool(4, 5, 3600, dial, close)
 
 func GetKVStorageCompactClient(host, port string) *thriftpool.IdleClient {
 	client, err := bsGenericMapPool.Get(host, port).Get()
@@ -61,14 +62,14 @@ func BackToPool(c *thriftpool.IdleClient) {
 	if c == nil {
 		return
 	}
-	netarr := strings.Split(c.Socket.Addr().String(), ":")
-	bsGenericMapPool.Get(netarr[0], netarr[1]).Put(c)
+
+	bsGenericMapPool.Get(c.Host, c.Port).Put(c)
 }
 func ServiceDisconnect(c *thriftpool.IdleClient) {
 	if c == nil {
 		return
 	}
-	netarr := strings.Split(c.Socket.Addr().String(), ":")
-	bsGenericMapPool.Release(netarr[0], netarr[1])
-	telenotification.NotifyServiceError("", netarr[0], netarr[1], errors.New("service disconnect"))
+
+	bsGenericMapPool.Release(c.Host, c.Port)
+	telenotification.NotifyServiceError("", c.Host, c.Port, errors.New("service disconnect"))
 }

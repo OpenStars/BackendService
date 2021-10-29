@@ -50,7 +50,7 @@ func (m *kvstorageservice) GetData(key string) (string, error) {
 		transports.ServiceDisconnect(client)
 		return "", errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return "", nil
 	}
@@ -105,7 +105,7 @@ func (m *kvstorageservice) CloseIterate(sessionkey int64) error {
 		transports.ServiceDisconnect(client)
 		return errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	if r != KVStorage.TErrorCode_EGood {
 		return errors.New(r.String())
 	}
@@ -133,7 +133,7 @@ func (m *kvstorageservice) NextItem(sessionKey int64) (*KVStorage.KVItem, error)
 		transports.ServiceDisconnect(client)
 		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return nil, errors.New(r.String())
 	}
@@ -162,7 +162,7 @@ func (m *kvstorageservice) NextListItems(sessionKey, count int64) ([]*KVStorage.
 		transports.ServiceDisconnect(client)
 		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return nil, errors.New(r.ErrorCode.String())
 	}
@@ -185,7 +185,7 @@ func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
 		transports.ServiceDisconnect(client)
 		return false, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	if r != KVStorage.TErrorCode_EGood {
 		return false, nil
 	}
@@ -205,7 +205,7 @@ func (m *kvstorageservice) RemoveData(key string) (bool, error) {
 		transports.ServiceDisconnect(client)
 		return false, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	if r != KVStorage.TErrorCode_EGood {
 		return false, nil
 	}
@@ -225,7 +225,7 @@ func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVIt
 		transports.ServiceDisconnect(client)
 		return nil, nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	if r.ErrorCode != KVStorage.TErrorCode_EGood {
 		return nil, nil, nil
 	}
@@ -246,7 +246,7 @@ func (m *kvstorageservice) PutMultiData(listData []*KVStorage.KVItem) (err error
 		transports.ServiceDisconnect(client)
 		return errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
-	defer transports.BackToPool(client)
+	transports.BackToPool(client)
 	return nil
 }
 

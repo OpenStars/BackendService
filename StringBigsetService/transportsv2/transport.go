@@ -3,7 +3,6 @@ package transportsv2
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/OpenStars/BackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
@@ -36,6 +35,8 @@ func dial(addr, port string, connTimeout time.Duration) (*thriftpool.IdleClient,
 	return &thriftpool.IdleClient{
 		Client: client,
 		Socket: socket,
+		Host:   addr,
+		Port:   port,
 	}, nil
 }
 
@@ -57,13 +58,10 @@ func GetBsGenericClient(host, port string) *thriftpool.IdleClient {
 }
 
 func BackToPool(c *thriftpool.IdleClient) {
-	netarr := strings.Split(c.Socket.Addr().String(), ":")
-	bsGenericMapPool.Get(netarr[0], netarr[1]).Put(c)
-	// fmt.Println("back to pool address", c.Socket.Addr().String())
+	bsGenericMapPool.Get(c.Host, c.Port).Put(c)
 }
 
 func ServiceDisconnect(c *thriftpool.IdleClient) {
-	netarr := strings.Split(c.Socket.Addr().String(), ":")
-	bsGenericMapPool.Release(netarr[0], netarr[1])
-	telenotification.NotifyServiceError("", netarr[0], netarr[1], errors.New("service disconnect"))
+	bsGenericMapPool.Release(c.Host, c.Port)
+	telenotification.NotifyServiceError("", c.Host, c.Port, errors.New("service disconnect"))
 }

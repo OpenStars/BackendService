@@ -36,6 +36,8 @@ type ThriftPool struct {
 type IdleClient struct {
 	Socket *thrift.TSocket
 	Client interface{}
+	Host   string
+	Port   string
 }
 
 type idleConn struct {
