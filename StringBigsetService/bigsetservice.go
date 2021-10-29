@@ -65,9 +65,9 @@ func (m *StringBigsetService) WatchChangeEndpoint() {
 
 func (m *StringBigsetService) TotalStringKeyCount() (r int64, err error) {
 	m.mu.RLock()
-	m.mu.RLock()
+
 	client := transports.GetBsGenericClient(m.host, m.port)
-	m.mu.RUnlock()
+
 	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		return 0, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -87,9 +87,9 @@ func (m *StringBigsetService) TotalStringKeyCount() (r int64, err error) {
 func (m *StringBigsetService) GetListKey(fromIndex int64, count int32) ([]string, error) {
 
 	m.mu.RLock()
-	m.mu.RLock()
+
 	client := transports.GetBsGenericClient(m.host, m.port)
-	m.mu.RUnlock()
+
 	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -114,9 +114,9 @@ func (m *StringBigsetService) GetListKey(fromIndex int64, count int32) ([]string
 
 func (m *StringBigsetService) BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (failedItem []*generic.TBigsetItem, err error) {
 	m.mu.RLock()
-	m.mu.RLock()
+
 	client := transports.GetBsGenericClient(m.host, m.port)
-	m.mu.RUnlock()
+
 	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 

@@ -3,16 +3,21 @@ package KVStorageService
 import (
 	"context"
 	"errors"
+	"log"
+	"sync"
+
+	"github.com/lehaisonmath6/etcdconfig"
 
 	"github.com/OpenStars/BackendService/KVStorageService/kvstorage/thrift/gen-go/OpenStars/Platform/KVStorage"
 	transports "github.com/OpenStars/BackendService/KVStorageService/kvstorage/transportsv2"
 )
 
 type kvstorageservice struct {
-	host string
-	port string
-	sid  string
-
+	host   string
+	port   string
+	sid    string
+	schema string
+	mu     *sync.RWMutex
 	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
 
 }
@@ -38,8 +43,9 @@ func (m *kvstorageservice) GetData(key string) (string, error) {
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return "", errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -67,8 +73,9 @@ func (m *kvstorageservice) OpenIterate() (int64, error) {
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -93,8 +100,9 @@ func (m *kvstorageservice) CloseIterate(sessionkey int64) error {
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -121,8 +129,9 @@ func (m *kvstorageservice) NextItem(sessionKey int64) (*KVStorage.KVItem, error)
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -150,8 +159,9 @@ func (m *kvstorageservice) NextListItems(sessionKey, count int64) ([]*KVStorage.
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -170,8 +180,9 @@ func (m *kvstorageservice) NextListItems(sessionKey, count int64) ([]*KVStorage.
 }
 
 func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -193,8 +204,9 @@ func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
 }
 
 func (m *kvstorageservice) RemoveData(key string) (bool, error) {
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -213,8 +225,9 @@ func (m *kvstorageservice) RemoveData(key string) (bool, error) {
 }
 
 func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVItem, missingkeys []string, err error) {
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return nil, nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -234,8 +247,9 @@ func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVIt
 }
 
 func (m *kvstorageservice) PutMultiData(listData []*KVStorage.KVItem) (err error) {
+	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
-
+	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -250,16 +264,39 @@ func (m *kvstorageservice) PutMultiData(listData []*KVStorage.KVItem) (err error
 	return nil
 }
 
+func (m *kvstorageservice) WatchChangeEndpoint() {
+	epChan := make(chan *etcdconfig.Endpoint)
+	go etcdconfig.WatchChangeService(m.sid, epChan)
+	for ep := range epChan {
+		log.Println("[EVENT CHANGE ENDPOINT] sid", m.sid, "to address", ep.Host+":"+ep.Port)
+		m.mu.Lock()
+		m.host = ep.Host
+		m.port = ep.Port
+		m.mu.Unlock()
+	}
+}
+
 func NewClient(sid string, host string, port string) Client {
-	client := transports.GetKVStorageCompactClient(host, port)
+	ep, _ := etcdconfig.GetEndpoint(sid, "thrift_compact")
+	if ep == nil {
+		ep = &etcdconfig.Endpoint{
+			Host: host,
+			Port: port,
+			SID:  sid,
+		}
+	}
+	log.Println("Init KVStorage Service sid", ep.SID, "address", ep.Host+":"+ep.Port)
+	client := transports.GetKVStorageCompactClient(ep.Host, ep.Port)
 	if client == nil || client.Client == nil {
+		log.Println("[ERROR] kvstorage sid", ep.SID, "address", ep.Host+":"+ep.Port, "connection refused")
 		return nil
 	}
 	kvstorage := &kvstorageservice{
-		host: host,
-		port: port,
-		sid:  sid,
+		host:   ep.Host,
+		port:   ep.Port,
+		sid:    ep.SID,
+		schema: ep.Schema,
 	}
-
+	go kvstorage.WatchChangeEndpoint()
 	return kvstorage
 }

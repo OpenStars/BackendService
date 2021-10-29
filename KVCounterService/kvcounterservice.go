@@ -3,15 +3,21 @@ package KVCounterService
 import (
 	"context"
 	"errors"
+	"log"
+	"sync"
+
+	"github.com/lehaisonmath6/etcdconfig"
 
 	"github.com/OpenStars/BackendService/KVCounterService/kvcounter/thrift/gen-go/OpenStars/Counters/KVStepCounter"
 	transports "github.com/OpenStars/BackendService/KVCounterService/kvcounter/transportsv2"
 )
 
 type KVCounterService struct {
-	host string
-	port string
-	sid  string
+	host   string
+	port   string
+	sid    string
+	schema string
+	mu     *sync.RWMutex
 }
 
 func (m *KVCounterService) GetValue(genname string) (int64, error) {
@@ -24,7 +30,9 @@ func (m *KVCounterService) GetValue(genname string) (int64, error) {
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.Lock()
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
 	if client == nil || client.Client == nil {
 		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -49,7 +57,9 @@ func (m *KVCounterService) GetMultiValue(listKeys []string) ([]*KVStepCounter.TK
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.Lock()
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -73,7 +83,9 @@ func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCou
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.Lock()
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
@@ -98,7 +110,9 @@ func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
 	// 		m.port = p
 	// 	}
 	// }
+	m.mu.Lock()
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
 
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
@@ -125,7 +139,9 @@ func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, erro
 	// 	}
 	// }
 
+	m.mu.Lock()
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
 
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
@@ -154,7 +170,9 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 	// 	}
 	// }
 
+	m.mu.Lock()
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
 
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
@@ -183,7 +201,9 @@ func (m *KVCounterService) RemoveGenerator(genname string) (bool, error) {
 	// 	}
 	// }
 
+	m.mu.Lock()
 	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
 
 	if client == nil || client.Client == nil {
 		transports.ServiceDisconnect(client)
@@ -199,17 +219,41 @@ func (m *KVCounterService) RemoveGenerator(genname string) (bool, error) {
 	return true, nil
 
 }
-
+func (m *KVCounterService) WatchChangeEndpoint() {
+	epChan := make(chan *etcdconfig.Endpoint)
+	go etcdconfig.WatchChangeService(m.sid, epChan)
+	for ep := range epChan {
+		log.Println("[EVENT CHANGE ENDPOINT] sid", m.sid, "to address", ep.Host+":"+ep.Port)
+		m.mu.Lock()
+		m.host = ep.Host
+		m.port = ep.Port
+		m.mu.Unlock()
+	}
+}
 func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Client {
-	client := transports.GetKVCounterCompactClient(defaultHost, defaultPort)
+	ep, _ := etcdconfig.GetEndpoint(sid, "thrift_binary")
+	if ep == nil {
+		ep = &etcdconfig.Endpoint{
+			Host: defaultHost,
+			Port: defaultPort,
+			SID:  sid,
+		}
+	}
+	log.Println("Init KVCounterService sid", ep.SID, "address", ep.Host+":"+ep.Port)
+
+	client := transports.GetKVCounterCompactClient(ep.Host, ep.Port)
 	if client == nil || client.Client == nil {
+		log.Println("[ERROR] kvcounter sid", ep.SID, "address", ep.Host+":"+ep.Port, "connection refused")
+
 		return nil
 	}
 	kvcounter := &KVCounterService{
-		host: defaultHost,
-		port: defaultPort,
-		sid:  sid,
+		host:   ep.Host,
+		port:   ep.Port,
+		sid:    sid,
+		schema: ep.Schema,
 	}
+	go kvcounter.WatchChangeEndpoint()
 
 	// if kvcounter.etcdManager == nil {
 	// 	return kvcounter
