@@ -69,7 +69,6 @@ func ServiceDisconnect(c *thriftpool.IdleClient) {
 	if c == nil {
 		return
 	}
-
 	bsGenericMapPool.Release(c.Host, c.Port)
 	telenotification.NotifyServiceError("", c.Host, c.Port, errors.New("service disconnect"))
 }
