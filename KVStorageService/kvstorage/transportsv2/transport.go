@@ -47,7 +47,7 @@ func close(c *thriftpool.IdleClient) error {
 	return err
 }
 
-var bsGenericMapPool = thriftpool.NewMapPool(4, 5, 3600, dial, close)
+var bsGenericMapPool = thriftpool.NewMapPool(1000, 5, 3600, dial, close)
 
 func GetKVStorageCompactClient(host, port string) *thriftpool.IdleClient {
 	client, err := bsGenericMapPool.Get(host, port).Get()
