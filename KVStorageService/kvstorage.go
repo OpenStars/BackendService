@@ -19,7 +19,6 @@ type kvstorageservice struct {
 	schema string
 	mu     *sync.RWMutex
 	// etcdManager *EndpointsManager.EtcdBackendEndpointManager
-
 }
 
 // func (m *kvstorageservice) notifyEndpointError() {
