@@ -12,6 +12,7 @@ import (
 	transports "github.com/OpenStars/BackendService/KVStorageService/kvstorage/transportsv2"
 )
 
+// update kv
 type kvstorageservice struct {
 	host   string
 	port   string
