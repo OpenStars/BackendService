@@ -231,7 +231,7 @@ func (m *KVCounterService) WatchChangeEndpoint() {
 	}
 }
 func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Client {
-	ep, _ := etcdconfig.GetEndpoint(sid, "thrift_binary")
+	ep, _ := etcdconfig.GetEndpoint(sid, "thrift_compact")
 	if ep == nil {
 		ep = &etcdconfig.Endpoint{
 			Host: defaultHost,
