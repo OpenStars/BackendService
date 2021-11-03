@@ -296,6 +296,7 @@ func NewClient(sid string, host string, port string) Client {
 		port:   ep.Port,
 		sid:    ep.SID,
 		schema: ep.Schema,
+		mu:     &sync.RWMutex{},
 	}
 	go kvstorage.WatchChangeEndpoint()
 	return kvstorage

@@ -252,6 +252,7 @@ func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) Clien
 		port:   ep.Port,
 		sid:    sid,
 		schema: ep.Schema,
+		mu:     &sync.RWMutex{},
 	}
 	go kvcounter.WatchChangeEndpoint()
 
