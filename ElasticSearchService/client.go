@@ -21,7 +21,7 @@ type Location struct {
 	Longitude float64 `json:"lon,omitempty"`
 }
 
-func (m *client) SearchRawString(indexName, rawQuery string) (rawResult []byte, total int64, err error) {
+func (m *client) SearchRawString(indexName, rawQuery string) (rawResult [][]byte, total int64, err error) {
 	var buf bytes.Buffer
 	if err = json.NewEncoder(&buf).Encode(rawQuery); err != nil {
 		return nil, 0, err
@@ -44,8 +44,8 @@ func (m *client) SearchRawString(indexName, rawQuery string) (rawResult []byte, 
 	if string(resultBody) == "" {
 		return nil, 0, errors.New("NOT FOUND")
 	}
-	ParseResultToArrayJson(rawResult)
-	return resultBody, 0, nil
+	return ParseResultToArrJsonWithLenght(resultBody)
+
 }
 
 func ParseResultToArrJsonWithLenght(rawResult []byte) ([][]byte, int64, error) {
