@@ -12,4 +12,6 @@ type Client interface {
 	Get(indexName string, docID string) (r interface{}, err error)
 
 	Update(indexName string, docID string, documentJson string) (bool, error)
+
+	SearchRawString(indexName, rawQuery string) (rawResult []byte, total int64, err error)
 }

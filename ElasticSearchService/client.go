@@ -21,6 +21,78 @@ type Location struct {
 	Longitude float64 `json:"lon,omitempty"`
 }
 
+func (m *client) SearchRawString(indexName, rawQuery string) (rawResult []byte, total int64, err error) {
+	var buf bytes.Buffer
+	if err = json.NewEncoder(&buf).Encode(rawQuery); err != nil {
+		return nil, 0, err
+	}
+	res, err := m.esclient.Search(
+		m.esclient.Search.WithContext(context.Background()),
+		m.esclient.Search.WithIndex(indexName),
+		m.esclient.Search.WithBody(&buf),
+		m.esclient.Search.WithTrackTotalHits(true),
+		m.esclient.Search.WithPretty(),
+	)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer res.Body.Close()
+	resultBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, 0, err
+	}
+	if string(resultBody) == "" {
+		return nil, 0, errors.New("NOT FOUND")
+	}
+	ParseResultToArrayJson(rawResult)
+	return resultBody, 0, nil
+}
+
+func ParseResultToArrJsonWithLenght(rawResult []byte) ([][]byte, int64, error) {
+	var result map[string]interface{}
+	err := json.Unmarshal(rawResult, &result)
+	if err != nil {
+		return nil, 0, err
+	}
+	if result["hits"] == nil {
+		return nil, 0, errors.New("NOT FOUND")
+	}
+	hits := result["hits"].(map[string]interface{})
+	if hits == nil {
+		return nil, 0, errors.New("NOT FOUND")
+	}
+	var total int64
+	if hits["total"] != nil {
+		totalStruct := hits["total"].(map[string]interface{})
+		total = totalStruct["value"].(int64)
+	}
+	if hits["hits"] == nil {
+		return nil, total, errors.New("NOT FOUND")
+	}
+
+	histhist := hits["hits"].([]interface{})
+	if histhist == nil {
+		return nil, total, errors.New("NOT FOUND")
+	}
+	var listDoc [][]byte
+	for _, h := range histhist {
+		hi := h.(map[string]interface{})
+		if hi == nil {
+			continue
+		}
+		if hi["_source"] == nil {
+			continue
+		}
+		databytes, _ := json.Marshal(hi["_source"])
+		listDoc = append(listDoc, databytes)
+	}
+	if len(listDoc) == 0 {
+		return nil, total, errors.New("NOT FOUND")
+	}
+
+	return listDoc, total, nil
+}
+
 func ConvertToMapInterface(stu interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
 	val := reflect.ValueOf(stu).Elem()
