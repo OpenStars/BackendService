@@ -63,7 +63,7 @@ func ParseResultToArrJsonWithLenght(rawResult []byte) ([][]byte, int64, error) {
 	var total int64
 	if hits["total"] != nil {
 		totalStruct := hits["total"].(map[string]interface{})
-		total = totalStruct["value"].(int64)
+		total = int64(totalStruct["value"].(float64))
 	}
 	if hits["hits"] == nil {
 		return nil, total, errors.New("NOT FOUND")
