@@ -9,5 +9,5 @@ func TestES(t *testing.T) {
 	if !ok {
 		t.Errorf("Want ok true")
 	}
-	t.Errorf("ok")
+	t.Errorf("ok failed")
 }
