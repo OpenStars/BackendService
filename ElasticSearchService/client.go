@@ -22,14 +22,13 @@ type Location struct {
 }
 
 func (m *client) SearchRawString(indexName, rawQuery string) (rawResult [][]byte, total int64, err error) {
-	var buf bytes.Buffer
-	if err = json.NewEncoder(&buf).Encode(rawQuery); err != nil {
-		return nil, 0, err
-	}
+
+	buf := bytes.NewBuffer([]byte(rawQuery))
+
 	res, err := m.esclient.Search(
 		m.esclient.Search.WithContext(context.Background()),
 		m.esclient.Search.WithIndex(indexName),
-		m.esclient.Search.WithBody(&buf),
+		m.esclient.Search.WithBody(buf),
 		m.esclient.Search.WithTrackTotalHits(true),
 		m.esclient.Search.WithPretty(),
 	)
