@@ -9,7 +9,7 @@ import (
 
 	"github.com/OpenStars/BackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
 	transports "github.com/OpenStars/BackendService/StringBigsetService/transportsv2"
-	"github.com/lehaisonmath6/etcdconfig"
+	etcdconfig "github.com/OpenStars/configetcd"
 )
 
 var reconnect = true

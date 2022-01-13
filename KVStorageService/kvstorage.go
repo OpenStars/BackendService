@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/lehaisonmath6/etcdconfig"
+	etcdconfig "github.com/OpenStars/configetcd"
 
 	"github.com/OpenStars/BackendService/KVStorageService/kvstorage/thrift/gen-go/OpenStars/Platform/KVStorage"
 	transports "github.com/OpenStars/BackendService/KVStorageService/kvstorage/transportsv2"
