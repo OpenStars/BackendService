@@ -3,7 +3,7 @@ package ElasticSearchService
 import (
 	"log"
 
-	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v7"
 )
 
 func NewClient(hosts []string) Client {
@@ -12,7 +12,7 @@ func NewClient(hosts []string) Client {
 	}
 	url := hosts[0]
 	if hosts[0][len(hosts[0])-1] == '/' {
-		url = hosts[0][:len(hosts[0])-2]
+		url = hosts[0][:len(hosts[0])-1]
 	}
 	es, err := elasticsearch.NewClient(cfg)
 	if err != nil {
