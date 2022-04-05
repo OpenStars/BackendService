@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	etcdconfig "github.com/OpenStars/configetcd"
+	apm "go.elastic.co/apm/v2"
 
 	"github.com/OpenStars/BackendService/KVStorageService/kvstorage/thrift/gen-go/OpenStars/Platform/KVStorage"
 	transports "github.com/OpenStars/BackendService/KVStorageService/kvstorage/transportsv2"
@@ -34,6 +35,8 @@ type kvstorageservice struct {
 // }
 
 func (m *kvstorageservice) GetData(key string) (string, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetData", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -64,6 +67,8 @@ func (m *kvstorageservice) GetData(key string) (string, error) {
 }
 
 func (m *kvstorageservice) OpenIterate() (int64, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"OpenIterate", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -91,6 +96,8 @@ func (m *kvstorageservice) OpenIterate() (int64, error) {
 }
 
 func (m *kvstorageservice) CloseIterate(sessionkey int64) error {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"CloseIterate", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -120,6 +127,8 @@ func (m *kvstorageservice) CloseIterate(sessionkey int64) error {
 	return nil
 }
 func (m *kvstorageservice) NextItem(sessionKey int64) (*KVStorage.KVItem, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"NextItem", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -150,6 +159,8 @@ func (m *kvstorageservice) NextItem(sessionKey int64) (*KVStorage.KVItem, error)
 }
 
 func (m *kvstorageservice) NextListItems(sessionKey, count int64) ([]*KVStorage.KVItem, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"NextListItems", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -180,6 +191,8 @@ func (m *kvstorageservice) NextListItems(sessionKey, count int64) ([]*KVStorage.
 }
 
 func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"PutData", "request")
+	defer tx.End()
 	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -204,6 +217,8 @@ func (m *kvstorageservice) PutData(key string, value string) (bool, error) {
 }
 
 func (m *kvstorageservice) RemoveData(key string) (bool, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"RemoveData", "request")
+	defer tx.End()
 	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -225,6 +240,8 @@ func (m *kvstorageservice) RemoveData(key string) (bool, error) {
 }
 
 func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVItem, missingkeys []string, err error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetListData", "request")
+	defer tx.End()
 	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -247,6 +264,8 @@ func (m *kvstorageservice) GetListData(keys []string) (results []*KVStorage.KVIt
 }
 
 func (m *kvstorageservice) PutMultiData(listData []*KVStorage.KVItem) (err error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"PutMultiData", "request")
+	defer tx.End()
 	m.mu.RLock()
 	client := transports.GetKVStorageCompactClient(m.host, m.port)
 	m.mu.RUnlock()

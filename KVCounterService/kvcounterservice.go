@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	etcdconfig "github.com/OpenStars/configetcd"
+	apm "go.elastic.co/apm/v2"
 
 	"github.com/OpenStars/BackendService/KVCounterService/kvcounter/thrift/gen-go/OpenStars/Counters/KVStepCounter"
 	transports "github.com/OpenStars/BackendService/KVCounterService/kvcounter/transportsv2"
@@ -21,6 +22,8 @@ type KVCounterService struct {
 }
 
 func (m *KVCounterService) GetValue(genname string) (int64, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetValue", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -48,6 +51,8 @@ func (m *KVCounterService) GetValue(genname string) (int64, error) {
 }
 
 func (m *KVCounterService) GetMultiValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetMultiValue", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -74,6 +79,8 @@ func (m *KVCounterService) GetMultiValue(listKeys []string) ([]*KVStepCounter.TK
 	return r.ListItems, nil
 }
 func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetMultiCurrentValue", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -101,6 +108,8 @@ func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCou
 }
 
 func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetCurrentValue", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -129,6 +138,8 @@ func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
 }
 
 func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, error) {
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetStepValue", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -159,7 +170,8 @@ func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, erro
 }
 
 func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
-
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"CreateGenerator", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -190,7 +202,8 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 }
 
 func (m *KVCounterService) RemoveGenerator(genname string) (bool, error) {
-
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"RemoveGenerator", "request")
+	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {

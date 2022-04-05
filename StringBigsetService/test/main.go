@@ -112,43 +112,12 @@ func bulkPut() {
 }
 func main() {
 
-	bigset = StringBigsetService.NewClient(nil, "/test", "10.110.69.96", "18407")
-	// DeleteItem()
-	// DeleteRandom()
-	// log.Println("delete oke")
-	// GetItem()
-	// bulkPut()
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// fmt.Println("len item", len(lsItems))
-	// listKey, err := bigset.GetListKey(0, 1000)
-	// fmt.Println("listkey", len(listKey), err)
-	// fmt.Println(listKey)
-	// GetItem()
-	ListAllItem()
-	// for bskey := 0; bskey < 100; bskey++ {
-	// 	go func(key int) {
-	// 		for i := 0; i < 10000000; i++ {
-	// 			b := rand.Int()
-	// 			bskey := fmt.Sprintf("this_is_bigset_key_of_my_bigset_from_os_linux_corei5_ram8gb_ssd256_id_%d", bskey)
-	// 			itemkey := fmt.Sprintf("%19d", b)
-	// 			fmt.Println("bskey", bskey, "itemkey", itemkey)
-	// 			bigset.BsPutItem(bskey, itemkey, itemkey)
-	// 		}
-	// 	}(bskey)
-	// }
-	waitKey := make(chan bool)
-	<-waitKey
-	// r, err := bigset.BsRangeQueryAll("eth:NormalAddress")
-	// fmt.Println("r", r, "err", err)
-	// GetItem()
-	// ListAllItem()
-	// bigset.BsRangeQuery("eth:NormalAddress", "", "")
-	// totalCount, err := bigset.TotalStringKeyCount()
-	// fmt.Println("1", totalCount, err)
-	// totalCount, err = bigset.TotalStringKeyCount()
-	// fmt.Println("2", totalCount, err)
-	// totalCount, err = bigset.TotalStringKeyCount()
-	// fmt.Println("3", totalCount, err)
+	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.60.68.100", "18117")
+	for i := 0; i < 100; i++ {
+		fmt.Println(i)
+		go bigset.BsGetSlice("GROUPMEMBER_"+"0329b33d5219e83622e4308b98639e6e97a9aefc4b59c3dca82ce3e41e8c2fa1d4", 0, 10000)
+	}
+	done := make(chan bool)
+	<-done
+
 }
