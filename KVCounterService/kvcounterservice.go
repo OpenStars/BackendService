@@ -202,7 +202,7 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 }
 
 func (m *KVCounterService) RemoveGenerator(genname string) (bool, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"RemoveGenerator", "request")
+	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"CreateGenerator", "request")
 	defer tx.End()
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
