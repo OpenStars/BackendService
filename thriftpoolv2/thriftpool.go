@@ -38,6 +38,7 @@ type IdleClient struct {
 	Client interface{}
 	Host   string
 	Port   string
+	SID    string
 }
 
 type idleConn struct {
