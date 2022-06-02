@@ -10,7 +10,7 @@ import (
 var bigset StringBigsetService.Client
 
 func main() {
-	bigset = StringBigsetService.NewClient(nil, "/test/checkbigset", "10.60.68.102", "22407")
+	bigset = StringBigsetService.NewClient(nil, "/test/checkbigset", "10.110.1.21", "29810")
 	if bigset == nil {
 		log.Fatalln("Cannot connect to bigset service")
 	}
