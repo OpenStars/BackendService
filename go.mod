@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/OpenStars/configetcd v0.0.0-20220113042930-5628e65b7e44
 	github.com/apache/thrift v0.13.0
-	github.com/elastic/go-elasticsearch/v7 v7.17.1
+	github.com/elastic/go-elasticsearch/v7 v7.16.0
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/rtt/Go-Solr v0.0.0-20190512221613-64fac99dcae2
 	go.elastic.co/apm/v2 v2.0.0
