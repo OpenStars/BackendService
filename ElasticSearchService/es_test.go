@@ -43,3 +43,9 @@ func TestSearchES(t *testing.T) {
 		fmt.Println(string(raw))
 	}
 }
+
+func TestAggsCount(t *testing.T) {
+	esClient := NewClient([]string{"http://10.110.1.100:9206"})
+	docCount, err := esClient.AggsNumberRangeByField("index_post_data", "create_time", 1664373500, 1664373718)
+	fmt.Println(docCount, err)
+}

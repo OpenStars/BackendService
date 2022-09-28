@@ -14,4 +14,6 @@ type Client interface {
 	Update(indexName string, docID string, documentJson string) (bool, error)
 
 	SearchRawString(indexName, rawQuery string) (rawResult [][]byte, total int64, err error)
+
+	AggsNumberRangeByField(indexName, fieldName string, startRange, endRange int64) (int64, error)
 }

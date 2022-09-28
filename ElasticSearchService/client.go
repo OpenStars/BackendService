@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"reflect"
@@ -19,6 +20,76 @@ import (
 type Location struct {
 	Latitude  float64 `json:"lat,omitempty"`
 	Longitude float64 `json:"lon,omitempty"`
+}
+
+func (m *client) AggsNumberRangeByField(indexName, fieldName string, startRange, endRange int64) (int64, error) {
+	queryString := fmt.Sprintf(`{
+		"aggs": {
+			"%s_aggs": {
+			  "range": {
+				"field": "%s",
+				"ranges": [
+				  {
+					"from": %d,
+					"to": %d
+				  }
+				]
+			  }
+			}
+		}
+  }`, fieldName, fieldName, startRange, endRange)
+	buf := bytes.NewBuffer([]byte(queryString))
+
+	res, err := m.esclient.Search(
+		m.esclient.Search.WithContext(context.Background()),
+		m.esclient.Search.WithIndex(indexName),
+		m.esclient.Search.WithBody(buf),
+		m.esclient.Search.WithTrackTotalHits(true),
+		m.esclient.Search.WithPretty(),
+	)
+	if err != nil {
+		return 0, err
+	}
+	defer res.Body.Close()
+	resultBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	if string(resultBody) == "" {
+		return 0, errors.New("NOT FOUND")
+	}
+	var result map[string]interface{}
+	err = json.Unmarshal(resultBody, &result)
+	if err != nil {
+		return 0, err
+	}
+	if result["aggregations"] == nil {
+		return 0, errors.New("Not found field aggregations in result")
+	}
+	aggsByField, ok := result["aggregations"].(map[string]interface{})
+	if !ok {
+		return 0, errors.New("Data result aggs is not map interface")
+	}
+	aggsName, ok := aggsByField[fieldName+"_aggs"].(map[string]interface{})
+	if !ok {
+		return 0, errors.New("AggsName is not type interface")
+	}
+	bucket, ok := aggsName["buckets"].([]interface{})
+	if !ok {
+		return 0, errors.New("Bucket is not type array interface")
+	}
+	if len(bucket) != 1 {
+		return 0, errors.New("Invalid bucket result")
+	}
+	mapAggs, ok := bucket[0].(map[string]interface{})
+	if !ok {
+		return 0, errors.New("Map Aggs not type map interface")
+	}
+	docCount, ok := mapAggs["doc_count"].(float64)
+	if !ok {
+		return 0, errors.New("Not found field doc count")
+	}
+	return int64(docCount), nil
 }
 
 func (m *client) SearchRawString(indexName, rawQuery string) (rawResult [][]byte, total int64, err error) {
@@ -43,6 +114,7 @@ func (m *client) SearchRawString(indexName, rawQuery string) (rawResult [][]byte
 	if string(resultBody) == "" {
 		return nil, 0, errors.New("NOT FOUND")
 	}
+
 	return ParseResultToArrJsonWithLenght(resultBody)
 
 }
