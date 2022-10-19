@@ -47,16 +47,19 @@ struct ListTKVcounterItemResult{
     1:TErrorCode errorCode,
     2:list<TKVCounterItem> listItems,
 }
-service KVStepCounterService extends TDataService
-{
+service KVStepCounterService extends TDataService{
     i32 createGenerator(1: string genName),
     i32 removeGenerator(1: string genName),
     i64 getCurrentValue(1: string genName),
     i64 getValue(1: string genName) ,
     i64 getStepValue(1: string genName, 2: i64 step),
+    i64 setValue(1:string genName,2:i64 value),
+    i64 decrement(1:string genName,2:i64 value)
 
     ListTKVcounterItemResult getMultiCurrentValue(1:list<string> listKeys)
     ListTKVcounterItemResult getMultiValue(1:list<string> listKeys)
+    ListTKVcounterItemResult getMultiStepValue(1:list<string> listKeys,2:i64 step)
 }
+
 
 

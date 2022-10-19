@@ -1705,11 +1705,23 @@ TDataService
   //  - Step
   GetStepValue(ctx context.Context, genName string, step int64) (r int64, err error)
   // Parameters:
+  //  - GenName
+  //  - Value
+  SetValue(ctx context.Context, genName string, value int64) (r int64, err error)
+  // Parameters:
+  //  - GenName
+  //  - Value
+  Decrement(ctx context.Context, genName string, value int64) (r int64, err error)
+  // Parameters:
   //  - ListKeys
   GetMultiCurrentValue(ctx context.Context, listKeys []string) (r *ListTKVcounterItemResult_, err error)
   // Parameters:
   //  - ListKeys
   GetMultiValue(ctx context.Context, listKeys []string) (r *ListTKVcounterItemResult_, err error)
+  // Parameters:
+  //  - ListKeys
+  //  - Step
+  GetMultiStepValue(ctx context.Context, listKeys []string, step int64) (r *ListTKVcounterItemResult_, err error)
 }
 
 type KVStepCounterServiceClient struct {
@@ -1792,27 +1804,69 @@ func (p *KVStepCounterServiceClient) GetStepValue(ctx context.Context, genName s
 }
 
 // Parameters:
-//  - ListKeys
-func (p *KVStepCounterServiceClient) GetMultiCurrentValue(ctx context.Context, listKeys []string) (r *ListTKVcounterItemResult_, err error) {
-  var _args29 KVStepCounterServiceGetMultiCurrentValueArgs
-  _args29.ListKeys = listKeys
-  var _result30 KVStepCounterServiceGetMultiCurrentValueResult
-  if err = p.Client_().Call(ctx, "getMultiCurrentValue", &_args29, &_result30); err != nil {
+//  - GenName
+//  - Value
+func (p *KVStepCounterServiceClient) SetValue(ctx context.Context, genName string, value int64) (r int64, err error) {
+  var _args29 KVStepCounterServiceSetValueArgs
+  _args29.GenName = genName
+  _args29.Value = value
+  var _result30 KVStepCounterServiceSetValueResult
+  if err = p.Client_().Call(ctx, "setValue", &_args29, &_result30); err != nil {
     return
   }
   return _result30.GetSuccess(), nil
 }
 
 // Parameters:
-//  - ListKeys
-func (p *KVStepCounterServiceClient) GetMultiValue(ctx context.Context, listKeys []string) (r *ListTKVcounterItemResult_, err error) {
-  var _args31 KVStepCounterServiceGetMultiValueArgs
-  _args31.ListKeys = listKeys
-  var _result32 KVStepCounterServiceGetMultiValueResult
-  if err = p.Client_().Call(ctx, "getMultiValue", &_args31, &_result32); err != nil {
+//  - GenName
+//  - Value
+func (p *KVStepCounterServiceClient) Decrement(ctx context.Context, genName string, value int64) (r int64, err error) {
+  var _args31 KVStepCounterServiceDecrementArgs
+  _args31.GenName = genName
+  _args31.Value = value
+  var _result32 KVStepCounterServiceDecrementResult
+  if err = p.Client_().Call(ctx, "decrement", &_args31, &_result32); err != nil {
     return
   }
   return _result32.GetSuccess(), nil
+}
+
+// Parameters:
+//  - ListKeys
+func (p *KVStepCounterServiceClient) GetMultiCurrentValue(ctx context.Context, listKeys []string) (r *ListTKVcounterItemResult_, err error) {
+  var _args33 KVStepCounterServiceGetMultiCurrentValueArgs
+  _args33.ListKeys = listKeys
+  var _result34 KVStepCounterServiceGetMultiCurrentValueResult
+  if err = p.Client_().Call(ctx, "getMultiCurrentValue", &_args33, &_result34); err != nil {
+    return
+  }
+  return _result34.GetSuccess(), nil
+}
+
+// Parameters:
+//  - ListKeys
+func (p *KVStepCounterServiceClient) GetMultiValue(ctx context.Context, listKeys []string) (r *ListTKVcounterItemResult_, err error) {
+  var _args35 KVStepCounterServiceGetMultiValueArgs
+  _args35.ListKeys = listKeys
+  var _result36 KVStepCounterServiceGetMultiValueResult
+  if err = p.Client_().Call(ctx, "getMultiValue", &_args35, &_result36); err != nil {
+    return
+  }
+  return _result36.GetSuccess(), nil
+}
+
+// Parameters:
+//  - ListKeys
+//  - Step
+func (p *KVStepCounterServiceClient) GetMultiStepValue(ctx context.Context, listKeys []string, step int64) (r *ListTKVcounterItemResult_, err error) {
+  var _args37 KVStepCounterServiceGetMultiStepValueArgs
+  _args37.ListKeys = listKeys
+  _args37.Step = step
+  var _result38 KVStepCounterServiceGetMultiStepValueResult
+  if err = p.Client_().Call(ctx, "getMultiStepValue", &_args37, &_result38); err != nil {
+    return
+  }
+  return _result38.GetSuccess(), nil
 }
 
 type KVStepCounterServiceProcessor struct {
@@ -1820,15 +1874,18 @@ type KVStepCounterServiceProcessor struct {
 }
 
 func NewKVStepCounterServiceProcessor(handler KVStepCounterService) *KVStepCounterServiceProcessor {
-  self33 := &KVStepCounterServiceProcessor{NewTDataServiceProcessor(handler)}
-  self33.AddToProcessorMap("createGenerator", &kVStepCounterServiceProcessorCreateGenerator{handler:handler})
-  self33.AddToProcessorMap("removeGenerator", &kVStepCounterServiceProcessorRemoveGenerator{handler:handler})
-  self33.AddToProcessorMap("getCurrentValue", &kVStepCounterServiceProcessorGetCurrentValue{handler:handler})
-  self33.AddToProcessorMap("getValue", &kVStepCounterServiceProcessorGetValue{handler:handler})
-  self33.AddToProcessorMap("getStepValue", &kVStepCounterServiceProcessorGetStepValue{handler:handler})
-  self33.AddToProcessorMap("getMultiCurrentValue", &kVStepCounterServiceProcessorGetMultiCurrentValue{handler:handler})
-  self33.AddToProcessorMap("getMultiValue", &kVStepCounterServiceProcessorGetMultiValue{handler:handler})
-  return self33
+  self39 := &KVStepCounterServiceProcessor{NewTDataServiceProcessor(handler)}
+  self39.AddToProcessorMap("createGenerator", &kVStepCounterServiceProcessorCreateGenerator{handler:handler})
+  self39.AddToProcessorMap("removeGenerator", &kVStepCounterServiceProcessorRemoveGenerator{handler:handler})
+  self39.AddToProcessorMap("getCurrentValue", &kVStepCounterServiceProcessorGetCurrentValue{handler:handler})
+  self39.AddToProcessorMap("getValue", &kVStepCounterServiceProcessorGetValue{handler:handler})
+  self39.AddToProcessorMap("getStepValue", &kVStepCounterServiceProcessorGetStepValue{handler:handler})
+  self39.AddToProcessorMap("setValue", &kVStepCounterServiceProcessorSetValue{handler:handler})
+  self39.AddToProcessorMap("decrement", &kVStepCounterServiceProcessorDecrement{handler:handler})
+  self39.AddToProcessorMap("getMultiCurrentValue", &kVStepCounterServiceProcessorGetMultiCurrentValue{handler:handler})
+  self39.AddToProcessorMap("getMultiValue", &kVStepCounterServiceProcessorGetMultiValue{handler:handler})
+  self39.AddToProcessorMap("getMultiStepValue", &kVStepCounterServiceProcessorGetMultiStepValue{handler:handler})
+  return self39
 }
 
 type kVStepCounterServiceProcessorCreateGenerator struct {
@@ -2071,6 +2128,102 @@ var retval int64
   return true, err
 }
 
+type kVStepCounterServiceProcessorSetValue struct {
+  handler KVStepCounterService
+}
+
+func (p *kVStepCounterServiceProcessorSetValue) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := KVStepCounterServiceSetValueArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("setValue", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := KVStepCounterServiceSetValueResult{}
+var retval int64
+  var err2 error
+  if retval, err2 = p.handler.SetValue(ctx, args.GenName, args.Value); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing setValue: " + err2.Error())
+    oprot.WriteMessageBegin("setValue", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("setValue", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type kVStepCounterServiceProcessorDecrement struct {
+  handler KVStepCounterService
+}
+
+func (p *kVStepCounterServiceProcessorDecrement) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := KVStepCounterServiceDecrementArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("decrement", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := KVStepCounterServiceDecrementResult{}
+var retval int64
+  var err2 error
+  if retval, err2 = p.handler.Decrement(ctx, args.GenName, args.Value); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing decrement: " + err2.Error())
+    oprot.WriteMessageBegin("decrement", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("decrement", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
 type kVStepCounterServiceProcessorGetMultiCurrentValue struct {
   handler KVStepCounterService
 }
@@ -2150,6 +2303,54 @@ var retval *ListTKVcounterItemResult_
     result.Success = retval
 }
   if err2 = oprot.WriteMessageBegin("getMultiValue", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type kVStepCounterServiceProcessorGetMultiStepValue struct {
+  handler KVStepCounterService
+}
+
+func (p *kVStepCounterServiceProcessorGetMultiStepValue) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := KVStepCounterServiceGetMultiStepValueArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("getMultiStepValue", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := KVStepCounterServiceGetMultiStepValueResult{}
+var retval *ListTKVcounterItemResult_
+  var err2 error
+  if retval, err2 = p.handler.GetMultiStepValue(ctx, args.ListKeys, args.Step); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getMultiStepValue: " + err2.Error())
+    oprot.WriteMessageBegin("getMultiStepValue", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return true, err2
+  } else {
+    result.Success = retval
+}
+  if err2 = oprot.WriteMessageBegin("getMultiStepValue", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -3162,6 +3363,460 @@ func (p *KVStepCounterServiceGetStepValueResult) String() string {
 }
 
 // Attributes:
+//  - GenName
+//  - Value
+type KVStepCounterServiceSetValueArgs struct {
+  GenName string `thrift:"genName,1" db:"genName" json:"genName"`
+  Value int64 `thrift:"value,2" db:"value" json:"value"`
+}
+
+func NewKVStepCounterServiceSetValueArgs() *KVStepCounterServiceSetValueArgs {
+  return &KVStepCounterServiceSetValueArgs{}
+}
+
+
+func (p *KVStepCounterServiceSetValueArgs) GetGenName() string {
+  return p.GenName
+}
+
+func (p *KVStepCounterServiceSetValueArgs) GetValue() int64 {
+  return p.Value
+}
+func (p *KVStepCounterServiceSetValueArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceSetValueArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.GenName = v
+}
+  return nil
+}
+
+func (p *KVStepCounterServiceSetValueArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Value = v
+}
+  return nil
+}
+
+func (p *KVStepCounterServiceSetValueArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("setValue_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *KVStepCounterServiceSetValueArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("genName", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:genName: ", p), err) }
+  if err := oprot.WriteString(string(p.GenName)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.genName (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:genName: ", p), err) }
+  return err
+}
+
+func (p *KVStepCounterServiceSetValueArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("value", thrift.I64, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:value: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Value)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.value (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:value: ", p), err) }
+  return err
+}
+
+func (p *KVStepCounterServiceSetValueArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("KVStepCounterServiceSetValueArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type KVStepCounterServiceSetValueResult struct {
+  Success *int64 `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewKVStepCounterServiceSetValueResult() *KVStepCounterServiceSetValueResult {
+  return &KVStepCounterServiceSetValueResult{}
+}
+
+var KVStepCounterServiceSetValueResult_Success_DEFAULT int64
+func (p *KVStepCounterServiceSetValueResult) GetSuccess() int64 {
+  if !p.IsSetSuccess() {
+    return KVStepCounterServiceSetValueResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *KVStepCounterServiceSetValueResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *KVStepCounterServiceSetValueResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceSetValueResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  p.Success = &v
+}
+  return nil
+}
+
+func (p *KVStepCounterServiceSetValueResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("setValue_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *KVStepCounterServiceSetValueResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.I64, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteI64(int64(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *KVStepCounterServiceSetValueResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("KVStepCounterServiceSetValueResult(%+v)", *p)
+}
+
+// Attributes:
+//  - GenName
+//  - Value
+type KVStepCounterServiceDecrementArgs struct {
+  GenName string `thrift:"genName,1" db:"genName" json:"genName"`
+  Value int64 `thrift:"value,2" db:"value" json:"value"`
+}
+
+func NewKVStepCounterServiceDecrementArgs() *KVStepCounterServiceDecrementArgs {
+  return &KVStepCounterServiceDecrementArgs{}
+}
+
+
+func (p *KVStepCounterServiceDecrementArgs) GetGenName() string {
+  return p.GenName
+}
+
+func (p *KVStepCounterServiceDecrementArgs) GetValue() int64 {
+  return p.Value
+}
+func (p *KVStepCounterServiceDecrementArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceDecrementArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.GenName = v
+}
+  return nil
+}
+
+func (p *KVStepCounterServiceDecrementArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Value = v
+}
+  return nil
+}
+
+func (p *KVStepCounterServiceDecrementArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("decrement_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *KVStepCounterServiceDecrementArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("genName", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:genName: ", p), err) }
+  if err := oprot.WriteString(string(p.GenName)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.genName (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:genName: ", p), err) }
+  return err
+}
+
+func (p *KVStepCounterServiceDecrementArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("value", thrift.I64, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:value: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Value)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.value (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:value: ", p), err) }
+  return err
+}
+
+func (p *KVStepCounterServiceDecrementArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("KVStepCounterServiceDecrementArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type KVStepCounterServiceDecrementResult struct {
+  Success *int64 `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewKVStepCounterServiceDecrementResult() *KVStepCounterServiceDecrementResult {
+  return &KVStepCounterServiceDecrementResult{}
+}
+
+var KVStepCounterServiceDecrementResult_Success_DEFAULT int64
+func (p *KVStepCounterServiceDecrementResult) GetSuccess() int64 {
+  if !p.IsSetSuccess() {
+    return KVStepCounterServiceDecrementResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *KVStepCounterServiceDecrementResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *KVStepCounterServiceDecrementResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceDecrementResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  p.Success = &v
+}
+  return nil
+}
+
+func (p *KVStepCounterServiceDecrementResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("decrement_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *KVStepCounterServiceDecrementResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.I64, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteI64(int64(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *KVStepCounterServiceDecrementResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("KVStepCounterServiceDecrementResult(%+v)", *p)
+}
+
+// Attributes:
 //  - ListKeys
 type KVStepCounterServiceGetMultiCurrentValueArgs struct {
   ListKeys []string `thrift:"listKeys,1" db:"listKeys" json:"listKeys"`
@@ -3221,13 +3876,13 @@ func (p *KVStepCounterServiceGetMultiCurrentValueArgs)  ReadField1(iprot thrift.
   tSlice := make([]string, 0, size)
   p.ListKeys =  tSlice
   for i := 0; i < size; i ++ {
-var _elem34 string
+var _elem40 string
     if v, err := iprot.ReadString(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
-    _elem34 = v
+    _elem40 = v
 }
-    p.ListKeys = append(p.ListKeys, _elem34)
+    p.ListKeys = append(p.ListKeys, _elem40)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -3433,13 +4088,13 @@ func (p *KVStepCounterServiceGetMultiValueArgs)  ReadField1(iprot thrift.TProtoc
   tSlice := make([]string, 0, size)
   p.ListKeys =  tSlice
   for i := 0; i < size; i ++ {
-var _elem35 string
+var _elem41 string
     if v, err := iprot.ReadString(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
-    _elem35 = v
+    _elem41 = v
 }
-    p.ListKeys = append(p.ListKeys, _elem35)
+    p.ListKeys = append(p.ListKeys, _elem41)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -3583,6 +4238,254 @@ func (p *KVStepCounterServiceGetMultiValueResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("KVStepCounterServiceGetMultiValueResult(%+v)", *p)
+}
+
+// Attributes:
+//  - ListKeys
+//  - Step
+type KVStepCounterServiceGetMultiStepValueArgs struct {
+  ListKeys []string `thrift:"listKeys,1" db:"listKeys" json:"listKeys"`
+  Step int64 `thrift:"step,2" db:"step" json:"step"`
+}
+
+func NewKVStepCounterServiceGetMultiStepValueArgs() *KVStepCounterServiceGetMultiStepValueArgs {
+  return &KVStepCounterServiceGetMultiStepValueArgs{}
+}
+
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs) GetListKeys() []string {
+  return p.ListKeys
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs) GetStep() int64 {
+  return p.Step
+}
+func (p *KVStepCounterServiceGetMultiStepValueArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.LIST {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs)  ReadField1(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]string, 0, size)
+  p.ListKeys =  tSlice
+  for i := 0; i < size; i ++ {
+var _elem42 string
+    if v, err := iprot.ReadString(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    _elem42 = v
+}
+    p.ListKeys = append(p.ListKeys, _elem42)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Step = v
+}
+  return nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("getMultiStepValue_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("listKeys", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:listKeys: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRING, len(p.ListKeys)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.ListKeys {
+    if err := oprot.WriteString(string(v)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:listKeys: ", p), err) }
+  return err
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("step", thrift.I64, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:step: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Step)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.step (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:step: ", p), err) }
+  return err
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("KVStepCounterServiceGetMultiStepValueArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type KVStepCounterServiceGetMultiStepValueResult struct {
+  Success *ListTKVcounterItemResult_ `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewKVStepCounterServiceGetMultiStepValueResult() *KVStepCounterServiceGetMultiStepValueResult {
+  return &KVStepCounterServiceGetMultiStepValueResult{}
+}
+
+var KVStepCounterServiceGetMultiStepValueResult_Success_DEFAULT *ListTKVcounterItemResult_
+func (p *KVStepCounterServiceGetMultiStepValueResult) GetSuccess() *ListTKVcounterItemResult_ {
+  if !p.IsSetSuccess() {
+    return KVStepCounterServiceGetMultiStepValueResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *KVStepCounterServiceGetMultiStepValueResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.STRUCT {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueResult)  ReadField0(iprot thrift.TProtocol) error {
+  p.Success = &ListTKVcounterItemResult_{}
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("getMultiStepValue_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *KVStepCounterServiceGetMultiStepValueResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("KVStepCounterServiceGetMultiStepValueResult(%+v)", *p)
 }
 
 

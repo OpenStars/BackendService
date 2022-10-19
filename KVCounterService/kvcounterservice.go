@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	etcdconfig "github.com/OpenStars/configetcd"
-	apm "go.elastic.co/apm/v2"
 
 	"github.com/OpenStars/BackendService/KVCounterService/kvcounter/thrift/gen-go/OpenStars/Counters/KVStepCounter"
 	transports "github.com/OpenStars/BackendService/KVCounterService/kvcounter/transportsv2"
@@ -22,8 +21,7 @@ type KVCounterService struct {
 }
 
 func (m *KVCounterService) GetValue(genname string) (int64, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetValue", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -50,9 +48,92 @@ func (m *KVCounterService) GetValue(genname string) (int64, error) {
 
 }
 
+func (m *KVCounterService) SetValue(genname string, value int64) (int64, error) {
+
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
+	m.mu.Lock()
+	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
+	if client == nil || client.Client == nil {
+		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).SetValue(context.Background(), genname, value)
+	if err != nil {
+		transports.ServiceDisconnect(client)
+		return -1, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer transports.BackToPool(client)
+	return r, nil
+
+}
+
+func (m *KVCounterService) Decrement(genname string, value int64) (int64, error) {
+
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
+	m.mu.Lock()
+	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
+	if client == nil || client.Client == nil {
+		return -1, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).Decrement(context.Background(), genname, value)
+	if err != nil {
+		transports.ServiceDisconnect(client)
+		return -1, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer transports.BackToPool(client)
+	return r, nil
+
+}
+
+func (m *KVCounterService) GetMultiStepValue(listKeys []string, step int64) ([]*KVStepCounter.TKVCounterItem, error) {
+
+	// if m.etcdManager != nil {
+	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
+	// 	if err != nil {
+	// 		log.Println("EtcdManager get endpoints", "err", err)
+	// 	} else {
+	// 		m.host = h
+	// 		m.port = p
+	// 	}
+	// }
+	m.mu.Lock()
+	client := transports.GetKVCounterCompactClient(m.host, m.port)
+	m.mu.Unlock()
+	if client == nil || client.Client == nil {
+		transports.ServiceDisconnect(client)
+		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	r, err := client.Client.(*KVStepCounter.KVStepCounterServiceClient).GetMultiStepValue(context.Background(), listKeys, step)
+	if err != nil {
+		transports.ServiceDisconnect(client)
+		return nil, errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
+	}
+	defer transports.BackToPool(client)
+	return r.ListItems, nil
+}
+
 func (m *KVCounterService) GetMultiValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetMultiValue", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -79,8 +160,7 @@ func (m *KVCounterService) GetMultiValue(listKeys []string) ([]*KVStepCounter.TK
 	return r.ListItems, nil
 }
 func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCounter.TKVCounterItem, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetMultiCurrentValue", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -108,8 +188,7 @@ func (m *KVCounterService) GetMultiCurrentValue(listKeys []string) ([]*KVStepCou
 }
 
 func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetCurrentValue", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -138,8 +217,7 @@ func (m *KVCounterService) GetCurrentValue(genname string) (int64, error) {
 }
 
 func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"GetStepValue", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -170,8 +248,7 @@ func (m *KVCounterService) GetStepValue(genname string, step int64) (int64, erro
 }
 
 func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"CreateGenerator", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -202,8 +279,7 @@ func (m *KVCounterService) CreateGenerator(genname string) (int32, error) {
 }
 
 func (m *KVCounterService) RemoveGenerator(genname string) (bool, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"CreateGenerator", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
