@@ -7,6 +7,7 @@ import (
 )
 
 func NewClient(hosts []string) Client {
+	log.Println("Init ElasticSearchClient address", hosts)
 	cfg := elasticsearch.Config{
 		Addresses: hosts,
 	}
