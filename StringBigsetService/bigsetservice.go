@@ -3,6 +3,7 @@ package StringBigsetService
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -78,7 +79,7 @@ func (m *StringBigsetService) TotalStringKeyCount() (r int64, err error) {
 	defer cancel()
 	r, err = client.Client.(*generic.TStringBigSetKVServiceClient).TotalStringKeyCount(ctx)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, "func TotalStringKeyCount")
 		return 0, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
 	transports.BackToPool(client)
@@ -100,7 +101,7 @@ func (m *StringBigsetService) GetListKey(fromIndex int64, count int32) ([]string
 	r, err := client.Client.(*generic.TStringBigSetKVServiceClient).GetListKey(ctx, fromIndex, count)
 
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func GetListKey fromIndex %d count %d", fromIndex, count))
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -126,7 +127,7 @@ func (m *StringBigsetService) BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (f
 	r, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsMultiPutBsItem(ctx, lsItem)
 
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func BsMultiPutBsItem %v", lsItem))
 		return lsItem, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -168,7 +169,8 @@ func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (
 	})
 
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func BsPutItem key %s value %s", itemKey, itemVal))
+		//transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return false, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -209,7 +211,9 @@ func (m *StringBigsetService) BsRangeQuery(bskey string, startKey string, endKey
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsRangeQuery(ctx, generic.TStringKey(bskey), generic.TItemKey(startKey), generic.TItemKey(endKey))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func BsRangeQuery bsKey %s start %s end %s", bskey, startKey, endKey))
+
+		//	transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -245,7 +249,9 @@ func (m *StringBigsetService) BsRangeQueryAll(bskey string) ([]*generic.TItem, e
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsRangeQuery(ctx, generic.TStringKey(bskey), nil, generic.TItemKey("z"))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func bsRangeQuery All %s", bskey))
+
+		//transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -328,7 +334,9 @@ func (m *StringBigsetService) BsGetItem(bskey string, itemkey string) (*generic.
 	defer cancel()
 	r, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsGetItem(ctx, generic.TStringKey(bskey), generic.TItemKey(itemkey))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func bsGetItem bskey %s itemKey %s", bskey, itemkey))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -362,7 +370,9 @@ func (m *StringBigsetService) GetTotalCount(bskey string) (int64, error) {
 	r, err := client.Client.(*generic.TStringBigSetKVServiceClient).GetTotalCount(ctx, generic.TStringKey(bskey))
 
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func GetTotalCount %s", bskey))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return 0, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -495,7 +505,9 @@ func (m *StringBigsetService) BsGetSlice(bskey string, fromPos int32, count int3
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsGetSlice(ctx, generic.TStringKey(bskey), fromPos, count)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func bsGetSlice bsKey %s offset %d limit %d", bskey, fromPos, count))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -532,7 +544,9 @@ func (m *StringBigsetService) BsGetSliceR(bskey string, fromPos int32, count int
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsGetSliceR(ctx, generic.TStringKey(bskey), fromPos, count)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func bsGetSliceR %s fromKey %d count %d", bskey, fromPos, count))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -568,7 +582,9 @@ func (m *StringBigsetService) BsRemoveItem(bskey string, itemkey string) (bool, 
 	defer cancel()
 	ok, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsRemoveItem(ctx, generic.TStringKey(bskey), generic.TItemKey(itemkey))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func BsRemoveItem bsKey %s itemKey %s", bskey, itemkey))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return false, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -591,8 +607,8 @@ func (m *StringBigsetService) BsMultiPut(bskey string, lsItems []*generic.TItem)
 	client := transports.GetBsGenericClient(m.host, m.port)
 	m.mu.RUnlock()
 	if client == nil || client.Client == nil {
-
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+
 	}
 
 	itemset := &generic.TItemSet{
@@ -627,7 +643,10 @@ func (m *StringBigsetService) BsMultiRemoveBsItem(listItems []*generic.TBigsetIt
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsMultiRemoveBsItem(ctx, listItems)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func BsMultiRemoveBsItem %v", listItems))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -662,7 +681,9 @@ func (m *StringBigsetService) BsGetSliceFromItem(bskey string, fromKey string, c
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsGetSliceFromItem(ctx, generic.TStringKey(bskey), generic.TItemKey(fromKey), count)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func bsGetSliceFromIem %s fromKey %s count %d", bskey, fromKey, count))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
@@ -697,7 +718,9 @@ func (m *StringBigsetService) BsGetSliceFromItemR(bskey string, fromKey string, 
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsGetSliceFromItemR(ctx, generic.TStringKey(bskey), generic.TItemKey(fromKey), count)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func bsGetSliceFromIemR %s fromKey %s count %d", bskey, fromKey, count))
+
+		// transports.ServiceDisconnect(client)
 		// client = transports.NeewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}

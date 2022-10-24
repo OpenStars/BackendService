@@ -63,5 +63,10 @@ func BackToPool(c *thriftpool.IdleClient) {
 
 func ServiceDisconnect(c *thriftpool.IdleClient) {
 	bsGenericMapPool.Release(c.Host, c.Port)
-	telenotification.NotifyServiceError("", c.Host, c.Port, errors.New("service disconnect"))
+	telenotification.NotifyServiceError(c.SID, c.Host, c.Port, errors.New("service disconnect"))
+}
+
+func ServiceDisconnect2(c *thriftpool.IdleClient, err error, message string) {
+	bsGenericMapPool.Release(c.Host, c.Port)
+	telenotification.Notify(fmt.Sprintf("Service sid %s address %s:%s %v %s", c.SID, c.Host, c.Port, err, message))
 }

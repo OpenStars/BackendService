@@ -6,6 +6,7 @@ import (
 	"math/rand"
 
 	"github.com/OpenStars/BackendService/StringBigsetService"
+	"github.com/OpenStars/BackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
 )
 
 var bigset StringBigsetService.Client
@@ -22,7 +23,26 @@ func GetItem() {
 	fmt.Println("max size item total", total)
 	// fmt.Println(lsItems)
 }
-
+func TestMultiPut() {
+	item, err := bigset.BsMultiPutBsItem([]*generic.TBigsetItem{
+		{
+			Bskey:     []byte("TestKey"),
+			Itemkey:   []byte("ItemKeyTest1"),
+			Itemvalue: []byte("ItemValueTest1"),
+		},
+		{
+			Bskey:     []byte("TestKey2"),
+			Itemkey:   []byte("ItemKeyTest2"),
+			Itemvalue: []byte("ItemValueTest2"),
+		},
+		{
+			Bskey:     []byte("TestKe3"),
+			Itemkey:   []byte("ItemKeyTest3"),
+			Itemvalue: []byte("ItemValueTest3"),
+		},
+	})
+	fmt.Println(len(item), err)
+}
 func DeleteRandom() {
 	totalItem, err := bigset.GetTotalCount("this_is_bigset_key_of_my_bigset_from_os_linux_corei5_ram8gb_ssd256_id_99")
 	log.Println("total", totalItem, err)
@@ -57,6 +77,7 @@ func ListAllItem() {
 		if err != nil || len(lsKey) == 0 {
 			log.Fatalln("get list key", err)
 		}
+		fmt.Println("starIndext", startIndex, "totalKey", len(lsKey))
 		for i, bskey := range lsKey {
 			log.Println("bskey", bskey)
 			totalItem, err := bigset.GetTotalCount(bskey)
@@ -112,12 +133,36 @@ func bulkPut() {
 }
 func main() {
 
-	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.60.68.100", "18117")
-	for i := 0; i < 100; i++ {
-		fmt.Println(i)
-		go bigset.BsGetSlice("GROUPMEMBER_"+"0329b33d5219e83622e4308b98639e6e97a9aefc4b59c3dca82ce3e41e8c2fa1d4", 0, 10000)
+	lsItem := []*generic.TBigsetItem{
+		{
+			Bskey:     []byte("TestKey"),
+			Itemkey:   []byte("ItemKeyTest1"),
+			Itemvalue: []byte("ItemValueTest1"),
+		},
+		{
+			Bskey:     []byte("TestKey2"),
+			Itemkey:   []byte("ItemKeyTest2"),
+			Itemvalue: []byte("ItemValueTest2"),
+		},
+		{
+			Bskey:     []byte("TestKe3"),
+			Itemkey:   []byte("ItemKeyTest3"),
+			Itemvalue: []byte("ItemValueTest3"),
+		},
 	}
-	done := make(chan bool)
-	<-done
-
+	msg := fmt.Sprintf("lsBsItem %v", lsItem)
+	fmt.Println("msg ", msg)
+	//	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.110.69.97", "30547")
+	//
+	//	for i := 0; i < 100; i++ {
+	//		fmt.Println(i)
+	//		go bigset.BsGetSlice("GROUPMEMBER_"+"0329b33d5219e83622e4308b98639e6e97a9aefc4b59c3dca82ce3e41e8c2fa1d4", 0, 10000)
+	//	}
+	//
+	// done := make(chan bool)
+	// <-done
+	//
+	//	TestMultiPut()
+	//
+	// ListAllItem()
 }
