@@ -1,4 +1,4 @@
-package sortedsetservice
+package SortedSetService
 
 import (
 	"context"
