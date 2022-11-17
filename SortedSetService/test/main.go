@@ -112,7 +112,7 @@ func GetLoad() {
 	}
 }
 func main() {
-	// TestLoad()
-	// Test0()
+	TestLoad()
+	Test0()
 	GetLoad()
 }
