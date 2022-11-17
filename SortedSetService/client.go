@@ -112,11 +112,11 @@ func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) *Sort
 		SID:  sid,
 	}
 
-	log.Println("Init KVCounterService sid", ep.SID, "address", ep.Host+":"+ep.Port)
+	log.Println("Init Zset sid", ep.SID, "address", ep.Host+":"+ep.Port)
 
 	client := transports.GetSortedSetCompactClient(ep.Host, ep.Port)
 	if client == nil || client.Client == nil {
-		log.Println("[ERROR] kvcounter sid", ep.SID, "address", ep.Host+":"+ep.Port, "connection refused")
+		log.Println("[ERROR] zset sid", ep.SID, "address", ep.Host+":"+ep.Port, "connection refused")
 
 		return nil
 	}
