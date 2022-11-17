@@ -11,8 +11,6 @@ import (
 	"github.com/OpenStars/BackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
 	transports "github.com/OpenStars/BackendService/StringBigsetService/transportsv2"
 	etcdconfig "github.com/OpenStars/configetcd"
-
-	apm "go.elastic.co/apm/v2"
 )
 
 var reconnect = true
@@ -143,8 +141,7 @@ func (m *StringBigsetService) BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (f
 }
 
 func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (bool, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"BsPutItem", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -188,8 +185,7 @@ func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (
 }
 
 func (m *StringBigsetService) BsRangeQuery(bskey string, startKey string, endKey string) ([]*generic.TItem, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"BsRangeQuery", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -310,8 +306,7 @@ func (m *StringBigsetService) BsRangeQueryByPage(bskey string, startKey, endKey 
 }
 
 func (m *StringBigsetService) BsGetItem(bskey string, itemkey string) (*generic.TItem, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"BsGetItem", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -484,16 +479,15 @@ func (m *StringBigsetService) CreateStringBigSet(bskey string) (*generic.TString
 }
 
 func (m *StringBigsetService) BsGetSlice(bskey string, fromPos int32, count int32) ([]*generic.TItem, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"BsGetSlice", "request")
-	defer tx.End()
+
 	if count == 0 {
 		return nil, nil
 	}
 
 	m.mu.RLock()
-	span := tx.StartSpan("get pool", "getPool", nil)
+
 	client := transports.GetBsGenericClient(m.host, m.port)
-	span.End()
+
 	m.mu.RUnlock()
 
 	if client == nil || client.Client == nil {
@@ -520,8 +514,7 @@ func (m *StringBigsetService) BsGetSlice(bskey string, fromPos int32, count int3
 }
 
 func (m *StringBigsetService) BsGetSliceR(bskey string, fromPos int32, count int32) ([]*generic.TItem, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"BsGetSliceR", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
@@ -558,8 +551,7 @@ func (m *StringBigsetService) BsGetSliceR(bskey string, fromPos int32, count int
 }
 
 func (m *StringBigsetService) BsRemoveItem(bskey string, itemkey string) (bool, error) {
-	tx := apm.DefaultTracer().StartTransaction(m.sid+" "+"BsRemoveItem", "request")
-	defer tx.End()
+
 	// if m.etcdManager != nil {
 	// 	h, p, err := m.etcdManager.GetEndpoint(m.sid)
 	// 	if err != nil {
