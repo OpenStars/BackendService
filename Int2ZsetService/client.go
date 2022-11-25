@@ -11,7 +11,7 @@ import (
 	"github.com/lehaisonmath6/etcdconfig"
 )
 
-type int2zset struct {
+type Int2ZsetClient struct {
 	host   string
 	port   string
 	sid    string
@@ -19,7 +19,7 @@ type int2zset struct {
 	mu     *sync.RWMutex
 }
 
-func (m *int2zset) AddItem(setID int64, item *Int2Zset.TItem, maxItem int64) (bool, error) {
+func (m *Int2ZsetClient) AddItem(setID int64, item *Int2Zset.TItem, maxItem int64) (bool, error) {
 	m.mu.RLock()
 	client := transports.GetInt2ZsetCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -37,7 +37,7 @@ func (m *int2zset) AddItem(setID int64, item *Int2Zset.TItem, maxItem int64) (bo
 
 }
 
-func (m *int2zset) AddListItem(lsItem []*Int2Zset.TItemSet, maxItem int64) (bool, error) {
+func (m *Int2ZsetClient) AddListItem(lsItem []*Int2Zset.TItemSet, maxItem int64) (bool, error) {
 	m.mu.RLock()
 	client := transports.GetInt2ZsetCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -56,7 +56,7 @@ func (m *int2zset) AddListItem(lsItem []*Int2Zset.TItemSet, maxItem int64) (bool
 
 }
 
-func (m *int2zset) RemoveItem(setID int64, itemID string) (bool, error) {
+func (m *Int2ZsetClient) RemoveItem(setID int64, itemID string) (bool, error) {
 	m.mu.RLock()
 	client := transports.GetInt2ZsetCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -73,7 +73,7 @@ func (m *int2zset) RemoveItem(setID int64, itemID string) (bool, error) {
 	return r.Data, nil
 
 }
-func (m *int2zset) RemoveListItems(lsItems []*Int2Zset.TItemSet) ([]*Int2Zset.TItemSet, error) {
+func (m *Int2ZsetClient) RemoveListItems(lsItems []*Int2Zset.TItemSet) ([]*Int2Zset.TItemSet, error) {
 	m.mu.RLock()
 	client := transports.GetInt2ZsetCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -93,7 +93,7 @@ func (m *int2zset) RemoveListItems(lsItems []*Int2Zset.TItemSet) ([]*Int2Zset.TI
 	return r.Data, nil
 
 }
-func (m *int2zset) ListItems(setID int64, offset, limit int32, desc bool) ([]*Int2Zset.TItem, int64, error) {
+func (m *Int2ZsetClient) ListItems(setID int64, offset, limit int32, desc bool) ([]*Int2Zset.TItem, int64, error) {
 	m.mu.RLock()
 	client := transports.GetInt2ZsetCompactClient(m.host, m.port)
 	m.mu.RUnlock()
@@ -111,7 +111,7 @@ func (m *int2zset) ListItems(setID int64, offset, limit int32, desc bool) ([]*In
 
 }
 
-func (m *int2zset) WatchChangeEndpoint() {
+func (m *Int2ZsetClient) WatchChangeEndpoint() {
 	epChan := make(chan *etcdconfig.Endpoint)
 	go etcdconfig.WatchChangeService(m.sid, epChan)
 	for ep := range epChan {
@@ -122,7 +122,7 @@ func (m *int2zset) WatchChangeEndpoint() {
 		m.mu.Unlock()
 	}
 }
-func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) *int2zset {
+func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) *Int2ZsetClient {
 
 	// ep, _ := etcdconfig.GetEndpoint(sid, "thrift_compact")
 
@@ -140,7 +140,7 @@ func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) *int2
 
 		return nil
 	}
-	sortedService := &int2zset{
+	sortedService := &Int2ZsetClient{
 		host:   ep.Host,
 		port:   ep.Port,
 		sid:    sid,
