@@ -152,17 +152,16 @@ func main() {
 	}
 	msg := fmt.Sprintf("lsBsItem %v", lsItem)
 	fmt.Println("msg ", msg)
-	//	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.110.69.97", "30547")
-	//
-	//	for i := 0; i < 100; i++ {
-	//		fmt.Println(i)
-	//		go bigset.BsGetSlice("GROUPMEMBER_"+"0329b33d5219e83622e4308b98639e6e97a9aefc4b59c3dca82ce3e41e8c2fa1d4", 0, 10000)
-	//	}
-	//
-	// done := make(chan bool)
-	// <-done
-	//
-	//	TestMultiPut()
-	//
-	// ListAllItem()
+	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.110.69.97", "33557")
+	ListAllItem()
+	// for i := 0; i < 100; i++ {
+	// 	fmt.Println(i)
+	// 	go bigset.BsGetSlice("GROUPMEMBER_"+"0329b33d5219e83622e4308b98639e6e97a9aefc4b59c3dca82ce3e41e8c2fa1d4", 0, 10000)
+	// }
+
+	done := make(chan bool)
+	<-done
+
+	TestMultiPut()
+
 }
