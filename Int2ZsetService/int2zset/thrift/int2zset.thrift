@@ -14,7 +14,9 @@ enum TErrorCode{
 
 struct TItemSet {
     1:i64 set_id
-
+    2:string key
+    3:binary value
+    4:i64 score
 }
 
 struct TItem{
