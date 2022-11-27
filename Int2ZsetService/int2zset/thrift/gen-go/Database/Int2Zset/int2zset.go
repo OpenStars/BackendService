@@ -561,6 +561,141 @@ func (p *TZset) String() string {
 // Attributes:
 //  - Code
 //  - Data
+type TItemResult_ struct {
+  Code TErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Data *TItem `thrift:"data,2" db:"data" json:"data"`
+}
+
+func NewTItemResult_() *TItemResult_ {
+  return &TItemResult_{}
+}
+
+
+func (p *TItemResult_) GetCode() TErrorCode {
+  return p.Code
+}
+var TItemResult__Data_DEFAULT *TItem
+func (p *TItemResult_) GetData() *TItem {
+  if !p.IsSetData() {
+    return TItemResult__Data_DEFAULT
+  }
+return p.Data
+}
+func (p *TItemResult_) IsSetData() bool {
+  return p.Data != nil
+}
+
+func (p *TItemResult_) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.I32 {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.STRUCT {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *TItemResult_)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := TErrorCode(v)
+  p.Code = temp
+}
+  return nil
+}
+
+func (p *TItemResult_)  ReadField2(iprot thrift.TProtocol) error {
+  p.Data = &TItem{}
+  if err := p.Data.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Data), err)
+  }
+  return nil
+}
+
+func (p *TItemResult_) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("TItemResult"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *TItemResult_) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Code)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.code (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:code: ", p), err) }
+  return err
+}
+
+func (p *TItemResult_) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("data", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:data: ", p), err) }
+  if err := p.Data.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Data), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:data: ", p), err) }
+  return err
+}
+
+func (p *TItemResult_) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("TItemResult_(%+v)", *p)
+}
+
+// Attributes:
+//  - Code
+//  - Data
 type TBoolResult_ struct {
   Code TErrorCode `thrift:"code,1" db:"code" json:"code"`
   Data bool `thrift:"data,2" db:"data" json:"data"`
@@ -1151,6 +1286,10 @@ TDataService
   //  - Limit
   //  - IsDesc
   ListItems(ctx context.Context, set_id int64, offset int32, limit int32, is_desc bool) (r *TListItemResult_, err error)
+  // Parameters:
+  //  - SetID
+  //  - ItemKey
+  GetItem(ctx context.Context, set_id int64, item_key string) (r *TItemResult_, err error)
 }
 
 type Int2ZsetServiceClient struct {
@@ -1244,18 +1383,33 @@ func (p *Int2ZsetServiceClient) ListItems(ctx context.Context, set_id int64, off
   return _result14.GetSuccess(), nil
 }
 
+// Parameters:
+//  - SetID
+//  - ItemKey
+func (p *Int2ZsetServiceClient) GetItem(ctx context.Context, set_id int64, item_key string) (r *TItemResult_, err error) {
+  var _args15 Int2ZsetServiceGetItemArgs
+  _args15.SetID = set_id
+  _args15.ItemKey = item_key
+  var _result16 Int2ZsetServiceGetItemResult
+  if err = p.Client_().Call(ctx, "getItem", &_args15, &_result16); err != nil {
+    return
+  }
+  return _result16.GetSuccess(), nil
+}
+
 type Int2ZsetServiceProcessor struct {
   *TDataServiceProcessor
 }
 
 func NewInt2ZsetServiceProcessor(handler Int2ZsetService) *Int2ZsetServiceProcessor {
-  self15 := &Int2ZsetServiceProcessor{NewTDataServiceProcessor(handler)}
-  self15.AddToProcessorMap("addItem", &int2ZsetServiceProcessorAddItem{handler:handler})
-  self15.AddToProcessorMap("addListItems", &int2ZsetServiceProcessorAddListItems{handler:handler})
-  self15.AddToProcessorMap("removeItem", &int2ZsetServiceProcessorRemoveItem{handler:handler})
-  self15.AddToProcessorMap("removeListItems", &int2ZsetServiceProcessorRemoveListItems{handler:handler})
-  self15.AddToProcessorMap("listItems", &int2ZsetServiceProcessorListItems{handler:handler})
-  return self15
+  self17 := &Int2ZsetServiceProcessor{NewTDataServiceProcessor(handler)}
+  self17.AddToProcessorMap("addItem", &int2ZsetServiceProcessorAddItem{handler:handler})
+  self17.AddToProcessorMap("addListItems", &int2ZsetServiceProcessorAddListItems{handler:handler})
+  self17.AddToProcessorMap("removeItem", &int2ZsetServiceProcessorRemoveItem{handler:handler})
+  self17.AddToProcessorMap("removeListItems", &int2ZsetServiceProcessorRemoveListItems{handler:handler})
+  self17.AddToProcessorMap("listItems", &int2ZsetServiceProcessorListItems{handler:handler})
+  self17.AddToProcessorMap("getItem", &int2ZsetServiceProcessorGetItem{handler:handler})
+  return self17
 }
 
 type int2ZsetServiceProcessorAddItem struct {
@@ -1481,6 +1635,54 @@ var retval *TListItemResult_
     result.Success = retval
 }
   if err2 = oprot.WriteMessageBegin("listItems", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type int2ZsetServiceProcessorGetItem struct {
+  handler Int2ZsetService
+}
+
+func (p *int2ZsetServiceProcessorGetItem) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := Int2ZsetServiceGetItemArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("getItem", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := Int2ZsetServiceGetItemResult{}
+var retval *TItemResult_
+  var err2 error
+  if retval, err2 = p.handler.GetItem(ctx, args.SetID, args.ItemKey); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getItem: " + err2.Error())
+    oprot.WriteMessageBegin("getItem", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush(ctx)
+    return true, err2
+  } else {
+    result.Success = retval
+}
+  if err2 = oprot.WriteMessageBegin("getItem", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1847,11 +2049,11 @@ func (p *Int2ZsetServiceAddListItemsArgs)  ReadField1(iprot thrift.TProtocol) er
   tSlice := make([]*TItemSet, 0, size)
   p.Items =  tSlice
   for i := 0; i < size; i ++ {
-    _elem16 := &TItemSet{}
-    if err := _elem16.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem16), err)
+    _elem18 := &TItemSet{}
+    if err := _elem18.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem18), err)
     }
-    p.Items = append(p.Items, _elem16)
+    p.Items = append(p.Items, _elem18)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -2305,11 +2507,11 @@ func (p *Int2ZsetServiceRemoveListItemsArgs)  ReadField1(iprot thrift.TProtocol)
   tSlice := make([]*TItemSet, 0, size)
   p.Items =  tSlice
   for i := 0; i < size; i ++ {
-    _elem17 := &TItemSet{}
-    if err := _elem17.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem17), err)
+    _elem19 := &TItemSet{}
+    if err := _elem19.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem19), err)
     }
-    p.Items = append(p.Items, _elem17)
+    p.Items = append(p.Items, _elem19)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -2753,6 +2955,233 @@ func (p *Int2ZsetServiceListItemsResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("Int2ZsetServiceListItemsResult(%+v)", *p)
+}
+
+// Attributes:
+//  - SetID
+//  - ItemKey
+type Int2ZsetServiceGetItemArgs struct {
+  SetID int64 `thrift:"set_id,1" db:"set_id" json:"set_id"`
+  ItemKey string `thrift:"item_key,2" db:"item_key" json:"item_key"`
+}
+
+func NewInt2ZsetServiceGetItemArgs() *Int2ZsetServiceGetItemArgs {
+  return &Int2ZsetServiceGetItemArgs{}
+}
+
+
+func (p *Int2ZsetServiceGetItemArgs) GetSetID() int64 {
+  return p.SetID
+}
+
+func (p *Int2ZsetServiceGetItemArgs) GetItemKey() string {
+  return p.ItemKey
+}
+func (p *Int2ZsetServiceGetItemArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 2:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *Int2ZsetServiceGetItemArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.SetID = v
+}
+  return nil
+}
+
+func (p *Int2ZsetServiceGetItemArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.ItemKey = v
+}
+  return nil
+}
+
+func (p *Int2ZsetServiceGetItemArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("getItem_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *Int2ZsetServiceGetItemArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("set_id", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:set_id: ", p), err) }
+  if err := oprot.WriteI64(int64(p.SetID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.set_id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:set_id: ", p), err) }
+  return err
+}
+
+func (p *Int2ZsetServiceGetItemArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("item_key", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:item_key: ", p), err) }
+  if err := oprot.WriteString(string(p.ItemKey)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.item_key (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:item_key: ", p), err) }
+  return err
+}
+
+func (p *Int2ZsetServiceGetItemArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("Int2ZsetServiceGetItemArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type Int2ZsetServiceGetItemResult struct {
+  Success *TItemResult_ `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewInt2ZsetServiceGetItemResult() *Int2ZsetServiceGetItemResult {
+  return &Int2ZsetServiceGetItemResult{}
+}
+
+var Int2ZsetServiceGetItemResult_Success_DEFAULT *TItemResult_
+func (p *Int2ZsetServiceGetItemResult) GetSuccess() *TItemResult_ {
+  if !p.IsSetSuccess() {
+    return Int2ZsetServiceGetItemResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *Int2ZsetServiceGetItemResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *Int2ZsetServiceGetItemResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.STRUCT {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *Int2ZsetServiceGetItemResult)  ReadField0(iprot thrift.TProtocol) error {
+  p.Success = &TItemResult_{}
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *Int2ZsetServiceGetItemResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("getItem_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *Int2ZsetServiceGetItemResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *Int2ZsetServiceGetItemResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("Int2ZsetServiceGetItemResult(%+v)", *p)
 }
 
 

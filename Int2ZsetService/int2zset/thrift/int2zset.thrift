@@ -29,6 +29,10 @@ struct TZset{
     1:list<TItem> data
 }
 
+struct TItemResult {
+    1:TErrorCode code
+    2:TItem data
+}
 
 struct TBoolResult{
     1:TErrorCode code
@@ -57,6 +61,7 @@ service Int2ZsetService extends TDataService{
     TBoolResult removeItem(1:i64 set_id,2:string item_key)
     TListItemSetResult removeListItems(1:list<TItemSet> items)
     TListItemResult listItems(1:i64 set_id,2:i32 offset,3:i32 limit,4:bool is_desc)
+    TItemResult getItem(1:i64 set_id,2:string item_key)
 }
 
 

@@ -122,6 +122,27 @@ func (m *Int2ZsetClient) WatchChangeEndpoint() {
 		m.mu.Unlock()
 	}
 }
+
+func (m *Int2ZsetClient) GetItem(setID int64, itemID string) (*Int2Zset.TItem, error) {
+	m.mu.RLock()
+	client := transports.GetInt2ZsetCompactClient(m.host, m.port)
+	m.mu.RUnlock()
+	if client == nil || client.Client == nil {
+		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+
+	r, err := client.Client.(*Int2Zset.Int2ZsetServiceClient).GetItem(context.Background(), setID, itemID)
+	if err != nil {
+		transports.ServiceDisconnect(client)
+		return nil, errors.New("Int2Zset: " + m.sid + " error: " + err.Error())
+	}
+	defer transports.BackToPool(client)
+	if r.Code == Int2Zset.TErrorCode_EGood {
+		return r.Data, nil
+	}
+	return nil, nil
+
+}
 func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) *Int2ZsetClient {
 
 	// ep, _ := etcdconfig.GetEndpoint(sid, "thrift_compact")

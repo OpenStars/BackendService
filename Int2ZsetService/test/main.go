@@ -108,6 +108,7 @@ func GetLoad() {
 	for _, item := range lsItem {
 		fmt.Println("key", item.Key, "value", string(item.Value), "score", item.Score)
 	}
+	fmt.Println(int2ZsetService.GetItem(setID, "lhs6"))
 }
 func TestRemove() {
 	setID := int64(-1)
@@ -118,5 +119,6 @@ func main() {
 	// TestLoad()
 	// Test0()
 	// TestRemove()
-	// GetLoad()
+	GetLoad()
+
 }
