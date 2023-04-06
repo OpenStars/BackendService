@@ -111,6 +111,7 @@ func (m *client) SearchRawString(indexName, rawQuery string) (rawResult [][]byte
 	if err != nil {
 		return nil, 0, err
 	}
+	fmt.Println(string(resultBody))
 	if string(resultBody) == "" {
 		return nil, 0, errors.New("NOT FOUND")
 	}

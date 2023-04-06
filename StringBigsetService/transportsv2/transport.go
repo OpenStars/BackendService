@@ -51,7 +51,7 @@ var bsGenericMapPool = thriftpool.NewMapPool(1000, 5, 3600, dial, close)
 func GetBsGenericClient(host, port string) *thriftpool.IdleClient {
 	client, err := bsGenericMapPool.Get(host, port).Get()
 	if err != nil {
-		telenotification.NotifyServiceError("", host, port, err)
+		telenotification.NotifyServiceError("", host, port, errors.New(fmt.Sprint("ThriftPool State totalIdleConn", bsGenericMapPool.Get(host, port).TotalIdleConn(), "total Conn", bsGenericMapPool.Get(host, port).TotalConn())))
 		return nil
 	}
 	return client
@@ -61,12 +61,15 @@ func BackToPool(c *thriftpool.IdleClient) {
 	bsGenericMapPool.Get(c.Host, c.Port).Put(c)
 }
 
-func ServiceDisconnect(c *thriftpool.IdleClient) {
+func ServiceDisconnect(c *thriftpool.IdleClient, message string) {
 	bsGenericMapPool.Release(c.Host, c.Port)
-	telenotification.NotifyServiceError(c.SID, c.Host, c.Port, errors.New("service disconnect"))
+	thirftState := fmt.Sprint("ThriftPool State totalIdleConn", bsGenericMapPool.Get(c.Host, c.Port).TotalIdleConn(), "total Conn", bsGenericMapPool.Get(c.Host, c.Port).TotalConn())
+	telenotification.NotifyServiceError(c.SID, c.Host, c.Port, errors.New(message+" "+thirftState))
 }
 
 func ServiceDisconnect2(c *thriftpool.IdleClient, err error, message string) {
 	bsGenericMapPool.Release(c.Host, c.Port)
-	telenotification.Notify(fmt.Sprintf("Service sid %s address %s:%s %v %s", c.SID, c.Host, c.Port, err, message))
+
+	thirftState := fmt.Sprint("ThriftPool State totalIdleConn", bsGenericMapPool.Get(c.Host, c.Port).TotalIdleConn(), "total Conn", bsGenericMapPool.Get(c.Host, c.Port).TotalConn())
+	telenotification.Notify(fmt.Sprintf("Service sid %s address %s:%s %v %s", c.SID, c.Host, c.Port, err, message+" "+thirftState))
 }

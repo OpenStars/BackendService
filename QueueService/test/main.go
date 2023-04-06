@@ -44,13 +44,25 @@ func Test1() {
 }
 func Test0() {
 	queueID := "TestLoad0"
-	// ok, err := queueDbService.AddItem(queueID, &QueueDb.TItem{
-	// 	Key:   "lhs10",
-	// 	Value: []byte("abc"),
-	// }, 3)
-	// fmt.Println(ok, err)
+	ok, err := queueDbService.AddItem(queueID, &QueueDb.TItem{
+		Key:   "lhs1",
+		Value: []byte("abc"),
+	}, 3)
+	ok, err = queueDbService.AddItem(queueID, &QueueDb.TItem{
+		Key:   "lhs2",
+		Value: []byte("abc"),
+	}, 3)
+	ok, err = queueDbService.AddItem(queueID, &QueueDb.TItem{
+		Key:   "lhs3",
+		Value: []byte("abc"),
+	}, 3)
+	ok, err = queueDbService.AddItem(queueID, &QueueDb.TItem{
+		Key:   "lhs4",
+		Value: []byte("abc"),
+	}, 3)
+	fmt.Println(ok, err)
 
-	lsItem, total, err := queueDbService.ListItems(queueID, 0, 1000, true)
+	lsItem, total, err := queueDbService.ListItems(queueID, 0, 1000, false)
 	if err != nil || len(lsItem) == 0 {
 		log.Fatalln(err)
 	}
@@ -116,7 +128,7 @@ func TestRemove() {
 	fmt.Println(ok, err)
 }
 func main() {
-	TestRemove()
+	// TestRemove()
 	// TestLoad()
 	Test0()
 

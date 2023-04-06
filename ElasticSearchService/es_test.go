@@ -22,20 +22,31 @@ func TestIndexES(t *testing.T) {
 
 func TestSearchES(t *testing.T) {
 
-	name := "Cao"
+	name := "Sơn"
 	queryString := fmt.Sprintf(`{
 		"query": {
 		  "multi_match": {
 			"query":  "%s",
 			"type":   "phrase_prefix",
-			"fields": ["name"]
+			"fields": ["display_name"]
 		  } 
 		},
 		"from": %d,
 		"size": %d 
   }`, name, 0, 10)
+	// 	queryString := fmt.Sprintf(`{
+	// 		"query": {
+	// 		  "multi_match": {
+	// 			"query":  "%s",
+	// 			"type":   "phrase_prefix",
+	// 			"fields": ["name"]
+	// 		  }
+	// 		},
+	// 		"from": %d,
+	// 		"size": %d
+	//   }`, name, 0, 10)
 	esClient := NewClient([]string{"http://10.110.1.100:9206"})
-	rawRs, _, err := esClient.SearchRawString("socialnetwork_group", queryString)
+	rawRs, _, err := esClient.SearchRawString("index_profile_info_by_appid_trustkeys", queryString)
 	if err != nil {
 		log.Fatalln(err)
 	}

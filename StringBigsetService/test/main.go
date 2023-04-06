@@ -152,7 +152,7 @@ func main() {
 	}
 	msg := fmt.Sprintf("lsBsItem %v", lsItem)
 	fmt.Println("msg ", msg)
-	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.110.69.97", "33557")
+	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.110.69.97", "30507")
 	ListAllItem()
 	// for i := 0; i < 100; i++ {
 	// 	fmt.Println(i)
@@ -162,6 +162,6 @@ func main() {
 	done := make(chan bool)
 	<-done
 
-	TestMultiPut()
+	// TestMultiPut()
 
 }

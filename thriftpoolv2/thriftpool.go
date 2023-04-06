@@ -33,6 +33,13 @@ type ThriftPool struct {
 	closed      bool
 }
 
+func (m *ThriftPool) TotalIdleConn() int {
+	return m.idle.Len()
+}
+func (m *ThriftPool) TotalConn() int {
+	return int(m.count)
+}
+
 type IdleClient struct {
 	Socket *thrift.TSocket
 	Client interface{}
@@ -48,7 +55,7 @@ type idleConn struct {
 
 var nowFunc = time.Now
 
-//error
+// error
 var (
 	ErrOverMax          = errors.New("ErrOverMax")
 	ErrInvalidConn      = errors.New("ErrInvalidConn")

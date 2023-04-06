@@ -284,7 +284,7 @@ func (m *StringBigsetService) BsRangeQueryByPage(bskey string, startKey, endKey 
 	defer cancel()
 	r, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsRangeQuery(ctx, generic.TStringKey(bskey), generic.TItemKey(startKey), generic.TItemKey(endKey))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, fmt.Sprint("BsRangeQueryByPage bskey", bskey, "startKey", startKey, "endKey", endKey, "begin", begin, "end", end))
 		return nil, -1, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -402,7 +402,7 @@ func (m *StringBigsetService) GetBigSetInfoByName(bskey string) (*generic.TStrin
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).GetBigSetInfoByName(ctx, generic.TStringKey(bskey))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, err.Error())
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -437,7 +437,7 @@ func (m *StringBigsetService) RemoveAll(bskey string) (bool, error) {
 	defer cancel()
 	_, err := client.Client.(*generic.TStringBigSetKVServiceClient).RemoveAll(ctx, generic.TStringKey(bskey))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, err.Error())
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return false, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -466,7 +466,7 @@ func (m *StringBigsetService) CreateStringBigSet(bskey string) (*generic.TString
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).CreateStringBigSet(ctx, generic.TStringKey(bskey))
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, err.Error())
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return nil, errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
 	}
@@ -611,7 +611,7 @@ func (m *StringBigsetService) BsMultiPut(bskey string, lsItems []*generic.TItem)
 	defer cancel()
 	rs, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsMultiPut(ctx, generic.TStringKey(bskey), itemset, false, false)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, fmt.Sprint("BsMultiPut bskey", bskey))
 		// client = transports.NewGetBsGenericClient(m.host, m.port)
 		return false, errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
 	}
