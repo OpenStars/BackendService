@@ -1,7 +1,6 @@
 package transports
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -49,9 +48,10 @@ func close(c *thriftpool.IdleClient) error {
 var bsGenericMapPool = thriftpool.NewMapPool(1000, 5, 3600, dial, close)
 
 func GetInt2ZsetCompactClient(host, port string) *thriftpool.IdleClient {
-	client, err := bsGenericMapPool.Get(host, port).Get()
+	p := bsGenericMapPool.Get(host, port)
+	client, err := p.Get()
 	if err != nil {
-		telenotification.NotifyServiceError("", host, port, err)
+		telenotification.NotifyServiceError(fmt.Sprint("QueueDb totalIdle", p.TotalIdleConn(), "totalConn", p.TotalConn()), host, port, err)
 		return nil
 	}
 	return client
@@ -64,10 +64,10 @@ func BackToPool(c *thriftpool.IdleClient) {
 
 	bsGenericMapPool.Get(c.Host, c.Port).Put(c)
 }
-func ServiceDisconnect(c *thriftpool.IdleClient) {
+func ServiceDisconnect(c *thriftpool.IdleClient, err error) {
 	if c == nil {
 		return
 	}
 	bsGenericMapPool.Release(c.Host, c.Port)
-	telenotification.NotifyServiceError("", c.Host, c.Port, errors.New("service disconnect"))
+	telenotification.NotifyServiceError(c.SID, c.Host, c.Port, err)
 }

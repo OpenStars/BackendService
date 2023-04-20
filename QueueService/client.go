@@ -3,11 +3,13 @@ package QueueService
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"sync"
 
 	"github.com/OpenStars/BackendService/QueueService/queuedb/thrift/gen-go/Database/QueueDb"
 	"github.com/OpenStars/BackendService/QueueService/queuedb/transports"
+	telenotification "github.com/OpenStars/BackendService/TeleNotification"
 	"github.com/lehaisonmath6/etcdconfig"
 )
 
@@ -29,7 +31,7 @@ func (m *QueueDbClient) AddItem(queueID string, item *QueueDb.TItem, maxItem int
 
 	r, err := client.Client.(*QueueDb.QueueDbServiceClient).AddItem(context.Background(), queueID, item, maxItem)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, errors.New(fmt.Sprint("AddItem queueId", queueID, "item", item.String(), "maxItem", maxItem, err)))
 		return false, errors.New("Int2Zset: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -47,7 +49,7 @@ func (m *QueueDbClient) AddListItem(lsItem []*QueueDb.TItemQueue, maxItem int64)
 
 	_, err := client.Client.(*QueueDb.QueueDbServiceClient).AddListItems(context.Background(), lsItem, maxItem)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, errors.New(fmt.Sprint("AddListItems", len(lsItem), err)))
 		return false, errors.New("Int2ZSet: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -66,7 +68,7 @@ func (m *QueueDbClient) RemoveItem(queueID string, itemID string) (bool, error) 
 
 	r, err := client.Client.(*QueueDb.QueueDbServiceClient).RemoveItem(context.Background(), queueID, itemID)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, errors.New(fmt.Sprint("RemoveITem queueID", queueID, "itemID", itemID)))
 		return false, errors.New("Int2Zset: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -83,7 +85,7 @@ func (m *QueueDbClient) RemoveListItems(lsItems []*QueueDb.TItemQueue) ([]*Queue
 
 	r, err := client.Client.(*QueueDb.QueueDbServiceClient).RemoveListItems(context.Background(), lsItems)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, errors.New(fmt.Sprint("RemoveListItems", len(lsItems))))
 		return nil, errors.New("Int2Zset: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -103,7 +105,7 @@ func (m *QueueDbClient) ListItems(queueID string, offset, limit int32, desc bool
 
 	r, err := client.Client.(*QueueDb.QueueDbServiceClient).ListItems(context.Background(), queueID, offset, limit, desc)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, errors.New(fmt.Sprint("ListItems queueID", queueID, "offset", offset, "limit", limit, desc, err)))
 		return nil, 0, errors.New("Int2Zset: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -133,7 +135,7 @@ func (m *QueueDbClient) GetItem(queueID string, itemID string) (*QueueDb.TItem, 
 
 	r, err := client.Client.(*QueueDb.QueueDbServiceClient).GetItem(context.Background(), queueID, itemID)
 	if err != nil {
-		transports.ServiceDisconnect(client)
+		transports.ServiceDisconnect(client, errors.New(fmt.Sprint("GetItem queueID", queueID, "itemID", itemID)))
 		return nil, errors.New("Int2Zset: " + m.sid + " error: " + err.Error())
 	}
 	defer transports.BackToPool(client)
@@ -153,12 +155,12 @@ func NewClient(etcdServers []string, sid, defaultHost, defaultPort string) *Queu
 		SID:  sid,
 	}
 
-	log.Println("Init Zset sid", ep.SID, "address", ep.Host+":"+ep.Port)
+	log.Println("Init QueueDb sid", ep.SID, "address", ep.Host+":"+ep.Port)
 
 	client := transports.GetInt2ZsetCompactClient(ep.Host, ep.Port)
 	if client == nil || client.Client == nil {
 		log.Println("[ERROR] zset sid", ep.SID, "address", ep.Host+":"+ep.Port, "connection refused")
-
+		telenotification.Notify(fmt.Sprint("QueueDb sid", ep.SID, "address", ep.Host+":"+ep.Port, "can not connect"))
 		return nil
 	}
 	sortedService := &QueueDbClient{
