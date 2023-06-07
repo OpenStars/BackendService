@@ -130,7 +130,7 @@ func TestRemove() {
 func main() {
 	// TestRemove()
 	// TestLoad()
-	Test0()
+	// Test0()
 
 	// GetLoad()
 

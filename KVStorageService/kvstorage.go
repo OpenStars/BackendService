@@ -58,7 +58,7 @@ func (m *kvstorageservice) GetData(key string) (string, error) {
 		return "", errors.New("KVCounterService: " + m.sid + " error: " + err.Error())
 	}
 	transports.BackToPool(client)
-	if r.ErrorCode != KVStorage.TErrorCode_EGood {
+	if r.ErrorCode != KVStorage.TErrorCode_EGood || r.Data == nil {
 		return "", nil
 	}
 	return r.Data.Value, nil
