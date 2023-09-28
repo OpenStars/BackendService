@@ -133,34 +133,41 @@ func bulkPut() {
 }
 func main() {
 
-	lsItem := []*generic.TBigsetItem{
-		{
-			Bskey:     []byte("TestKey"),
-			Itemkey:   []byte("ItemKeyTest1"),
-			Itemvalue: []byte("ItemValueTest1"),
-		},
-		{
-			Bskey:     []byte("TestKey2"),
-			Itemkey:   []byte("ItemKeyTest2"),
-			Itemvalue: []byte("ItemValueTest2"),
-		},
-		{
-			Bskey:     []byte("TestKe3"),
-			Itemkey:   []byte("ItemKeyTest3"),
-			Itemvalue: []byte("ItemValueTest3"),
-		},
+	// lsItem := []*generic.TBigsetItem{
+	// 	{
+	// 		Bskey:     []byte("TestKey"),
+	// 		Itemkey:   []byte("ItemKeyTest1"),
+	// 		Itemvalue: []byte("ItemValueTest1"),
+	// 	},
+	// 	{
+	// 		Bskey:     []byte("TestKey2"),
+	// 		Itemkey:   []byte("ItemKeyTest2"),
+	// 		Itemvalue: []byte("ItemValueTest2"),
+	// 	},
+	// 	{
+	// 		Bskey:     []byte("TestKe3"),
+	// 		Itemkey:   []byte("ItemKeyTest3"),
+	// 		Itemvalue: []byte("ItemValueTest3"),
+	// 	},
+	// }
+	// msg := fmt.Sprintf("lsBsItem %v", lsItem)
+	// fmt.Println("msg ", msg)
+	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.110.69.97", "30687")
+	const LIST_REGISTER_INSTALL_APP = "LIST_REGISTER_INSTALL_APP"
+	total, _ := bigset.GetTotalCount(LIST_REGISTER_INSTALL_APP)
+	lsItems, _ := bigset.BsGetSlice(LIST_REGISTER_INSTALL_APP, 0, int32(total))
+	for i, item := range lsItems {
+		fmt.Println(i+1, string(item.Key), string(item.Value))
 	}
-	msg := fmt.Sprintf("lsBsItem %v", lsItem)
-	fmt.Println("msg ", msg)
-	bigset = StringBigsetService.NewClient(nil, "/test/dd2", "10.110.69.97", "30507")
-	ListAllItem()
+	fmt.Println("total", total)
+	// ListAllItem()
 	// for i := 0; i < 100; i++ {
 	// 	fmt.Println(i)
 	// 	go bigset.BsGetSlice("GROUPMEMBER_"+"0329b33d5219e83622e4308b98639e6e97a9aefc4b59c3dca82ce3e41e8c2fa1d4", 0, 10000)
 	// }
 
-	done := make(chan bool)
-	<-done
+	// done := make(chan bool)
+	// <-done
 
 	// TestMultiPut()
 

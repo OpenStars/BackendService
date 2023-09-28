@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"reflect"
@@ -107,11 +108,10 @@ func (m *client) SearchRawString(indexName, rawQuery string) (rawResult [][]byte
 		return nil, 0, err
 	}
 	defer res.Body.Close()
-	resultBody, err := ioutil.ReadAll(res.Body)
+	resultBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, 0, err
 	}
-	fmt.Println(string(resultBody))
 	if string(resultBody) == "" {
 		return nil, 0, errors.New("NOT FOUND")
 	}
