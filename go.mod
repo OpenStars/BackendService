@@ -1,6 +1,6 @@
 module github.com/OpenStars/BackendService
 
-go 1.17
+go 1.20
 
 require (
 	github.com/OpenStars/configetcd v0.0.0-20220113042930-5628e65b7e44
@@ -9,6 +9,8 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/lehaisonmath6/etcdconfig v1.0.5
 	github.com/rtt/Go-Solr v0.0.0-20190512221613-64fac99dcae2
+	go.uber.org/mock v0.3.0
+	golang.org/x/tools v0.6.0
 )
 
 require (
@@ -23,9 +25,10 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
-	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
-	golang.org/x/sys v0.0.0-20220405052023-b1e9470b6e64 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/mod v0.11.0 // indirect
+	golang.org/x/net v0.15.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
 	google.golang.org/grpc v1.38.0 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
