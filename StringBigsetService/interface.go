@@ -22,4 +22,5 @@ type Client interface {
 	BsMultiPutBsItem(lsItem []*generic.TBigsetItem) (failedItem []*generic.TBigsetItem, err error)
 	BsMultiRemoveBsItem(listItems []*generic.TBigsetItem) (listFailedRemove []*generic.TBigsetItem, err error)
 	BsRangeQueryAll(bskey string) ([]*generic.TItem, error)
+	BsPutItemSwap(bskey string, itemKey, itemVal string) (bool, string, error)
 }

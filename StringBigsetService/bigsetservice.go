@@ -184,6 +184,41 @@ func (m *StringBigsetService) BsPutItem(bskey string, itemKey, itemVal string) (
 
 }
 
+func (m *StringBigsetService) BsPutItemSwap(bskey string, itemKey, itemVal string) (bool, string, error) {
+	m.mu.RLock()
+	client := transports.GetBsGenericClient(m.host, m.port)
+	m.mu.RUnlock()
+	if client == nil || client.Client == nil {
+		return false, "", errors.New("Can not connect to backend service: " + m.sid + "host: " + m.host + "port: " + m.port)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	r, err := client.Client.(*generic.TStringBigSetKVServiceClient).BsPutItem(ctx, generic.TStringKey(bskey), &generic.TItem{
+		Key:   []byte(itemKey),
+		Value: []byte(itemVal),
+	})
+
+	if err != nil {
+		transports.ServiceDisconnect2(client, err, fmt.Sprintf("func BsPutItem key %s value %s", itemKey, itemVal))
+		//transports.ServiceDisconnect(client)
+		// client = transports.NewGetBsGenericClient(m.host, m.port)
+		return false, "", errors.New("StringBigsetSerice: " + m.sid + " error: " + err.Error())
+	}
+	defer transports.BackToPool(client)
+	if r.Error != generic.TErrorCode_EGood {
+		return false, "", nil
+	}
+	// if r.Ok == false {
+	// 	err := errors.New("Can not write bskey: " + bskey + " itemkey: " + itemKey)
+	// 	transports.ServiceDisconnect(client)
+	// 	return false, err
+	// }
+	if r.IsSetOldItem() {
+		return true, string(r.GetOldItem().GetValue()), nil
+	}
+	return true, "", nil
+}
+
 func (m *StringBigsetService) BsRangeQuery(bskey string, startKey string, endKey string) ([]*generic.TItem, error) {
 
 	// if m.etcdManager != nil {
