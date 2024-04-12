@@ -276,11 +276,18 @@ func (m *client) Index(indexName, docID, documentJson string) (bool, error) {
 		return false, err
 	}
 	if res.IsError() {
-		return false, errors.New("Error Indexing document " + res.Status())
+		defer res.Body.Close()
+		resultBody, err := io.ReadAll(res.Body)
+		if err != nil {
+			return false, errors.New("Error Indexing document " + err.Error())
+		}
+		return false, errors.New("Error Indexing document " + string(resultBody))
 	}
 	defer res.Body.Close()
-	resultBody, err := ioutil.ReadAll(res.Body)
-
+	resultBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return false, errors.New("Error Indexing document " + err.Error())
+	}
 	var resultBodyMap map[string]interface{}
 	err = json.Unmarshal(resultBody, &resultBodyMap)
 	if err != nil {
